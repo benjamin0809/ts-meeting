@@ -13,4 +13,3 @@ export default class UserManage extends Vue {
 
 <style>
 </style>
-

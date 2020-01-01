@@ -2,5 +2,8 @@
   "extends": "tslint-config-standard",
   "globals": {
     "require": true
-  }
+  },
+  "type": "number",
+  "min": 0,
+  "whitespace": false
 }

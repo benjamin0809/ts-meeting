@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <app-header v-if="this.$store.state.isLogin"></app-header>
+    <app-header v-if="loginState"></app-header>
     <el-main>
       <transition name="slide-fade">
         <router-view></router-view>
@@ -15,6 +15,14 @@ import Vue from 'vue'
 import AppHeader from './components/Header.vue'
 import AppFooter from './components/Footer.vue'
 import Component from 'vue-class-component'
+import {
+  State,
+  Getter,
+  Action,
+  Mutation,
+  namespace
+} from 'vuex-class'
+const someModule = namespace('path/to/module')
 @Component({
   components: {
     AppFooter,
@@ -22,8 +30,12 @@ import Component from 'vue-class-component'
   }
 })
 export default class App extends Vue {
-
+  @State('isLogin') loginState: any
+  created () {
+    console.log(this.loginState)
+  }
 }
+
 </script>
 <style lang="scss">
 #app {
