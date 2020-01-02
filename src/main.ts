@@ -6,6 +6,7 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'
 import Vuex from 'vuex'
+import 'normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler_material.css' // 全局導入dhtmlx-scheduler 樣式表

@@ -24,7 +24,7 @@ instance.interceptors.request.use(
     }
     // 在发送请求之前做些什么
     config.data = Object.assign({ lang: 'zh-CN' }, config.data)
-    debugger
+    // debugger
     return config
   },
   (error) => {

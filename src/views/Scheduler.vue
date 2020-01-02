@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 会议室预定dialog -->
-    <el-dialog title="会议室预定" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="会议室预定" :visible.sync="dialogVisible"  :before-close="handleClose">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="会议主题">
           <el-input v-model="form.subject"></el-input>
@@ -75,9 +75,16 @@
     </div>
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scope>
+
+.el-main{
+  padding: 0 0 0 20px !important;
+}
 .widget-box {
-  height: 100vh;
+   min-height: calc(100vh - 76px);
+}
+.el-dialog{
+  min-width: 800px;
 }
 .site_tab {
   left: 0px !important;
@@ -194,6 +201,11 @@ export default class Scheduler extends Vue {
     // 数据初始化
     this.GetBookedRoom(this.roomValue)
 
+    scheduler.config.first_hour = 8
+    scheduler.config.last_hour = 19
+    scheduler.config.hour_size_px = 80
+    scheduler.config.time_step = 15
+    scheduler.config.min_grid_size = 30
     scheduler.locale = {
       date: {
         month_full: [
@@ -256,6 +268,7 @@ export default class Scheduler extends Vue {
     scheduler.config.day_date = '%M %d日 %D'
     scheduler.config.default_date = '%Y年 %M %d日'
     scheduler.config.month_date = '%Y年 %M'
+    scheduler.config.drag_lightbox = false
     scheduler.init(this.$refs.container, new Date(), 'week')
     scheduler.parse(this.schedulerData, 'json')
     scheduler.updateView()
@@ -263,6 +276,7 @@ export default class Scheduler extends Vue {
     scheduler.attachEvent('onDragEnd', (id: string, ev: any) => {
       this.dialogVisible = true
       console.log(id, ev)
+      return false
     })
 
     scheduler.attachEvent('onBeforeLightbox', (id: string) => {

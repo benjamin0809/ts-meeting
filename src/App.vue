@@ -5,8 +5,9 @@
       <transition name="slide-fade">
         <router-view />
       </transition>
+      <!-- <app-footer></app-footer> -->
     </el-main>
-    <app-footer></app-footer>
+    
   </div>
 </template>
 
@@ -47,6 +48,9 @@ export default class App extends Vue {
   color: #2c3e50;
 }
 
+body{
+  margin: 0;
+}
 #nav {
   padding: 30px;
 
@@ -61,5 +65,8 @@ export default class App extends Vue {
 }
 .el-main {
   margin-top: 60px;
+  height: calc(100vh - 75px);
+  position: relative;
 }
+
 </style>

@@ -10,7 +10,7 @@
       active-text-color="#ffd04b"
     >
       <el-submenu index="3">
-        <template slot="title">F2846595</template>
+        <template slot="title">{{user.UserNo}}</template>
         <el-menu-item index="3-1">个人信息</el-menu-item>
         <el-menu-item index="3-2">设置</el-menu-item>
 
@@ -41,14 +41,16 @@
  
 <script  lang='ts'>
 import Vue from 'vue'
+import { IUserInfo } from '@/models'
 import Component from 'vue-class-component'
+import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 @Component
 export default class Header extends Vue {
   activeIndex = '1'
   activeIndex2 = '1'
-
+  @State private user!: IUserInfo
   handleSelect (key: string, keyPath: any) {
-      // debugger
+    // debugger
     if (key === '/login') {
       this.$store.dispatch('logout').catch(err => {
         console.error(err)
@@ -62,17 +64,17 @@ export default class Header extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
+
 .el-header {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  padding: 0;
+  padding: 0 !important; 
 }
-
 .el-menu--horizontal > .el-menu-item,
 .el-menu--horizontal > .el-submenu {
-  float: right;
+  float: right !important;
 }
 </style>
