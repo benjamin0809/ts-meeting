@@ -26,6 +26,7 @@ export const userLogin = (account: string, password: string) => {
     }
     // tslint:disable-next-line: no-floating-promises
     store.dispatch('login', account)
+
     resolve({
       result: true,
       user: {
@@ -34,4 +35,5 @@ export const userLogin = (account: string, password: string) => {
       }
     })
   })
+
 }
