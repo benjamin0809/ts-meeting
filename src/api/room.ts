@@ -1,6 +1,9 @@
 import store from '../store'
 import request from '../utils/request'
 
+export const getRoom = () => {
+  return request.get('room/GetRoom', { })
+}
 const siteOptions = [
   {
     value: 'GY',

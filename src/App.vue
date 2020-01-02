@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <app-header v-if="loginState"></app-header>
+    <app-header v-if="user.Id"></app-header>
     <el-main>
       <transition name="slide-fade">
-        <router-view></router-view>
+        <router-view />
       </transition>
     </el-main>
     <app-footer></app-footer>
@@ -15,6 +15,7 @@ import Vue from 'vue'
 import AppHeader from './components/Header.vue'
 import AppFooter from './components/Footer.vue'
 import Component from 'vue-class-component'
+import { IUserInfo } from './models'
 import {
   State,
   Getter,
@@ -30,12 +31,12 @@ const someModule = namespace('path/to/module')
   }
 })
 export default class App extends Vue {
-  @State('isLogin') loginState: any
+
+  @State private user!: IUserInfo
   created () {
-    console.log(this.loginState)
+    console.log(this.user)
   }
 }
-
 </script>
 <style lang="scss">
 #app {

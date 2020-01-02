@@ -1,4 +1,4 @@
-
+import { moduleUser } from '@/store/user'
 import Vue from 'vue'
 import Router, { Route } from 'vue-router'
 import Scheduler from '@/views/Scheduler.vue'
@@ -7,7 +7,6 @@ import SysAdmin from '@/views/sysadmin/Index.vue'
 import Notice from '@/views/sysadmin/Notice.vue'
 import RoleManage from '@/views/sysadmin/RoleManage.vue'
 import UserManage from '@/views/sysadmin/UserManage.vue'
-import store from '../store'
 Vue.use(Router)
 
 const router = new Router({
@@ -45,9 +44,7 @@ const router = new Router({
 })
 router.beforeEach((to: Route, from: Route, next: any) => {
   // ...判断session是否过期
-  // debugger
-
-  if (store.state.isLogin || to.name === 'login') {
+  if (moduleUser.Id > 0 || to.name === 'login') {
     next()
   } else {
     next(`/login?redirect=${to.path}`)

@@ -3,8 +3,8 @@ import request from '../utils/request'
 
 export const login = (account: string, pwd: string) => {
   return request.post('auth/login', {
-    UserCode: account,
-    Pwd: pwd
+    account: account,
+    password: pwd
   })
 }
 export const userLogin = (account: string, password: string) => {

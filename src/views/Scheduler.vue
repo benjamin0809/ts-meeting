@@ -111,168 +111,176 @@
 </style>
  
 <script lang='ts'>
-import "dhtmlx-scheduler";
-import Vue from "vue";
-import Component from "vue-class-component";
+import 'dhtmlx-scheduler'
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-import { getSites, getSiteRooms, getShedulerData } from "../api/room";
+import { getSites, getSiteRooms, getShedulerData, getRoom } from '../api/room'
 
 @Component
 export default class Scheduler extends Vue {
   // 预定dialog
-  dialogVisible = false;
+  dialogVisible = false
   form = {
-    subject: "",
-    remark: "",
-    contact: "",
-    date: "",
-    start: "",
-    end: "",
-    room: ""
-  };
+    subject: '',
+    remark: '',
+    contact: '',
+    date: '',
+    start: '',
+    end: '',
+    room: ''
+  }
   schedulerItem = {
-    id: "",
-    start_date: "",
-    end_date: "",
-    text: "",
-    details: ""
-  };
-  schedulerData: any = [];
+    id: '',
+    start_date: '',
+    end_date: '',
+    text: '',
+    details: ''
+  }
+  schedulerData: any = []
 
   // 获取site/room
-  siteOptions = getSites();
-  siteValue = this.siteOptions[0].value;
-  roomOptions = getSiteRooms(this.siteValue);
-  roomValue = this.roomOptions.length > 0 ? this.roomOptions[0].value : "";
-  siteChanged() {
-    console.log(this.siteValue);
-    this.roomOptions = getSiteRooms(this.siteValue);
+  siteOptions = getSites()
+  siteValue = this.siteOptions[0].value
+  roomOptions = getSiteRooms(this.siteValue)
+  roomValue = this.roomOptions.length > 0 ? this.roomOptions[0].value : ''
+  siteChanged () {
+    console.log(this.siteValue)
+    this.roomOptions = getSiteRooms(this.siteValue)
     this.roomValue =
-      this.roomOptions.length > 0 ? this.roomOptions[0].value : "";
+      this.roomOptions.length > 0 ? this.roomOptions[0].value : ''
   }
 
-  //刷新scheduler会议室预定数据
-  roomChanged() {
-    console.log(this.roomValue);
-    this.schedulerData=[];
-    this.GetBookedRoom(this.roomValue);
-    scheduler.parse(this.schedulerData, "json");
-    scheduler.updateView();
+  // 刷新scheduler会议室预定数据
+  roomChanged () {
+    console.log(this.roomValue)
+    this.schedulerData = []
+    this.GetBookedRoom(this.roomValue)
+    scheduler.parse(this.schedulerData, 'json')
+    scheduler.updateView()
   }
 
-  //构造scheduler数据
-  GetBookedRoom(room: string) {
-    const data = getShedulerData(room);
+  // 构造scheduler数据
+  GetBookedRoom (room: string) {
+    const data = getShedulerData(room)
     for (let item of data) {
       let schedulerItem = {
         id: item.id,
-        start_date: item.date + " " + item.start,
-        end_date: item.date + " " + item.end,
+        start_date: item.date + ' ' + item.start,
+        end_date: item.date + ' ' + item.end,
         text:
-          "预定人：" +
+          '预定人：' +
           item.user +
-          "</br>" +
-          "主题：" +
+          '</br>' +
+          '主题：' +
           item.subject +
-          "</br>" +
-          "联系方式" +
+          '</br>' +
+          '联系方式' +
           item.contact,
         details: item.remark
-      };
-      this.schedulerData.push(schedulerItem);
+      }
+      this.schedulerData.push(schedulerItem)
     }
   }
 
-  mounted() {
-    console.log(scheduler);
-    //数据初始化
-    this.GetBookedRoom(this.roomValue);
+  mounted () {
+    // console.log(scheduler)
+
+    getRoom().then(res => {
+      console.log(res)
+    }).catch(err => {
+      console.error(err)
+    })
+    // 数据初始化
+    this.GetBookedRoom(this.roomValue)
 
     scheduler.locale = {
       date: {
         month_full: [
-          "1月",
-          "2月",
-          "3月",
-          "4月",
-          "5月",
-          "6月",
-          "7月",
-          "8月",
-          "9月",
-          "10月",
-          "11月",
-          "12月"
+          '1月',
+          '2月',
+          '3月',
+          '4月',
+          '5月',
+          '6月',
+          '7月',
+          '8月',
+          '9月',
+          '10月',
+          '11月',
+          '12月'
         ],
         month_short: [
-          "1月",
-          "2月",
-          "3月",
-          "4月",
-          "5月",
-          "6月",
-          "7月",
-          "8月",
-          "9月",
-          "10月",
-          "11月",
-          "12月"
+          '1月',
+          '2月',
+          '3月',
+          '4月',
+          '5月',
+          '6月',
+          '7月',
+          '8月',
+          '9月',
+          '10月',
+          '11月',
+          '12月'
         ],
         day_full: [
-          "星期日",
-          "星期一",
-          "星期二",
-          "星期三",
-          "星期四",
-          "星期五",
-          "星期六"
+          '星期日',
+          '星期一',
+          '星期二',
+          '星期三',
+          '星期四',
+          '星期五',
+          '星期六'
         ],
-        day_short: ["日", "一", "二", "三", "四", "五", "六"]
+        day_short: ['日', '一', '二', '三', '四', '五', '六']
       },
       labels: {
-        dhx_cal_today_button: "今天",
-        day_tab: "日",
-        week_tab: "周",
-        month_tab: "月",
-        unit_tab: "會議室地址",
-        new_event: "會議室預訂",
-        icon_save: "保存",
-        icon_cancel: "取消",
-        icon_details: "详细",
-        icon_edit: "编辑",
-        icon_delete: "删除",
-        confirm_closing: "",
-        confirm_deleting: "確實要刪除該會議室預訂嗎?",
-        section_description: "會議室預訂"
+        dhx_cal_today_button: '今天',
+        day_tab: '日',
+        week_tab: '周',
+        month_tab: '月',
+        unit_tab: '會議室地址',
+        new_event: '會議室預訂',
+        icon_save: '保存',
+        icon_cancel: '取消',
+        icon_details: '详细',
+        icon_edit: '编辑',
+        icon_delete: '删除',
+        confirm_closing: '',
+        confirm_deleting: '確實要刪除該會議室預訂嗎?',
+        section_description: '會議室預訂'
       }
-    };
+    }
     /* globals scheduler */
-    scheduler.config.day_date = "%M %d日 %D";
-    scheduler.config.default_date = "%Y年 %M %d日";
-    scheduler.config.month_date = "%Y年 %M";
-    scheduler.init(this.$refs.container, new Date(), "week");
-    scheduler.parse(this.schedulerData, "json");
-    scheduler.updateView();
+    scheduler.config.day_date = '%M %d日 %D'
+    scheduler.config.default_date = '%Y年 %M %d日'
+    scheduler.config.month_date = '%Y年 %M'
+    scheduler.init(this.$refs.container, new Date(), 'week')
+    scheduler.parse(this.schedulerData, 'json')
+    scheduler.updateView()
 
-    scheduler.attachEvent("onDragEnd", (id: string, ev: any) => {
-      this.dialogVisible = true;
-      console.log(id, ev);
-    });
+    scheduler.attachEvent('onDragEnd', (id: string, ev: any) => {
+      this.dialogVisible = true
+      console.log(id, ev)
+    })
 
-    scheduler.attachEvent("onBeforeLightbox", (id: string) => {
-      this.dialogVisible = true;
+    scheduler.attachEvent('onBeforeLightbox', (id: string) => {
+      this.dialogVisible = true
       // any custom logic here
-      console.log(id);
-      return false;
-    });
+      console.log(id)
+      return false
+    })
   }
 
-  handleClose(done: any) {
-    this.$confirm("确认关闭？")
+  handleClose (done: any) {
+    this.$confirm('确认关闭？')
       .then(_ => {
-        done();
+        done()
       })
-      .catch(_ => {});
+      .catch(_ => {
+        console.error('關閉失敗')
+      })
   }
 }
 </script>
