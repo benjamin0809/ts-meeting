@@ -1,7 +1,7 @@
 import { moduleUser } from '@/store/user'
-import axios from 'axios'
-
-axios.defaults.headers.accept = '*'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import router from '@/router'
+import { IResponseResult } from '@/models/http'
 
 // import { BASE_URL } from '../../config/index'
 const instance = axios.create({
@@ -38,16 +38,48 @@ instance.interceptors.response.use(
   (response) => {
     // 对响应数据做点什么
     if (response.data && response.data.Errcode === 0) {
-      return response.data.Result
+      return response
     } else {
-      return Promise.reject(response.data.Errmsg)
+      return Promise.reject(response.data)
     }
 
   },
   (error) => {
     // 对响应错误做点什么
+
+    if (error.response.status === 401) {
+      // tslint:disable-next-line: no-floating-promises
+      router.replace({
+        path: '/login'
+      })
+      location.reload()
+    }
+    console.error(error.response.status)
+    debugger
     return Promise.reject(error)
   }
 )
 
-export default instance
+class Request {
+  static get<T> (url: string, config?: AxiosRequestConfig | undefined) {
+    return new Promise<T>((resolve, reject) => {
+      instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+        resolve(res.data.Result)
+      }).catch((err: IResponseResult<any>) => {
+        reject(err)
+      })
+    })
+  }
+
+  static post<T> (url: string, data: any, config?: AxiosRequestConfig | undefined) {
+    return new Promise<T>((resolve, reject) => {
+      instance.post<IResponseResult<T>>(url, data, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+        resolve(res.data.Result)
+      }).catch((err: any) => {
+        reject(err)
+      })
+    })
+  }
+}
+
+export default Request

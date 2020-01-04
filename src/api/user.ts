@@ -1,8 +1,9 @@
 import store from '../store'
 import request from '../utils/request'
+import { IUserInfo } from '@/models'
 
 export const login = (account: string, pwd: string) => {
-  return request.post('auth/login', {
+  return request.post<IUserInfo>('auth/login', {
     account: account,
     password: pwd
   })

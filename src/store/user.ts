@@ -64,7 +64,7 @@ class User extends VuexModule implements IUserInfo {
     try {
       const data = await login(userinfo.account, userinfo.password)
 
-      const { Email, UserNo, UserName, Id, Token } = data as any
+      const { Email, UserNo, UserName, Id, Token } = data
       sessionStorage.setItem('user', JSON.stringify(data))
       this.SET_EMAIL(Email)
       this.SET_USERNO(UserNo)

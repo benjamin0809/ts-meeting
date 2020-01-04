@@ -1,9 +1,55 @@
 import store from '../store'
 import request from '../utils/request'
+import { IBookingRoomInput, IHomeDataResult, IUpdateBookingRoomInput } from '@/models/room'
 
 export const getRoom = () => {
-  return request.get('room/GetRoom', { })
+  return request.get<any>('room/GetRoom', { })
 }
+
+/**
+ * 查询会议室预订数据
+ * @param queryDate 格式 yyyy-MM eg: 2020-01
+ */
+export const GetHomeData = (queryDate: string) => {
+  return request.get<IHomeDataResult[]>('room/GetHomeData', { params: { queryDate } })
+}
+
+export const GetSites = () => {
+  return request.get<any>('room/GetSites', { })
+}
+
+export const GetActiveRoom = () => {
+  return request.get<any>('room/GetActiveRoom', { })
+}
+
+/**
+ * 预订会议室
+ * @param entity 表单实体
+ */
+export const BookingRoom = (entity: IBookingRoomInput) => {
+  return request.post<any>('room/BookingRoom', entity)
+}
+
+export const UpdateBookingInfo = (entity: IUpdateBookingRoomInput) => {
+  return request.post<any>('room/UpdateBookingInfo', entity)
+}
+
+const testData: any = {
+  'UpdateBookingEntity': {
+    RecID: 0,
+  	'RoomID': 2,
+  	'StartTime': '2014-09-31 08:31:00.000',
+  	'EndTime': '2014-09-30 10:30:00.000',
+  	'MeetingMemo': 'Hello',
+  	'Tel': '15014491899'
+  }
+}
+UpdateBookingInfo(testData).then(res => {
+  console.log(res)
+}).catch(err => {
+  console.error(err)
+})
+
 const siteOptions = [
   {
     value: 'GY',
