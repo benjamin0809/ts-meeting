@@ -1,4 +1,8 @@
 module.exports = {
+  language: 'English',
+  menu: {
+    sysadmin: 'System Management'
+  },
   login: {
     byAccount: 'Account Login',
     'title': ' meeting room booking ',

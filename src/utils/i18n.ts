@@ -8,8 +8,10 @@ const messages = {
   'en_US': require('../assets/i18n/en')    // 英文语言包
 }
 
+const lang = localStorage.getItem('lang')
+
 // 最后 export default，这一步肯定要写的。
 export default new VueI18n({
-  locale : 'en_US', // set locale 默认显示英文
+  locale : lang || 'zh_CN', // set locale 默认显示英文
   messages : messages // set locale messages
 })

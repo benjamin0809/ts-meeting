@@ -9,6 +9,13 @@
       text-color="#fff"
       active-text-color="#ffd04b"
     >
+    <el-submenu index="4">
+        <template slot="title">{{$t('language')}}</template>
+        <el-menu-item index="en_US">English</el-menu-item>
+        <el-menu-item index="zh_CN">中文-简体</el-menu-item> 
+        <el-menu-item index="zh_TW">中文-繁体</el-menu-item>
+      </el-submenu>
+
       <el-submenu index="3">
         <template slot="title">{{user.UserNo}}</template>
         <el-menu-item index="3-1">个人信息</el-menu-item>
@@ -18,7 +25,7 @@
       </el-submenu>
 
       <el-submenu index="2">
-        <template slot="title">系統管理</template>
+        <template slot="title">{{$t('menu.sysadmin')}}</template>
         <el-menu-item index="/sysadmin/notice">公告管理</el-menu-item>
         <el-menu-item index="/sysadmin/user">用戶管理</el-menu-item>
         <el-menu-item index="/sysadmin/role">角色管理</el-menu-item>
@@ -44,6 +51,7 @@
  
 <script  lang='ts'>
 import Vue from 'vue'
+import { languages } from '@/constant'
 import { IUserInfo } from '@/models'
 import Component from 'vue-class-component'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
@@ -53,16 +61,25 @@ export default class Header extends Vue {
   activeIndex2 = '1'
   @State private user!: IUserInfo
   handleSelect (key: string, keyPath: any) {
-    // debugger
-    if (key === '/login') {
+
+    if (languages.some(p => p.code === key)) {
+      this.selectLanguage(key)
+    } else if (key === '/login') {
       this.$store.dispatch('logout').catch(err => {
         console.error(err)
       })
+    } else {
+      this.$router.push(key).catch(() => {
+          // console.error(err)
+      })
     }
-    this.$router.push(key).catch(() => {
-      // console.error(err)
-    })
-    // console.log(key, keyPath)
+
+    console.log(key, keyPath)
+  }
+
+  selectLanguage (lang: string) {
+    this.$i18n.locale = lang
+    localStorage.setItem('lang', lang)
   }
 }
 </script>

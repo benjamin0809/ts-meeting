@@ -1,6 +1,10 @@
 /* 国际化zh_cn */
 
 module.exports = {
+  language: '中文-简体',
+  menu: {
+    sysadmin: '系统管理'
+  },
   login: {
     byAccount: '账号密码登录',
     title: ' 会议室预订系统',
