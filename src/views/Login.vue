@@ -1,7 +1,17 @@
 <template>
   <div id="login">
+
+    <div class="left-box">
+      <el-carousel indicator-position="outside">
+        <el-carousel-item v-for="item in 4" :key="item">
+          <h3>{{ item }}</h3>
+        </el-carousel-item>
+      </el-carousel>
+    </div>
+
+    <div class="right-box">
     <el-tabs type="border-card">
-      <el-tab-pane label="账号登录">
+      <el-tab-pane :label="$t('login.byAccount')">
         <el-form
           :model="ruleForm2"
           status-icon
@@ -24,6 +34,7 @@
       </el-tab-pane>
       <el-tab-pane label="员宝扫码登录">Config</el-tab-pane>
     </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -112,8 +123,46 @@ export default class extends Vue {
   resetForm (formName: string) {
     (this.$refs[formName] as any).resetFields()
   }
+
+  created () {
+    console.log(this.$i18n.t('login.byAccount'))
+  }
 }
 </script>
 
-<style>
+<style lang="scss" scope>
+
+  #login::after{
+    clear: both;
+    content: '';
+    display: block;
+  }
+
+  .left-box{
+    margin-top: 15%;
+    float: left;
+    width: auto;
+    min-width: 50%;
+  }
+
+  .right-box{
+    margin-top: 15%;
+    float: right;
+    width: 30%;
+    margin-right:24px;
+  }
+  .el-carousel__item h3 {
+      color: #475669;
+      font-size: 18px;
+      opacity: 0.75;
+      line-height: 300px;
+      margin: 0;
+    }
+ .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
 </style>

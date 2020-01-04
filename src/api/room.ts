@@ -44,11 +44,11 @@ const testData: any = {
   	'Tel': '15014491899'
   }
 }
-UpdateBookingInfo(testData).then(res => {
-  console.log(res)
-}).catch(err => {
-  console.error(err)
-})
+// UpdateBookingInfo(testData).then(res => {
+//   console.log(res)
+// }).catch(err => {
+//   console.error(err)
+// })
 
 const siteOptions = [
   {

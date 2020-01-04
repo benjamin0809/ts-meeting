@@ -43,26 +43,26 @@
 </template>
  
 <script  lang='ts'>
-import Vue from "vue";
-import { IUserInfo } from "@/models";
-import Component from "vue-class-component";
-import { State, Getter, Action, Mutation, namespace } from "vuex-class";
+import Vue from 'vue'
+import { IUserInfo } from '@/models'
+import Component from 'vue-class-component'
+import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 @Component
 export default class Header extends Vue {
-  activeIndex = "1";
-  activeIndex2 = "1";
-  @State private user!: IUserInfo;
-  handleSelect(key: string, keyPath: any) {
+  activeIndex = '1'
+  activeIndex2 = '1'
+  @State private user!: IUserInfo
+  handleSelect (key: string, keyPath: any) {
     // debugger
-    if (key === "/login") {
-      this.$store.dispatch("logout").catch(err => {
-        console.error(err);
-      });
+    if (key === '/login') {
+      this.$store.dispatch('logout').catch(err => {
+        console.error(err)
+      })
     }
-    this.$router.push(key).catch(err => {
-      console.error(err);
-    });
-    console.log(key, keyPath);
+    this.$router.push(key).catch(() => {
+      // console.error(err)
+    })
+    // console.log(key, keyPath)
   }
 }
 </script>
