@@ -6,6 +6,9 @@ import Login from '@/views/Login.vue'
 import SysAdmin from '@/views/sysadmin/Index.vue'
 import Notice from '@/views/sysadmin/Notice.vue'
 import RoleManage from '@/views/sysadmin/RoleManage.vue'
+import Room from '@/views/room/Room.vue'
+import Site from '@/views/room/Site.vue'
+import Index from '@/views/room/Index.vue'
 import UserManage from '@/views/sysadmin/UserManage.vue'
 Vue.use(Router)
 
@@ -15,15 +18,16 @@ const router = new Router({
       path: '/sysadmin',
       name: 'sysadmin',
       component: SysAdmin,
-      children: [{
-        path: 'notice',
-        name: 'notice',
-        component: Notice
-      },
+      children: [
+        {
+          path: 'notice',
+          name: 'notice',
+          component: Notice
+        },
         {
           path: 'user',
           name: 'user',
-          component:  () => import(/* webpackChunkName: "about" */ '@/views/sysadmin/UserManage.vue')
+          component: () => import(/* webpackChunkName: "about" */ '@/views/sysadmin/UserManage.vue')
         },
         {
           path: 'role',
@@ -39,6 +43,23 @@ const router = new Router({
       path: '/login',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/room',
+      name: 'room',
+      component: Index,
+      children: [
+        {
+          path: '/room/site',
+          name: 'site',
+          component: Site
+        },
+        {
+          path: '/room/manage',
+          name: 'manage',
+          component: Room
+        }
+      ]
     }
   ]
 })

@@ -29,10 +29,13 @@
           <el-menu-item index="2-4-3">退出</el-menu-item>
         </el-submenu>-->
       </el-submenu>
+
       <!-- <el-menu-item index="3" disabled>Info</el-menu-item> -->
-      <el-menu-item index="4">
-        <a href="https://www.ele.me" target="_blank">Orders</a>
-      </el-menu-item>
+      <el-submenu index="1">
+        <template slot="title">会议室</template>
+        <el-menu-item index="/room/site">厂区管理</el-menu-item>
+        <el-menu-item index="/room/manage">会议室管理</el-menu-item>
+      </el-submenu>
 
       <el-menu-item index="/scheduler">Home</el-menu-item>
     </el-menu>
@@ -40,38 +43,37 @@
 </template>
  
 <script  lang='ts'>
-import Vue from 'vue'
-import { IUserInfo } from '@/models'
-import Component from 'vue-class-component'
-import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
+import Vue from "vue";
+import { IUserInfo } from "@/models";
+import Component from "vue-class-component";
+import { State, Getter, Action, Mutation, namespace } from "vuex-class";
 @Component
 export default class Header extends Vue {
-  activeIndex = '1'
-  activeIndex2 = '1'
-  @State private user!: IUserInfo
-  handleSelect (key: string, keyPath: any) {
+  activeIndex = "1";
+  activeIndex2 = "1";
+  @State private user!: IUserInfo;
+  handleSelect(key: string, keyPath: any) {
     // debugger
-    if (key === '/login') {
-      this.$store.dispatch('logout').catch(err => {
-        console.error(err)
-      })
+    if (key === "/login") {
+      this.$store.dispatch("logout").catch(err => {
+        console.error(err);
+      });
     }
     this.$router.push(key).catch(err => {
-      console.error(err)
-    })
-    console.log(key, keyPath)
+      console.error(err);
+    });
+    console.log(key, keyPath);
   }
 }
 </script>
 
 <style lang="scss" scope>
-
 .el-header {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  padding: 0 !important; 
+  padding: 0 !important;
 }
 .el-menu--horizontal > .el-menu-item,
 .el-menu--horizontal > .el-submenu {
