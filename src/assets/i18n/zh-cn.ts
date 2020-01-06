@@ -1,4 +1,4 @@
-/* 国际化zh_cn */
+/* 国际化zh-cn */
 
 module.exports = {
   language: '中文-简体',
