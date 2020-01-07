@@ -50,7 +50,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelDialog">取 消</el-button>
-        <el-button @click="dialogVisible = false">删除</el-button>
+        <el-button @click="cancelBooking">删除</el-button>
         <el-button type="primary" @click="saveDialog('form')">保存</el-button>
       </span>
     </el-dialog>
@@ -68,7 +68,7 @@
             <el-table-column property="Content"></el-table-column>
           </el-table>-->
 
-          <div v-for="item in showNotices">{{item.Content}}</div>
+          <div v-for="(item, name, index) in showNotices" :key="index" >{{item.Content}}</div>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -88,9 +88,9 @@
           <el-select v-model="siteValue" class="site_select" @change="siteChanged">
             <el-option
               v-for="item in siteOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.Code"
+              :label="item.Name"
+              :value="item.Code"
             ></el-option>
           </el-select>
         </div>
@@ -98,9 +98,9 @@
           <el-select v-model="roomValue" class="room_select" @change="roomChanged">
             <el-option
               v-for="item in roomOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.RoomID"
+              :label="item.RoomName"
+              :value="item.RoomID"
             ></el-option>
           </el-select>
         </div>
@@ -111,6 +111,7 @@
   </div>
 </template>
 <style lang="scss" scope>
+
 .el-main {
   padding: 0 0 0 20px !important;
 }
@@ -160,326 +161,400 @@
 </style>
  
 <script lang='ts'>
-import "dhtmlx-scheduler";
-import Vue from "vue";
-import Component from "vue-class-component";
+import Vue from 'vue'
 
-import { getSites, getSiteRooms, getShedulerData, getRoom } from "../api/room";
-import { getShowNotices } from "../api/notice";
-import { dateFormat } from "../utils/date";
+import Component from 'vue-class-component'
+import scheduler from '@/utils/scheduler'
+import moment from 'moment'
+import { Message } from 'element-ui'
+import { moduleScheduler } from '@/store/scheduler'
+import { getSites, getSiteRooms, getShedulerData, GetActiveRoom, GetSites, GetHomeData, GetMeetingRoomData, BookingRoom, UpdateBookingInfo, CancelBookingRoom } from '../api/room'
+import { getShowNotices } from '../api/notice'
+import { dateFormat } from '../utils/date'
+import { IRoom, ISite, ISchedulerItem, IBookingRoomInput, IBookingRoomEntity, IUpdateBookingRoomEntity, IUpdateBookingRoomInput } from '../models'
+import { ISchedulerOptions } from '../models/scheduler'
 
 @Component
 export default class Scheduler extends Vue {
   // 预定dialog
-  dialogVisible = false;
+  dialogVisible = false
   form = {
-    subject: "",
-    remark: "",
-    contact: "",
-    date: "",
-    start: "",
-    end: "",
-    room: "",
-    hint: ""
-  };
-
-  //暂存新增未保存的event id
-  indexId = "";
-
-  /*   schedulerItem = {
-    id: "",
-    start_date: "",
-    end_date: "",
-    text: "",
-    details: ""
-  }; */
-  schedulerData: any = [];
-
-  // 获取首页公告通知
-  showNotices = getShowNotices();
-  // 获取site/room
-  siteOptions = getSites();
-  siteValue = this.siteOptions[0].value;
-  roomOptions = getSiteRooms(this.siteValue);
-  roomValue = this.roomOptions.length > 0 ? this.roomOptions[0].value : "";
-  siteChanged() {
-    console.log(this.siteValue);
-    this.roomOptions = getSiteRooms(this.siteValue);
-    this.roomValue =
-      this.roomOptions.length > 0 ? this.roomOptions[0].value : "";
-    this.refreshScheduler();
+    subject: '',
+    remark: '',
+    contact: '',
+    date: '',
+    start: '',
+    end: '',
+    room: '',
+    hint: ''
   }
-  roomChanged() {
-    //debugger;
-    this.refreshScheduler();
+
+  // 暂存新增未保存的event id
+  indexId = ''
+
+  isloadingData = false
+  schedulerData: ISchedulerItem[] = []
+  schedulerOption: ISchedulerOptions = {
+    type: moduleScheduler.type,
+    RoomId: moduleScheduler.RoomId,
+    Site: moduleScheduler.Site
+  }
+  // 获取首页公告通知
+  showNotices = getShowNotices()
+  // 获取site/room
+  siteOptions: ISite[] = []
+  siteValue = moduleScheduler.Site
+  roomOptions: IRoom[] = []
+  allRomOptions: IRoom[] = []
+  roomValue = moduleScheduler.RoomId
+  crrentDate = new Date()
+  RecID = 0
+  siteChanged () {
+    // console.log(this.siteValue)
+    // this.roomOptions = getSiteRooms(this.siteValue)
+    this.roomOptions = this.allRomOptions.filter(p => p.Site === this.siteValue)
+    this.roomValue =
+      this.roomOptions.length > 0 ? this.roomOptions[0].RoomID : 0
+    this.refreshScheduler()
+    this.schedulerOption.Site = this.siteValue
+    moduleScheduler.setSchedulerOptions(this.schedulerOption)
+  }
+  roomChanged () {
+    moduleScheduler.CLEAR_MONTH()
+    // debugger;
+    moduleScheduler.setSchedulerOptions(this.schedulerOption)
+    this.refreshScheduler()
   }
 
   // 刷新scheduler会议室预定数据
-  refreshScheduler() {
-    console.log(this.roomValue);
-    this.schedulerData = [];
-    this.GetBookedRoom(this.roomValue);
-    scheduler.clearAll();
-    scheduler.parse(this.schedulerData, "json");
-    scheduler.updateView();
+  async refreshScheduler () {
+    console.log(this.roomValue)
+    this.schedulerData = []
+    await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'))
   }
 
-  // 构造scheduler数据
-  GetBookedRoom(room: string) {
-    const data = getShedulerData(room);
-    for (let item of data) {
-      let schedulerItem = {
-        id: item.id,
-        start_date: item.date + " " + item.start,
-        end_date: item.date + " " + item.end,
-        text:
-          "预定人：" +
-          item.user +
-          "</br>" +
-          "主题：" +
-          item.subject +
-          "</br>" +
-          "联系方式：" +
-          item.contact,
-        details: item.remark
-      };
-      this.schedulerData.push(schedulerItem);
+  async getMeetingRoomData (month: string) {
+    try {
+      this.isloadingData = true
+      const data = await GetMeetingRoomData(this.roomValue, month)
+      moduleScheduler.ADD_MONTH(month)
+      const list: ISchedulerItem[] = []
+      data.forEach((item) => {
+        const schedulerItem: ISchedulerItem = {
+          id : item.RecID,
+          start_date: item.Start_Date,
+          end_date: item.End_Date,
+          text: item.Text,
+          details: item.Remark,
+          tel: item.Tel,
+          memo: item.MeetingMemo
+        }
+        list.push(schedulerItem)
+      })
+      this.schedulerData.push(...list)
+      this.renderSchedulerData()
+    } catch (e) {
+      return []
+    } finally {
+      this.isloadingData = false
     }
   }
 
-  mounted() {
+  renderSchedulerData () {
+    scheduler.clearAll()
+    scheduler.parse(this.schedulerData, 'json')
+    scheduler.updateView()
+  }
+
+  showDialog (id: string) {
+    let item = this.schedulerData.find(m => m.id.toString() === id)
+    const attachEvent = scheduler.getEvent(id)
+    if (item !== undefined) {
+      // 修改
+      item = item as ISchedulerItem
+      this.form.subject = item.memo
+      this.form.remark = item.details
+      this.form.contact = item.tel
+      this.RecID = ~~id
+    } else {
+      // 新增
+      this.indexId = id
+    }
+    const startDate = attachEvent.start_date
+    const endDate = attachEvent.end_date
+    this.form.date = dateFormat(startDate)
+    this.form.start = dateFormat(startDate, 'HH:mm:ss')
+    this.form.end = dateFormat(endDate, 'HH:mm:ss')
+    this.dialogVisible = true
+  }
+  async mounted () {
     // console.log(scheduler)
 
-    getRoom()
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    this.siteOptions = await GetSites()
+    this.allRomOptions = await GetActiveRoom()
+    this.siteValue = this.siteValue || this.siteOptions[0].Code
+    this.roomValue = this.allRomOptions[0].RoomID
+    this.siteChanged()
     // 数据初始化
-    this.GetBookedRoom(this.roomValue);
 
-    scheduler.config.first_hour = 8;
-    scheduler.config.last_hour = 19;
-    scheduler.config.hour_size_px = 80;
-    scheduler.config.time_step = 15;
-    scheduler.config.min_grid_size = 30;
-    scheduler.locale = {
-      date: {
-        month_full: [
-          "1月",
-          "2月",
-          "3月",
-          "4月",
-          "5月",
-          "6月",
-          "7月",
-          "8月",
-          "9月",
-          "10月",
-          "11月",
-          "12月"
-        ],
-        month_short: [
-          "1月",
-          "2月",
-          "3月",
-          "4月",
-          "5月",
-          "6月",
-          "7月",
-          "8月",
-          "9月",
-          "10月",
-          "11月",
-          "12月"
-        ],
-        day_full: [
-          "星期日",
-          "星期一",
-          "星期二",
-          "星期三",
-          "星期四",
-          "星期五",
-          "星期六"
-        ],
-        day_short: ["日", "一", "二", "三", "四", "五", "六"]
-      },
-      labels: {
-        dhx_cal_today_button: "今天",
-        day_tab: "日",
-        week_tab: "周",
-        month_tab: "月",
-        unit_tab: "會議室地址",
-        new_event: "會議室預訂",
-        icon_save: "保存",
-        icon_cancel: "取消",
-        icon_details: "详细",
-        icon_edit: "编辑",
-        icon_delete: "删除",
-        confirm_closing: "",
-        confirm_deleting: "確實要刪除該會議室預訂嗎?",
-        section_description: "會議室預訂"
-      }
-    };
     /* globals scheduler */
-    scheduler.config.day_date = "%M %d日 %D";
-    scheduler.config.default_date = "%Y年 %M %d日";
-    scheduler.config.month_date = "%Y年 %M";
-    scheduler.config.drag_lightbox = false;
-    scheduler.init(this.$refs.container, new Date(), "week");
-    scheduler.parse(this.schedulerData, "json");
-    scheduler.updateView();
+    scheduler.init(this.$refs.container, new Date(), 'week')
+    scheduler.parse(this.schedulerData, 'json')
 
-    scheduler.attachEvent("onDragEnd", (id: string) => {
-      //debugger;
-      //获取attachEvent时间点绑定到预定dialog
-      this.indexId = id;
-      var attachEvent = scheduler.getEvent(id);
-      var startDate = attachEvent.start_date;
-      var endDate = attachEvent.end_date;
-      console.log(startDate, endDate);
-      this.form.date = dateFormat(startDate);
-      this.form.start = dateFormat(startDate, "HH:mm:ss");
-      this.form.end = dateFormat(endDate, "HH:mm:ss");
-      this.dialogVisible = true;
-      return false;
-    });
+    scheduler.attachEvent('onDragEnd', (id: string) => {
+      this.showDialog(id)
+    })
 
-    scheduler.attachEvent("onBeforeLightbox", (id: string, ev: any) => {
-      this.dialogVisible = true;
+    scheduler.templates.month_date_class = (date: any, today: any) => {
+      const time = new Date(date).getTime()
+      const from = time
+      const to = time + 86400000
+      const evs = scheduler.getEvents(from, to)
+      return ''
+    }
+    scheduler._click.buttons.edit = (id: any) => {
+      console.log('_click.buttons icon_edit', id)
+      this.showDialog(id)
+      // some_function(id)
+    }
+
+    scheduler._click.buttons.delete = (id: any) => {
+      console.log('_click.buttons icon_delete', id)
+      this.RecID = id
+      this.cancelBooking()
+      // some_function(id)
+    }
+
+    scheduler._click.buttons.details = (id: any) => {
+      console.log('_click.buttons icon_details', id)
+      this.showDialog(id)
+      // some_function(id)
+    }
+
+    // scheduler.attachEvent('onBeforeLightbox', (id: string, ev: any) => {
+    //   this.dialogVisible = true
+    //   // any custom logic here
+    //   console.log(id, ev)
+    //   return false
+    // })
+
+    scheduler.attachEvent('onBeforeEventChanged', (ev: any, e: any, isNew: any, original: any) => {
+      console.log(ev, e, isNew, original)
       // any custom logic here
-      console.log(id, ev);
-      return false;
-    });
+      return isNew
+    })
+
+    scheduler.attachEvent('onBeforeDrag', (id: any, mode: any, e: any) => {
+      // any custom logic here
+      return id === null
+    })
+
+    scheduler.attachEvent('onViewChange', (newMode: string, newDate: any) => {
+      console.log(newMode, newDate)
+      this.crrentDate = newDate
+      const startMonth = moment(newDate).format('YYYY-MM')
+      const endMonth = moment(newDate).add(7, 'd').format('YYYY-MM')
+      console.log(startMonth, endMonth)
+      switch (newMode) {
+        case 'day':
+          break
+        case 'week':
+          if (!this.isloadingData) {
+            if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
+              this.getMeetingRoomData(startMonth)
+            }
+            if (!moduleScheduler.loadedDataMonths.some(m => m === endMonth)) {
+              this.getMeetingRoomData(endMonth)
+            }
+          }
+          break
+        case 'month':
+          console.log(moment(newDate).add(7, 'd'))
+          break
+      }
+    })
   }
 
-  handleClose(done: any) {
-    this.$confirm("确认关闭？")
+  destroyed () {
+    console.log('destroyed')
+    moduleScheduler.CLEAR_MONTH()
+  }
+  handleClose (done: any) {
+    this.$confirm('确认关闭？')
       .then(_ => {
-        done();
-        if (this.indexId != "") {
-          scheduler.deleteEvent(this.indexId);
-          this.indexId = "";
+        done()
+        if (this.indexId !== '') {
+          scheduler.deleteEvent(this.indexId)
+          this.indexId = ''
         }
-        //清除dialog form
-        (this.$refs["form"] as any).resetFields();
+        // 清除dialog form
+        (this.$refs['form'] as any).resetFields()
       })
       .catch(_ => {
-        //console.error("關閉失敗");
-      });
+        // console.error("關閉失敗");
+      })
   }
 
-  cancelDialog() {
-    //清除dialog form
-    (this.$refs["form"] as any).resetFields();
-
-    this.dialogVisible = false;
-    if (this.indexId != "") {
-      scheduler.deleteEvent(this.indexId);
-      this.indexId = "";
+  cancelDialog () {
+    // 清除dialog form
+    this.dialogVisible = false
+    if (this.indexId !== '') {
+      scheduler.deleteEvent(this.indexId)
+      this.indexId = ''
+    } else if (this.RecID) {
+      // scheduler.setEvent(this.RecID, {
+      //   start_date: this.form.date + ' ' + this.form.start,
+      //   end_date:   this.form.date + ' ' + this.form.end
+      // })
     }
+    (this.$refs['form'] as any).resetFields()
+  }
+
+  cancelBooking () {
+    this.$confirm('确认取消会议室预订？',{ type: 'warning' })
+      .then(async () => {
+        await CancelBookingRoom(this.RecID);
+        // 清除dialog form
+        (this.$refs['form'] as any).resetFields()
+        this.schedulerData = []
+        this.dialogVisible = false
+        scheduler.render(new Date(this.crrentDate))
+        await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'))
+      })
+      .catch(_ => {
+        // console.error("關閉失敗");
+      })
   }
 
   // dialog form表单验证
-  validateSubject(rule: any, value: any, callback: any) {
-    if (value === "") {
-      callback(new Error("Please input the subject"));
+  validateSubject (rule: any, value: any, callback: any) {
+    if (value === '') {
+      callback(new Error('Please input the subject'))
     } else {
-      callback();
+      callback()
     }
   }
-  validateContact(rule: any, value: any, callback: any) {
-    if (value === "") {
-      callback(new Error("Please input the contact"));
+  validateContact (rule: any, value: any, callback: any) {
+    if (value === '') {
+      callback(new Error('Please input the contact'))
     } else {
-      callback();
+      callback()
     }
   }
 
-  validateDate(rule: any, value: any, callback: any) {
+  validateDate (rule: any, value: any, callback: any) {
     if (this.form.date === null) {
-      callback(new Error("Please input the date"));
+      callback(new Error('Please input the date'))
     } else {
-      var date = new Date(this.form.date);
+      let date = new Date(this.form.date)
       if (date.getTime() < Date.now()) {
-        callback(new Error("会议日期不能是今天之前"));
+        callback(new Error('会议日期不能是今天之前'))
       } else {
-        callback();
+        callback()
       }
     }
   }
-  validateStart(rule: any, value: any, callback: any) {
+  validateStart (rule: any, value: any, callback: any) {
     if (this.form.start === null) {
-      callback(new Error("Please input the start time"));
+      callback(new Error('Please input the start time'))
     } else {
-      var start = new Date(this.form.start);
-      var end = new Date(this.form.end);
+      let start = new Date(this.form.start)
+      let end = new Date(this.form.end)
       if (end.getTime() < start.getTime()) {
-        callback(new Error("会议开始时间必须小于结束时间"));
+        callback(new Error('会议开始时间必须小于结束时间'))
       } else {
-        callback();
+        callback()
       }
     }
   }
-  validateEnd(rule: any, value: any, callback: any) {
+  validateEnd (rule: any, value: any, callback: any) {
     if (this.form.end === null) {
-      callback(new Error("Please input the end time"));
+      callback(new Error('Please input the end time'))
     } else {
-      var start = new Date(this.form.start);
-      var end = new Date(this.form.end);
+      let start = new Date(this.form.start)
+      let end = new Date(this.form.end)
       if (end.getTime() < start.getTime()) {
-        callback(new Error("会议开始时间必须小于结束时间"));
+        callback(new Error('会议开始时间必须小于结束时间'))
       } else {
-        callback();
+        callback()
       }
     }
   }
 
   rules = {
-    subject: [{ validator: this.validateSubject, trigger: "blur" }],
-    contact: [{ validator: this.validateContact, trigger: "blur" }],
-    date: [{ validator: this.validateDate, trigger: "blur" }],
-    start: [{ validator: this.validateStart, trigger: "blur" }],
-    end: [{ validator: this.validateEnd, trigger: "blur" }]
-  };
+    subject: [{ validator: this.validateSubject, trigger: 'blur' }],
+    contact: [{ validator: this.validateContact, trigger: 'blur' }],
+    date: [{ validator: this.validateDate, trigger: 'blur' }],
+    start: [{ validator: this.validateStart, trigger: 'blur' }],
+    end: [{ validator: this.validateEnd, trigger: 'blur' }]
+  }
 
-  //保存 dialog form
-  saveDialog(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+  // 保存 dialog form
+  saveDialog (formName: string) {
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
-        let item = {
-          id: this.indexId,
-          start_date: this.form.date + " " + this.form.start,
-          end_date: this.form.date + " " + this.form.end,
-          text:
-            "预定人：" +
-            "李如梦" +
-            "</br>" +
-            "主题：" +
-            this.form.subject +
-            "</br>" +
-            "联系方式：" +
-            this.form.contact,
-          details: this.form.remark
-        };
-        //清除dialog form
-        (this.$refs["form"] as any).resetFields();
-        this.dialogVisible = false;
 
-        this.schedulerData.push(item);
-        scheduler.clearAll();
-        scheduler.parse(this.schedulerData, "json");
-        scheduler.updateView();
+        const BookingEntity: IBookingRoomEntity = {
+          MeetingMemo: this.form.subject,
+          StartTime: this.form.date + ' ' + this.form.start,
+          EndTime: this.form.date + ' ' + this.form.end,
+          Remark: this.form.remark,
+          Tel: this.form.contact,
+          ExtString1 : '',
+          RoomID: this.roomValue
+        }
 
-        //存到数据库
-        //---------
+        if (this.indexId) {
+          // 新增
+          const input: IBookingRoomInput = {
+            BookingEntity: BookingEntity
+          }
+          try {
+            await BookingRoom(input)
+            console.log('预订成功')
+            moduleScheduler.CLEAR_MONTH()
+            this.schedulerData = []
+            scheduler.render(new Date(this.crrentDate))
+            await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
+            // 清除dialog form
+            (this.$refs['form'] as any).resetFields()
+            this.dialogVisible = false
+          } catch (err) {
+            Message.error(err.Errmsg || 'Has Error')
+            console.log('失败')
+          }
+        } else {
+          // 修改
+          const entity: IUpdateBookingRoomEntity = {
+            RecID: this.RecID,
+            ...BookingEntity
+          }
+
+          const input: IUpdateBookingRoomInput = {
+            UpdateBookingEntity: entity
+          }
+          try {
+            await UpdateBookingInfo(input)
+            console.log('修改成功')
+            moduleScheduler.CLEAR_MONTH()
+            this.schedulerData = []
+            scheduler.render(new Date(this.crrentDate))
+            await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
+            // 清除dialog form
+            (this.$refs['form'] as any).resetFields()
+            this.dialogVisible = false
+          } catch (err) {
+            Message.error(err.Errmsg || 'Has Error')
+            console.log('失败')
+          }
+        }
+        // 存到数据库
+        // ---------
       } else {
-        console.log("error submit!!");
-        return false;
+        console.log('error submit!!')
+        return false
       }
-    });
+    })
   }
 }
 </script>

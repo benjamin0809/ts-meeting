@@ -10,7 +10,8 @@ import Vuex from 'vuex'
 import 'normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
-import 'dhtmlx-scheduler/codebase/dhtmlxscheduler_material.css' // 全局導入dhtmlx-scheduler 樣式表
+// 全局導入dhtmlx-scheduler 樣式表
+// import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css'
 
 Vue.config.productionTip = false
 

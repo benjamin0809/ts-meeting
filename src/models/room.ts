@@ -29,4 +29,27 @@ export interface IHomeDataResult {
   RoomId: string
   ItSuppor: string
   Tel: string
+  MeetingMemo: string
+  CreatedBy: string
+}
+
+export interface IRoom {
+  RoomID: number,
+  RoomName: string,
+  Site: string
+}
+
+export interface ISite {
+  CodeId: number,
+  Code: string
+  Name: string
+}
+export interface ISchedulerItem {
+  id: number
+  start_date: string
+  end_date: string
+  text: string
+  details: string,
+  tel: string,
+  memo: string
 }

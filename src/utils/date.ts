@@ -12,7 +12,10 @@
  * @example  dateFormat(new Date('2017-02-28 13:24:00'),'yyyy-MM-ddTHH:mm:ss+08:00')   "2017-02-28T13:24:00+08:00"
  * @returns {string}
  */
-export const dateFormat = (date: Date, sFormat: String = 'yyyy-MM-dd') => {
+export const dateFormat = (date: Date | string, sFormat: String = 'yyyy-MM-dd') => {
+  if (typeof(date) === 'string') {
+    date = new Date(date)
+  }
   let time = {
     Year: 0,
     TYear: '0',

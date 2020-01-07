@@ -64,16 +64,15 @@ export default class Header extends Vue {
 
     if (languages.some(p => p.code === key)) {
       this.selectLanguage(key)
-    } else if (key === '/login') {
-      this.$store.dispatch('logout').catch(err => {
-        console.error(err)
-      })
     } else {
-      this.$router.push(key).catch(() => {
-          // console.error(err)
+      if (key === '/login') {
+        this.$store.dispatch('logout').catch(err => {
+          console.error(err)
+        })
+      } this.$router.push(key).catch(() => {
+            // console.error(err)
       })
     }
-
     console.log(key, keyPath)
   }
 

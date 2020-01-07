@@ -1,11 +1,18 @@
 import store from '../store'
 import request from '../utils/request'
-import { IBookingRoomInput, IHomeDataResult, IUpdateBookingRoomInput } from '@/models/room'
+import { IBookingRoomInput, IHomeDataResult, IUpdateBookingRoomInput, IRoom, ISite } from '@/models/room'
 
 export const getRoom = () => {
-  return request.get<any>('room/GetRoom', { })
+  return request.get<IRoom[]>('room/GetRoom', { })
 }
 
+export const GetActiveRoom = () => {
+  return request.get<IRoom[]>('room/GetActiveRoom', { })
+}
+
+export const GetSites = () => {
+  return request.get<ISite[]>('room/GetSites', { })
+}
 /**
  * 查询会议室预订数据
  * @param queryDate 格式 yyyy-MM eg: 2020-01
@@ -14,12 +21,8 @@ export const GetHomeData = (queryDate: string) => {
   return request.get<IHomeDataResult[]>('room/GetHomeData', { params: { queryDate } })
 }
 
-export const GetSites = () => {
-  return request.get<any>('room/GetSites', { })
-}
-
-export const GetActiveRoom = () => {
-  return request.get<any>('room/GetActiveRoom', { })
+export const GetMeetingRoomData = (roomId: number, queryDate: string) => {
+  return request.get<IHomeDataResult[]>('room/GetMeetingRoomData', { params: { roomId, queryDate } })
 }
 
 /**
@@ -32,6 +35,10 @@ export const BookingRoom = (entity: IBookingRoomInput) => {
 
 export const UpdateBookingInfo = (entity: IUpdateBookingRoomInput) => {
   return request.post<any>('room/UpdateBookingInfo', entity)
+}
+
+export const CancelBookingRoom = (RecId: number) => {
+  return request.post<any>('room/CancelBookingRoom', { RecId })
 }
 
 const testData: any = {
