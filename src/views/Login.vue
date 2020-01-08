@@ -43,6 +43,7 @@ import { Message } from 'element-ui'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Action } from 'vuex-class'
+import { DesHelper } from '@/utils/des'
 @Component
 export default class extends Vue {
   @Action('login') private login!: any
@@ -125,7 +126,7 @@ export default class extends Vue {
   }
 
   created () {
-    console.log(this.$i18n.t('login.byAccount'))
+    console.log(DesHelper.DesEncrypt('123','123'))
   }
 }
 </script>

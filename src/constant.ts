@@ -11,3 +11,4 @@ export const languages = [
     lang: '中文繁体',
     code: 'zh_TW'
   }]
+export const SCERET = 'pBnnZUS0OjPeSW2w6MW%EUwjPoSlMDj4'

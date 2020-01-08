@@ -2,6 +2,8 @@ import { IUserInfo } from './../models/user'
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import store from './index'
 import { login } from '@/api/user'
+import { DesHelper } from '@/utils/des'
+import { SCERET } from '@/constant'
 
 const user = sessionStorage.getItem('user')
 let initVal: IUserInfo = {
@@ -60,9 +62,11 @@ class User extends VuexModule implements IUserInfo {
   }
   @Action
   public async login (userinfo: { account: string, password: string }) {
-    console.log(userinfo.account, userinfo.password)
+
     try {
-      const data = await login(userinfo.account, userinfo.password)
+      const pwd = DesHelper.DesEncrypt(userinfo.password,SCERET)
+      console.log(userinfo.account, pwd)
+      const data = await login(userinfo.account, pwd)
 
       const { Email, UserNo, UserName, Id, Token } = data
       sessionStorage.setItem('user', JSON.stringify(data))
