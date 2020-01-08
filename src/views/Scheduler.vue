@@ -269,6 +269,7 @@ export default class Scheduler extends Vue {
   showDialog (id: string) {
     let item = this.schedulerData.find(m => m.id.toString() === id)
     const attachEvent = scheduler.getEvent(id)
+    this.dialogVisible = true
     if (item !== undefined) {
       // 修改
       item = item as ISchedulerItem
@@ -285,7 +286,8 @@ export default class Scheduler extends Vue {
     this.form.date = dateFormat(startDate)
     this.form.start = dateFormat(startDate, 'HH:mm:ss')
     this.form.end = dateFormat(endDate, 'HH:mm:ss')
-    this.dialogVisible = true
+
+    console.log('showDialog time:', moment().format('HH:mm:ss'), 'form start: ', this.form.start, ',form end:', this.form.end)
   }
   async mounted () {
     // console.log(scheduler)
@@ -302,6 +304,7 @@ export default class Scheduler extends Vue {
     scheduler.parse(this.schedulerData, 'json')
 
     scheduler.attachEvent('onDragEnd', (id: string) => {
+      console.log('onDragEnd showDialog id:', id)
       this.showDialog(id)
     })
 
@@ -313,7 +316,7 @@ export default class Scheduler extends Vue {
       return ''
     }
     scheduler._click.buttons.edit = (id: any) => {
-      console.log('_click.buttons icon_edit', id)
+      console.log('_click.buttons icon_edit showDialog id:', id)
       this.showDialog(id)
       // some_function(id)
     }
@@ -326,17 +329,24 @@ export default class Scheduler extends Vue {
     }
 
     scheduler._click.buttons.details = (id: any) => {
-      console.log('_click.buttons icon_details', id)
+      console.log('_click.buttons icon_details showDialog id:', id)
       this.showDialog(id)
       // some_function(id)
     }
 
-    // scheduler.attachEvent('onBeforeLightbox', (id: string, ev: any) => {
-    //   this.dialogVisible = true
-    //   // any custom logic here
-    //   console.log(id, ev)
-    //   return false
-    // })
+    scheduler.attachEvent('onBeforeLightbox', (id: string, ev: any) => {
+      // this.dialogVisible = true
+      // any custom logic here
+      console.log('onBeforeLightbox', id, ev)
+      return false
+    })
+
+    scheduler.attachEvent('onDblClick', (id: any, e: any) => {
+      console.log('onDblClick showDialog id:', id, e)
+      // any custom logic here
+      this.showDialog(id)
+      return false
+    })
 
     scheduler.attachEvent('onBeforeEventChanged', (ev: any, e: any, isNew: any, original: any) => {
       console.log(ev, e, isNew, original)
@@ -387,6 +397,7 @@ export default class Scheduler extends Vue {
           scheduler.deleteEvent(this.indexId)
           this.indexId = ''
         }
+        this.RecID = 0;
         // 清除dialog form
         (this.$refs['form'] as any).resetFields()
       })
@@ -397,17 +408,13 @@ export default class Scheduler extends Vue {
 
   cancelDialog () {
     // 清除dialog form
-    this.dialogVisible = false
     if (this.indexId !== '') {
       scheduler.deleteEvent(this.indexId)
       this.indexId = ''
-    } else if (this.RecID) {
-      // scheduler.setEvent(this.RecID, {
-      //   start_date: this.form.date + ' ' + this.form.start,
-      //   end_date:   this.form.date + ' ' + this.form.end
-      // })
     }
+    this.RecID = 0;
     (this.$refs['form'] as any).resetFields()
+    this.dialogVisible = false
   }
 
   cancelBooking () {
@@ -437,6 +444,8 @@ export default class Scheduler extends Vue {
   validateContact (rule: any, value: any, callback: any) {
     if (value === '') {
       callback(new Error('Please input the contact'))
+    // } else if (/(^(\d{3,4}-)?\d{5,9})$|(1[3|5|7|8]\d{9})/.test(value)) {
+    //   callback(new Error('联系方式格式不正确'))
     } else {
       callback()
     }
