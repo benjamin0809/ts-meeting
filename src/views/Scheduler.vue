@@ -455,8 +455,7 @@ export default class Scheduler extends Vue {
     if (this.form.date === null) {
       callback(new Error('Please input the date'))
     } else {
-      let date = new Date(this.form.date)
-      if (date.getTime() < Date.now()) {
+      if (moment(this.form.date).isBefore(moment(), 'day')) {
         callback(new Error('会议日期不能是今天之前'))
       } else {
         callback()

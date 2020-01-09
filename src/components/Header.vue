@@ -11,9 +11,7 @@
     >
     <el-submenu index="4">
         <template slot="title">{{$t('language')}}</template>
-        <el-menu-item index="en_US">English</el-menu-item>
-        <el-menu-item index="zh_CN">中文-简体</el-menu-item> 
-        <el-menu-item index="zh_TW">中文-繁体</el-menu-item>
+        <el-menu-item :index="item.code" v-for="item in languages" :key="item.code">{{item.lang}}</el-menu-item>
       </el-submenu>
 
       <el-submenu index="3">
@@ -51,18 +49,19 @@
  
 <script  lang='ts'>
 import Vue from 'vue'
-import { languages } from '@/constant'
+import { LANGUAGES } from '@/constant'
 import { IUserInfo } from '@/models'
 import Component from 'vue-class-component'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 @Component
 export default class Header extends Vue {
+  languages = LANGUAGES
   activeIndex = '1'
   activeIndex2 = '1'
   @State private user!: IUserInfo
   handleSelect (key: string, keyPath: any) {
 
-    if (languages.some(p => p.code === key)) {
+    if (LANGUAGES.some(p => p.code === key)) {
       this.selectLanguage(key)
     } else {
       if (key === '/login') {
