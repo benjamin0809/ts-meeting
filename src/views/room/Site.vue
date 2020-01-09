@@ -27,17 +27,23 @@
       <el-button size="mini" type="primary" @click="addSite" style="margin-left:20px;">添加</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column label="日期" width="180">
+    <el-table :data="listData" style="width: 100%">
+      <!-- <el-table-column label="日期" width="180">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
           <span style="margin-left: 10px">{{ scope.row.date }}</span>
+        </template>
+      </el-table-column> -->
+
+      <el-table-column label="编码" width="180">
+        <template slot-scope="scope">
+          <span>{{ scope.row.Code }}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="名称" width="180">
         <template slot-scope="scope">
-          <span>{{ scope.row.label }}</span>
+          <span>{{ scope.row.Name }}</span>
         </template>
       </el-table-column>
 
@@ -52,96 +58,113 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import { ISite } from "../../models/site";
-import { dateFormat } from "../../utils/date";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import SiteApi from '@/api/admin'
+import { ISite } from '@/models/room'
+import { dateFormat } from '../../utils/date'
+import { CreateSiteEntity, UpdateSiteEntity } from '@/models'
 @Component({
-  name: "site"
+  name: 'site'
 })
 export default class extends Vue {
+  async mounted () {
+    this.listData = await SiteApi.GetSites()
+  }
+  listData: ISite[] = []
   tableData = [
     {
       id: 1,
-      date: "2020-01-02",
-      label: "龙华",
-      value: "LH"
+      date: '2020-01-02',
+      label: '龙华',
+      value: 'LH'
     },
     {
       id: 2,
-      date: "2020-01-02",
-      label: "贵阳",
-      value: "GY"
+      date: '2020-01-02',
+      label: '贵阳',
+      value: 'GY'
     }
-  ];
+  ]
 
-  dialogVisible = false;
+  dialogVisible = false
   siteForm = {
     id: 0,
-    label: "",
-    value: "",
-    ModifyTime: "",
-    ModifyUser: ""
-  };
+    label: '',
+    value: '',
+    ModifyTime: '',
+    ModifyUser: ''
+  }
 
-  addSite() {
-    this.dialogVisible = true;
+  addSite () {
+    this.dialogVisible = true
   }
 
   rules = {
-    label: [{ required: true, message: "请填写厂区名称", trigger: "blur" }],
-    value: [{ required: true, message: "请填写厂区代码", trigger: "blur" }]
-  };
-  submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+    label: [{ required: true, message: () => this.$i18n.t('login.byAccount'), trigger: 'blur' }],
+    value: [{ required: true, message: '请填写厂区代码', trigger: 'blur' }]
+  }
+  submitForm (formName: string) {
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
-        this.dialogVisible = false;
-        //判断是新增还是编辑
-        const index = this.tableData.findIndex(p => p.id == this.siteForm.id);
-        if (index > -1) {
-          let updateItem = this.tableData.find(p => p.id == this.siteForm.id);
-          if (updateItem) {
-            updateItem.label = this.siteForm.label;
-            updateItem.value = this.siteForm.value;
+        this.dialogVisible = false
+        const entity: CreateSiteEntity = {
+          Code: this.siteForm.value,
+          Name: this.siteForm.label,
+          Level: 1,
+          SortIndex: 1,
+          Status: 1,
+          Description: '',
+          Remark: ''
+        }
+        // 判断是新增还是编辑
+        if (this.siteForm.id) {
+          const updateEntity: UpdateSiteEntity = {
+            CodeId:  this.siteForm.id,
+            ...entity
           }
-          this.resetForm(formName);
+          await SiteApi.UpdateSite(updateEntity)
+          this.resetForm(formName)
         } else {
+          await SiteApi.AddSite(entity)
           this.tableData.push({
             id: Math.random(),
             date: dateFormat(new Date()),
             label: this.siteForm.label,
             value: this.siteForm.value
-          });
+          })
         }
-        this.resetForm(formName);
+        this.resetForm(formName)
       } else {
-        console.log("error submit!!");
-        return false;
+        console.log('error submit!!')
+        return false
       }
-    });
+    })
   }
 
-  cancelForm(formName: string) {
-    this.dialogVisible = false;
-    this.resetForm(formName);
+  cancelForm (formName: string) {
+    this.dialogVisible = false
+    this.resetForm(formName)
   }
 
-  resetForm(formName: string) {
-    (this.$refs[formName] as any).resetFields();
+  resetForm (formName: string) {
+    (this.$refs[formName] as any).resetFields()
   }
 
-  handleEdit(index: any, row: any) {
-    console.log(index, row);
-    this.siteForm.id = row.id;
-    this.siteForm.label = row.label;
-    this.siteForm.value = row.value;
-    this.dialogVisible = true;
+  handleEdit (index: any, row: any) {
+    console.log(index, row)
+    this.siteForm.id = row.CodeId
+    this.siteForm.label = row.Name
+    this.siteForm.value = row.Code
+    this.dialogVisible = true
   }
-  handleDelete(index: any, row: any) {
-    let a = this.tableData.findIndex(p => p.label == row.label);
-    this.tableData.splice(a, 1);
-    console.log(index, row);
+  async handleDelete (index: any, row: any) {
+    await SiteApi.DeleteSite(row.CodeId)
+    let a = this.tableData.findIndex(p => p.label === row.label)
+    this.tableData.splice(a, 1)
+    console.log(index, row)
   }
+
 }
 </script>
 

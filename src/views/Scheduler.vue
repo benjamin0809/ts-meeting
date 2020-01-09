@@ -168,7 +168,8 @@ import scheduler from '@/utils/scheduler'
 import moment from 'moment'
 import { Message } from 'element-ui'
 import { moduleScheduler } from '@/store/scheduler'
-import { getSites, getSiteRooms, getShedulerData, GetActiveRoom, GetSites, GetHomeData, GetMeetingRoomData, BookingRoom, UpdateBookingInfo, CancelBookingRoom } from '../api/room'
+import RoomApi from '@/api/room'
+import AdminApi from '@/api/admin'
 import { getShowNotices } from '../api/notice'
 import { dateFormat } from '../utils/date'
 import { IRoom, ISite, ISchedulerItem, IBookingRoomInput, IBookingRoomEntity, IUpdateBookingRoomEntity, IUpdateBookingRoomInput } from '../models'
@@ -236,7 +237,7 @@ export default class Scheduler extends Vue {
   async getMeetingRoomData (month: string) {
     try {
       this.isloadingData = true
-      const data = await GetMeetingRoomData(this.roomValue, month)
+      const data = await RoomApi.GetMeetingRoomData(this.roomValue, month)
       moduleScheduler.ADD_MONTH(month)
       const list: ISchedulerItem[] = []
       data.forEach((item) => {
@@ -290,10 +291,9 @@ export default class Scheduler extends Vue {
     console.log('showDialog time:', moment().format('HH:mm:ss'), 'form start: ', this.form.start, ',form end:', this.form.end)
   }
   async mounted () {
-    // console.log(scheduler)
-
-    this.siteOptions = await GetSites()
-    this.allRomOptions = await GetActiveRoom()
+    console.log(this.$t('login.byAccount'))
+    this.siteOptions = await AdminApi.GetSites()
+    this.allRomOptions = await RoomApi.GetActiveRoom()
     this.siteValue = this.siteValue || this.siteOptions[0].Code
     this.roomValue = this.allRomOptions[0].RoomID
     this.siteChanged()
@@ -420,7 +420,7 @@ export default class Scheduler extends Vue {
   cancelBooking () {
     this.$confirm('确认取消会议室预订？',{ type: 'warning' })
       .then(async () => {
-        await CancelBookingRoom(this.RecID);
+        await RoomApi.CancelBookingRoom(this.RecID);
         // 清除dialog form
         (this.$refs['form'] as any).resetFields()
         this.schedulerData = []
@@ -518,7 +518,7 @@ export default class Scheduler extends Vue {
             BookingEntity: BookingEntity
           }
           try {
-            await BookingRoom(input)
+            await RoomApi.BookingRoom(input)
             console.log('预订成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
@@ -542,7 +542,7 @@ export default class Scheduler extends Vue {
             UpdateBookingEntity: entity
           }
           try {
-            await UpdateBookingInfo(input)
+            await RoomApi.UpdateBookingInfo(input)
             console.log('修改成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
