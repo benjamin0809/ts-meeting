@@ -1,23 +1,28 @@
 <template>
   <div>
     <div class="page-title">
-      公告管理
-      <el-button size="mini" type="primary" @click="addNotice" style="margin-left:20px;">添加</el-button>
+      {{$t('notice.noticeManage')}}
+      <el-button
+        size="mini"
+        type="primary"
+        @click="addNotice"
+        style="margin-left:20px;"
+      >{{$t('notice.add')}}</el-button>
     </div>
 
     <el-dialog
-      title="添加公告通知"
+      :title="$t('notice.dialogTitle')"
       :visible.sync="dialogVisible"
       width="30%"
       ref="noticeDialog"
       @close="resetForm('noticeForm')"
     >
       <el-form :model="noticeForm" :rules="rules" ref="noticeForm">
-        <el-form-item label="内容" prop="content">
-          <el-input type="text" v-model="noticeForm.Content" auto-complete="off" placeholder></el-input>
+        <el-form-item :label="$t('notice.content')" prop="content">
+          <el-input type="text" v-model="noticeForm.Content" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="可见厂区" prop="site">
-          <el-select v-model="noticeForm.Sites" placeholder="请选择" multiple>
+        <el-form-item :label="$t('notice.ableSite')" prop="site">
+          <el-select v-model="noticeForm.Sites" :placeholder="$t('notice.pleaseChoose')" multiple>
             <el-option
               v-for="item in siteData"
               :key="item.value"
@@ -29,25 +34,30 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelForm('noticeForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('noticeForm')">确 定</el-button>
+        <el-button @click="cancelForm('noticeForm')">{{$t('notice.cancel')}}</el-button>
+        <el-button type="primary" @click="submitForm('noticeForm')">{{$t('notice.confirm')}}</el-button>
       </span>
     </el-dialog>
 
     <el-table
       :data="tableData.filter(data => !search || data.Content.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
+      :empty-text="$t('common.noData')"
     >
-      <el-table-column label="修改日期" prop="ModifyDate" width="150"></el-table-column>
-      <el-table-column label="修改人" prop="ModifyUser" width="100"></el-table-column>
-      <el-table-column label="内容" prop="Content"></el-table-column>
+      <el-table-column :label="$t('notice.modifyDate')" prop="ModifyDate" width="150"></el-table-column>
+      <el-table-column :label="$t('notice.modifyUser')" prop="ModifyUser" width="130"></el-table-column>
+      <el-table-column :label="$t('notice.content')" prop="Content"></el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
-          <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
+          <el-input v-model="search" size="mini" :placeholder="$t('notice.searchPlaceholder')"/>
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">{{$t('notice.edit')}}</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >{{$t('notice.delete')}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,14 +102,20 @@ export default class Notice extends Vue {
 
   validateSite(rule: any, value: any, callback: any) {
     if (this.noticeForm.Sites.length === 0) {
-      callback(new Error("请选择可见厂区"));
+      callback(new Error(this.$t("notice.ableSiteHint").toString()));
     } else {
       callback();
     }
   }
-
+  validateContent(rule: any, value: any, callback: any) {
+    if (this.noticeForm.Content === "") {
+      callback(new Error(this.$t("notice.contentHint").toString()));
+    } else {
+      callback();
+    }
+  }
   rules = {
-    name: [{ required: true, message: "请填写会议室名称", trigger: "blur" }],
+    content: [{ validator: this.validateContent, trigger: "blur" }],
     site: [{ validator: this.validateSite, trigger: "blur" }]
   };
 
@@ -124,7 +140,7 @@ export default class Notice extends Vue {
             ModifyUser: "李如梦"
           });
         }
-
+        this.$message(this.$t("common.saveSuccess").toString());
         this.resetForm(formName);
       } else {
         console.log("error submit!!");
@@ -150,9 +166,20 @@ export default class Notice extends Vue {
   }
 
   handleDelete(index: any, row: any) {
-    let a = this.tableData.findIndex(p => p.Id == row.Id);
-    this.tableData.splice(a, 1);
-    console.log(index, row);
+    this.$confirm(this.$t("common.deleteConfirm").toString(), {
+      cancelButtonText: this.$t("common.cancel").toString(),
+      confirmButtonText: this.$t("common.confirm").toString()
+    })
+      .then(_ => {
+        //删除操作
+        let a = this.tableData.findIndex(p => p.Id == row.Id);
+        this.tableData.splice(a, 1);
+        console.log(index, row);
+        this.$message(this.$t("common.deleteSuccess").toString());
+      })
+      .catch(_ => {
+        console.log("取消了删除");
+      });
   }
 }
 </script>

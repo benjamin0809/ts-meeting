@@ -16,17 +16,17 @@
 
       <el-submenu index="3">
         <template slot="title">{{user.UserNo}}</template>
-        <el-menu-item index="3-1">个人信息</el-menu-item>
-        <el-menu-item index="3-2">设置</el-menu-item>
+        <el-menu-item index="3-1">{{$t('menu.userInfo')}}</el-menu-item>
+        <el-menu-item index="3-2">{{$t('menu.setting')}}</el-menu-item>
 
-        <el-menu-item index="/login">退出</el-menu-item>
+        <el-menu-item index="/login">{{$t('menu.exit')}}</el-menu-item>
       </el-submenu>
 
       <el-submenu index="2">
         <template slot="title">{{$t('menu.sysadmin')}}</template>
-        <el-menu-item index="/sysadmin/notice">公告管理</el-menu-item>
-        <el-menu-item index="/sysadmin/user">用戶管理</el-menu-item>
-        <el-menu-item index="/sysadmin/role">角色管理</el-menu-item>
+        <el-menu-item index="/sysadmin/notice">{{$t('menu.noticeManage')}}</el-menu-item>
+        <el-menu-item index="/sysadmin/user">{{$t('menu.userManage')}}</el-menu-item>
+        <el-menu-item index="/sysadmin/role">{{$t('menu.roleManage')}}</el-menu-item>
         <!-- <el-submenu index="2-4">
           <template slot="title">F2846595</template>
           <el-menu-item index="2-4-1">item one</el-menu-item>
@@ -37,12 +37,12 @@
 
       <!-- <el-menu-item index="3" disabled>Info</el-menu-item> -->
       <el-submenu index="1">
-        <template slot="title">会议室</template>
-        <el-menu-item index="/room/site">厂区管理</el-menu-item>
-        <el-menu-item index="/room/manage">会议室管理</el-menu-item>
+        <template slot="title">{{$t('menu.room')}}</template>
+        <el-menu-item index="/room/site">{{$t('menu.siteManage')}}</el-menu-item>
+        <el-menu-item index="/room/manage">{{$t('menu.roomManage')}}</el-menu-item>
       </el-submenu>
 
-      <el-menu-item index="/scheduler">Home</el-menu-item>
+      <el-menu-item index="/scheduler">{{$t('menu.home')}}</el-menu-item>
     </el-menu>
   </el-header>
 </template>
@@ -78,6 +78,7 @@ export default class Header extends Vue {
   selectLanguage (lang: string) {
     this.$i18n.locale = lang
     localStorage.setItem('lang', lang)
+    window.location.reload();
   }
 }
 </script>

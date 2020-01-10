@@ -1,23 +1,28 @@
 <template>
   <div>
     <div class="page-title">
-      会议室管理
-      <el-button size="mini" type="primary" @click="addRoom" style="margin-left:20px;">添加</el-button>
+      {{$t('room.roomManage')}}
+      <el-button
+        size="mini"
+        type="primary"
+        @click="addRoom"
+        style="margin-left:20px;"
+      >{{$t('room.add')}}</el-button>
     </div>
 
     <el-dialog
-      title="添加会议室"
+      :title="$t('room.dialogTitle')"
       :visible.sync="dialogVisible"
       width="30%"
       ref="roomDialog"
       @close="resetForm('roomForm')"
     >
       <el-form :model="roomForm" :rules="rules" ref="roomForm">
-        <el-form-item label="名称" prop="name">
+        <el-form-item :label="$t('room.name')" prop="name">
           <el-input type="text" v-model="roomForm.name" auto-complete="off" placeholder></el-input>
         </el-form-item>
-        <el-form-item label="厂区" prop="site">
-          <el-select v-model="roomForm.site" placeholder="请选择">
+        <el-form-item :label="$t('room.site')" prop="site">
+          <el-select v-model="roomForm.site" :placeholder="$t('room.pleaseChoose')">
             <el-option
               v-for="item in siteData"
               :key="item.value"
@@ -29,69 +34,88 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelForm('roomForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('roomForm')">确 定</el-button>
+        <el-button @click="cancelForm('roomForm')">{{$t('room.cancel')}}</el-button>
+        <el-button type="primary" @click="submitForm('roomForm')">{{$t('room.confirm')}}</el-button>
       </span>
     </el-dialog>
 
     <el-tabs type="border-card">
       <el-tab-pane>
         <span slot="label">
-          <i class="el-icon-date"></i> All
+          <i class="el-icon-date"></i>
+          {{$t('room.all')}}
         </span>
-        <el-table :data="roomData" style="width: 100%">
-          <el-table-column label="日期" width="180">
+        <el-table :data="roomData" style="width: 100%" :empty-text="$t('common.noData')">
+          <el-table-column :label="$t('room.date')" width="180">
             <template slot-scope="scope">
               <i class="el-icon-time"></i>
               <span style="margin-left: 10px">{{ scope.row.date }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="名称" width="500">
+          <el-table-column :label="$t('room.name')" width="500">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="厂区" width="180">
+          <el-table-column :label="$t('room.site')" width="180">
             <template slot-scope="scope">
               <el-tag size="medium">{{ scope.row.site }}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column label="操作">
+          <el-table-column :label="$t('room.operation')">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button
+                size="mini"
+                @click="handleEdit(scope.$index, scope.row)"
+              >{{$t('room.edit')}}</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)"
+              >{{$t('room.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane v-for="item in siteData" :label="item.label">
-        <el-table :data="roomData.filter(p=>p.site==item.value)" style="width: 100%">
-          <el-table-column label="日期" width="180">
+        <el-table
+          :data="roomData.filter(p=>p.site==item.value)"
+          style="width: 100%"
+          :empty-text="$t('common.noData')"
+        >
+          <el-table-column :label="$t('room.date')" width="180">
             <template slot-scope="scope">
               <i class="el-icon-time"></i>
               <span style="margin-left: 10px">{{ scope.row.date }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="名称" width="500">
+          <el-table-column :label="$t('room.name')" width="500">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="厂区" width="180">
+          <el-table-column :label="$t('room.site')" width="180">
             <template slot-scope="scope">
               <el-tag size="medium">{{ scope.row.site }}</el-tag>
             </template>
           </el-table-column>
           <!-- align="right" -->
-          <el-table-column label="操作">
+          <el-table-column :label="$t('room.operation')">
             <template slot-scope="scope">
-              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button
+                size="mini"
+                @click="handleEdit(scope.$index, scope.row)"
+              >{{$t('room.edit')}}</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)"
+              >{{$t('room.delete')}}</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -161,16 +185,23 @@ export default class extends Vue {
     this.dialogVisible = true;
   }
 
+  validateName(rule: any, value: any, callback: any) {
+    if (value === "") {
+      callback(new Error(this.$t("room.nameHint").toString()));
+    } else {
+      callback();
+    }
+  }
   validateSite(rule: any, value: any, callback: any) {
     if (this.roomForm.site === "") {
-      callback(new Error("请选择会议室厂区"));
+      callback(new Error(this.$t("room.siteHint").toString()));
     } else {
       callback();
     }
   }
 
   rules = {
-    name: [{ required: true, message: "请填写会议室名称", trigger: "blur" }],
+    name: [{ validator: this.validateName, trigger: "blur" }],
     site: [{ validator: this.validateSite, trigger: "change" }]
   };
 
@@ -197,6 +228,7 @@ export default class extends Vue {
         }
 
         this.resetForm(formName);
+        this.$message(this.$t("common.saveSuccess").toString());
       } else {
         console.log("error submit!!");
         return false;
@@ -222,9 +254,20 @@ export default class extends Vue {
   }
 
   handleDelete(index: any, row: any) {
-    let a = this.roomData.findIndex(p => p.name == row.name);
-    this.roomData.splice(a, 1);
-    console.log(index, row);
+    this.$confirm(this.$t("common.deleteConfirm").toString(), {
+      cancelButtonText: this.$t("common.cancel").toString(),
+      confirmButtonText: this.$t("common.confirm").toString()
+    })
+      .then(_ => {
+        //删除操作
+        let a = this.roomData.findIndex(p => p.name == row.name);
+        this.roomData.splice(a, 1);
+        console.log(index, row);
+        this.$message(this.$t("common.deleteSuccess").toString());
+      })
+      .catch(_ => {
+        console.log("取消了删除");
+      });
   }
 }
 </script>

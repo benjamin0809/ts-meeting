@@ -1,43 +1,48 @@
 <template>
   <div>
     <div class="page-title">
-      角色管理
-      <el-button size="mini" type="primary" @click="addRole" style="margin-left:20px;">添加角色</el-button>
+      {{$t('role.roleManage')}}
+      <el-button
+        size="mini"
+        type="primary"
+        @click="addRole"
+        style="margin-left:20px;"
+      >{{$t('role.addRole')}}</el-button>
     </div>
 
     <el-dialog
-      title="添加角色"
+      :title="$t('role.addRole')"
       :visible.sync="dialogVisible"
       width="30%"
       ref="roleDialog"
       @close="resetForm('roleForm')"
     >
       <el-form :model="roleForm" :rules="rules" ref="roleForm" label-width="100px">
-        <el-form-item label="角色代码" prop="code">
+        <el-form-item :label="$t('role.code')" prop="code">
           <el-input type="text" v-model="roleForm.code" auto-complete="off" placeholder></el-input>
         </el-form-item>
-        <el-form-item label="角色名称" prop="name">
+        <el-form-item :label="$t('role.name')" prop="name">
           <el-input type="text" v-model="roleForm.name" auto-complete="off" placeholder></el-input>
         </el-form-item>
-        <el-form-item label="角色描述" prop="description">
+        <el-form-item :label="$t('role.description')" prop="description">
           <el-input type="text" v-model="roleForm.description" auto-complete="off" placeholder></el-input>
         </el-form-item>
-        <el-form-item label="角色权限">
+        <el-form-item :label="$t('role.permission')">
           <el-tree :data="menus" show-checkbox node-key="id" :props="defaultProps"></el-tree>
         </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelForm('roleForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('roleForm')">确 定</el-button>
+        <el-button @click="cancelForm('roleForm')">{{$t('role.cancel')}}</el-button>
+        <el-button type="primary" @click="submitForm('roleForm')">{{$t('role.confirm')}}</el-button>
       </span>
     </el-dialog>
 
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="code" label="角色代码" width="180" align="center"></el-table-column>
-      <el-table-column prop="name" label="角色名称" width="180" align="center"></el-table-column>
-      <el-table-column prop="description" label="角色描述"></el-table-column>
-      <el-table-column prop="tag" label="角色类型" width="180" align="center">
+    <el-table :data="tableData" border style="width: 100%" :empty-text="$t('common.noData')">
+      <el-table-column prop="code" :label="$t('role.code')" width="180" align="center"></el-table-column>
+      <el-table-column prop="name" :label="$t('role.name')" width="180" align="center"></el-table-column>
+      <el-table-column prop="description" :label="$t('role.description')"></el-table-column>
+      <el-table-column prop="tag" :label="$t('role.tag')" width="180" align="center">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.tag"
@@ -45,10 +50,14 @@
           >{{scope.row.tag}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="$t('role.operation')" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">{{$t('role.edit')}}</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >{{$t('role.delete')}}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -156,12 +165,31 @@ export default class RoleManage extends Vue {
     this.dialogVisible = true;
   }
 
+  validateCode(rule: any, value: any, callback: any) {
+    if (value === "") {
+      callback(new Error(this.$t("role.codeHint").toString()));
+    } else {
+      callback();
+    }
+  }
+  validateName(rule: any, value: any, callback: any) {
+    if (value === "") {
+      callback(new Error(this.$t("role.nameHint").toString()));
+    } else {
+      callback();
+    }
+  }
+  validateDescription(rule: any, value: any, callback: any) {
+    if (value === "") {
+      callback(new Error(this.$t("role.descripHint").toString()));
+    } else {
+      callback();
+    }
+  }
   rules = {
-    code: [{ required: true, message: "请填写角色代码", trigger: "blur" }],
-    name: [{ required: true, message: "请填写角色名称", trigger: "blur" }],
-    description: [
-      { required: true, message: "请填写角色名称", trigger: "blur" }
-    ]
+    code: [{ validator: this.validateCode, trigger: "blur" }],
+    name: [{ validator: this.validateName, trigger: "blur" }],
+    description: [{ validator: this.validateDescription, trigger: "blur" }]
   };
   submitForm(formName: string) {
     (this.$refs[formName] as any).validate((valid: boolean) => {
@@ -185,6 +213,7 @@ export default class RoleManage extends Vue {
           });
         }
         this.resetForm(formName);
+        this.$message(this.$t("common.saveSuccess").toString());
       } else {
         console.log("error submit!!");
         return false;
@@ -210,9 +239,20 @@ export default class RoleManage extends Vue {
     this.dialogVisible = true;
   }
   handleDelete(index: any, row: any) {
-    let a = this.tableData.findIndex(p => p.id == row.id);
-    this.tableData.splice(a, 1);
-    console.log(index, row);
+    this.$confirm(this.$t("common.deleteConfirm").toString(), {
+      cancelButtonText: this.$t("common.cancel").toString(),
+      confirmButtonText: this.$t("common.confirm").toString()
+    })
+      .then(_ => {
+        //删除操作
+        let a = this.tableData.findIndex(p => p.id == row.id);
+        this.tableData.splice(a, 1);
+        console.log(index, row);
+        this.$message(this.$t("common.deleteSuccess").toString());
+      })
+      .catch(_ => {
+        console.log("取消了删除");
+      });
   }
 }
 </script>

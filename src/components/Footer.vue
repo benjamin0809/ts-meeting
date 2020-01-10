@@ -1,6 +1,6 @@
 <template>
   <el-footer>
-     <el-divider>有限公司</el-divider>
+     <el-divider>{{$t('footer.corperation')}}</el-divider>
     </el-footer>
 </template>
 

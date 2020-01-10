@@ -1,23 +1,23 @@
 <template>
   <div>
     <!-- 会议室预定dialog -->
-    <el-dialog title="会议室预定" :visible.sync="dialogVisible" :before-close="handleClose">
+    <el-dialog :title="$t('schedulerDialog.title')" :visible.sync="dialogVisible" :before-close="handleClose">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="会议主题" prop="subject">
+        <el-form-item :label="$t('schedulerDialog.subject')" prop="subject">
           <el-input v-model="form.subject"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="$t('schedulerDialog.remark')" prop="remark">
           <el-input type="textarea" v-model="form.remark"></el-input>
         </el-form-item>
-        <el-form-item label="联系电话" prop="contact">
+        <el-form-item :label="$t('schedulerDialog.contact')" prop="contact">
           <el-input v-model="form.contact"></el-input>
         </el-form-item>
-        <el-form-item label="会议时间">
+        <el-form-item :label="$t('schedulerDialog.meetingTime')">
           <el-col :span="7">
             <el-form-item prop="date">
               <el-date-picker
                 type="date"
-                placeholder="选择日期"
+                :placeholder="$t('schedulerDialog.chooseDate')"
                 v-model="form.date"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
@@ -29,7 +29,7 @@
             <el-form-item prop="start">
               <!--               <el-time-picker placeholder="开始时间" v-model="form.start" style="width: 100%;"></el-time-picker> -->
               <el-time-select
-                placeholder="开始时间"
+                :placeholder="$t('schedulerDialog.startTime')"
                 v-model="form.start"
                 :picker-options="{start: '08:30',step: '00:30',end: '21:00'}"
               ></el-time-select>
@@ -40,7 +40,7 @@
             <el-form-item prop="end">
               <!--               <el-time-picker placeholder="结束时间" v-model="form.end" style="width: 100%;"></el-time-picker> -->
               <el-time-select
-                placeholder="结束时间"
+                :placeholder="$t('schedulerDialog.endTime')"
                 v-model="form.end"
                 :picker-options="{start: '08:30',step: '00:30',end: '21:00',minTime: form.start}"
               ></el-time-select>
@@ -49,19 +49,19 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelDialog">取 消</el-button>
-        <el-button @click="cancelBooking">删除</el-button>
-        <el-button type="primary" @click="saveDialog('form')">保存</el-button>
+        <el-button @click="cancelDialog">{{$t('schedulerDialog.cancel')}}</el-button>
+        <el-button @click="cancelBooking">{{$t('schedulerDialog.delete')}}</el-button>
+        <el-button type="primary" @click="saveDialog('form')">{{$t('schedulerDialog.save')}}</el-button>
       </span>
     </el-dialog>
 
     <!--公告通知  -->
-    <div class="notice-container">
+    <div class="notice-container" >
       <el-collapse>
         <el-collapse-item name="1" class="notice">
           <template slot="title">
             <i class="header-icon el-icon-s-promotion"></i>
-            公告通知
+            {{$t('notice.notice')}}
           </template>
           <!--           <el-table ref="singleTable" :data="showNotices" style="width: 100%">
             <el-table-column type="index" width="30"></el-table-column>
@@ -390,7 +390,7 @@ export default class Scheduler extends Vue {
     moduleScheduler.CLEAR_MONTH()
   }
   handleClose (done: any) {
-    this.$confirm('确认关闭？')
+    this.$confirm(this.$t('schedulerDialog.closeHint').toString())
       .then(_ => {
         done()
         if (this.indexId !== '') {
@@ -418,7 +418,7 @@ export default class Scheduler extends Vue {
   }
 
   cancelBooking () {
-    this.$confirm('确认取消会议室预订？',{ type: 'warning' })
+    this.$confirm(this.$t('schedulerDialog.cancelHint').toString(),{ type: 'warning' })
       .then(async () => {
         await RoomApi.CancelBookingRoom(this.RecID);
         // 清除dialog form
@@ -436,14 +436,14 @@ export default class Scheduler extends Vue {
   // dialog form表单验证
   validateSubject (rule: any, value: any, callback: any) {
     if (value === '') {
-      callback(new Error('Please input the subject'))
+      callback(new Error(this.$t('schedulerDialog.subjectHint').toString()))
     } else {
       callback()
     }
   }
   validateContact (rule: any, value: any, callback: any) {
     if (value === '') {
-      callback(new Error('Please input the contact'))
+      callback(new Error(this.$t('schedulerDialog.contactHint').toString()))
     // } else if (/(^(\d{3,4}-)?\d{5,9})$|(1[3|5|7|8]\d{9})/.test(value)) {
     //   callback(new Error('联系方式格式不正确'))
     } else {
@@ -453,10 +453,10 @@ export default class Scheduler extends Vue {
 
   validateDate (rule: any, value: any, callback: any) {
     if (this.form.date === null) {
-      callback(new Error('Please input the date'))
+      callback(new Error(this.$t('schedulerDialog.dateInputHint').toString()))
     } else {
       if (moment(this.form.date).isBefore(moment(), 'day')) {
-        callback(new Error('会议日期不能是今天之前'))
+        callback(new Error(this.$t('schedulerDialog.dateValidHint').toString()))
       } else {
         callback()
       }
@@ -464,12 +464,12 @@ export default class Scheduler extends Vue {
   }
   validateStart (rule: any, value: any, callback: any) {
     if (this.form.start === null) {
-      callback(new Error('Please input the start time'))
+      callback(new Error(this.$t('schedulerDialog.startHint').toString()))
     } else {
       let start = new Date(this.form.start)
       let end = new Date(this.form.end)
       if (end.getTime() < start.getTime()) {
-        callback(new Error('会议开始时间必须小于结束时间'))
+        callback(new Error(this.$t('schedulerDialog.timeValidHint').toString()))
       } else {
         callback()
       }
@@ -477,12 +477,12 @@ export default class Scheduler extends Vue {
   }
   validateEnd (rule: any, value: any, callback: any) {
     if (this.form.end === null) {
-      callback(new Error('Please input the end time'))
+      callback(new Error(this.$t('schedulerDialog.endHint').toString()))
     } else {
       let start = new Date(this.form.start)
       let end = new Date(this.form.end)
       if (end.getTime() < start.getTime()) {
-        callback(new Error('会议开始时间必须小于结束时间'))
+        callback(new Error(this.$t('schedulerDialog.timeValidHint').toString()))
       } else {
         callback()
       }
@@ -564,5 +564,10 @@ export default class Scheduler extends Vue {
       }
     })
   }
+
+
+
+
+
 }
 </script>

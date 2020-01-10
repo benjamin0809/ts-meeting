@@ -1,19 +1,19 @@
 <template>
   <div>
     <div class="page-title">
-      用户管理
+      {{$t('user.userManage')}}
       <!-- <el-button size="mini" type="primary" @click="addRole" style="margin-left:20px;">添加用户</el-button> -->
     </div>
 
     <el-dialog
-      title="编辑用户"
+      :title="$t('user.editUser')"
       :visible.sync="dialogVisible"
       width="30%"
       ref="userDialog"
       @close="resetForm('userForm')"
     >
       <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px">
-        <el-form-item label="工号" prop="code">
+        <el-form-item :label="$t('user.empNO')" prop="code">
           <el-input
             :disabled="true"
             type="text"
@@ -22,7 +22,7 @@
             placeholder
           ></el-input>
         </el-form-item>
-        <el-form-item label="姓名" prop="name">
+        <el-form-item :label="$t('user.name')" prop="name">
           <el-input
             :disabled="true"
             type="text"
@@ -31,7 +31,7 @@
             placeholder
           ></el-input>
         </el-form-item>
-        <el-form-item label="厂区" prop="description">
+        <el-form-item :label="$t('user.site')" prop="description">
           <el-input
             :disabled="true"
             type="text"
@@ -41,7 +41,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="角色" prop="role">
+        <el-form-item :label="$t('user.role')" prop="role">
           <el-radio-group v-model="userForm.role">
             <el-radio v-for="item of roleData" :label="item.code">{{item.name}}</el-radio>
           </el-radio-group>
@@ -49,16 +49,16 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelForm('userForm')">取 消</el-button>
-        <el-button type="primary" @click="submitForm('userForm')">确 定</el-button>
+        <el-button @click="cancelForm('userForm')">{{$t('user.cancel')}}</el-button>
+        <el-button type="primary" @click="submitForm('userForm')">{{$t('user.confirm')}}</el-button>
       </span>
     </el-dialog>
 
-    <el-table :data="userData" border style="width: 100%">
-      <el-table-column prop="empNumber" label="工号" width="180" align="center"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180" align="center"></el-table-column>
-      <el-table-column prop="site" label="厂区" width="180" align="center"></el-table-column>
-      <el-table-column prop="role" label="角色" width="300" align="center">
+    <el-table :data="userData" border style="width: 100%" :empty-text="$t('common.noData')">
+      <el-table-column prop="empNumber" :label="$t('user.empNO')" width="180" align="center"></el-table-column>
+      <el-table-column prop="name" :label="$t('user.name')" width="180" align="center"></el-table-column>
+      <el-table-column prop="site" :label="$t('user.site')" width="180" align="center"></el-table-column>
+      <el-table-column prop="role" :label="$t('user.role')" width="300" align="center">
         <template slot-scope="scope">
           <el-tag
             v-if="scope.row.role"
@@ -66,9 +66,13 @@
           >{{scope.row.roleName}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="$t('user.operation')" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleEdit(scope.$index, scope.row)"
+          >{{$t('user.edit')}}</el-button>
           <!--  <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
@@ -175,6 +179,7 @@ export default class RoleManage extends Vue {
           }
         }
         this.resetForm(formName);
+        this.$message(this.$t("common.saveSuccess").toString());
       } else {
         console.log("error submit!!");
         return false;

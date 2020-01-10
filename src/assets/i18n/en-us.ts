@@ -1,14 +1,145 @@
 module.exports = {
   language: 'English',
+  common: {
+    deleteConfirm: 'Confirm to delete it ?',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    noData: 'No any data now.',
+    deleteSuccess: 'Deleted successfully~',
+    saveSuccess: 'Saved successfully~'
+  },
+
   menu: {
-    sysadmin: 'System Management'
+    home: 'Home',
+
+    userInfo: 'My Profile',
+    setting: 'Setting',
+    exit: 'Logout',
+
+    sysadmin: 'System Management',
+    noticeManage: 'Notices',
+    userManage: 'Users',
+    roleManage: 'Roles',
+
+    room: 'Meeting Room',
+    siteManage: 'Room Sites',
+    roomManage: 'Room Management'
   },
   login: {
     byAccount: 'Account Login',
-    'title': ' meeting room booking ',
-    'username': 'please input username',
-    'password': 'please input password',
-    'login': 'login',
-    'language': 'please select language'
+    account: 'Account',
+    pass: 'Password',
+    submit: 'Submit',
+    reset: 'Reset',
+    title: ' meeting room booking ',
+    accHint: 'please input the account',
+    passHint: 'please input the password',
+    login: 'login',
+    language: 'please select language',
+    byiProud: 'iProud Login'
+  },
+  footer: {
+    corperation: 'Corperation'
+  },
+  schedulerDialog: {
+    title: 'Reserve a meeting room',
+    subject: 'Subject',
+    remark: 'Remark',
+    contact: 'Contact',
+    meetingTime: 'Time',
+    chooseDate: 'choose the date',
+    startTime: 'start time',
+    endTime: 'end time',
+    cancel: 'cancel',
+    delete: 'delete',
+    save: 'save',
+    closeHint: 'Confirm to close?',
+    cancelHint: 'Confirm to cancel the meeting reservation?',
+    subjectHint: 'Please input the subject',
+    contactHint: 'Please input the contact',
+    dateInputHint: 'Please input the date',
+    dateValidHint: 'Meeting date cannot be before today',
+    startHint: 'Please input the start time',
+    endHint: 'Please input the end time',
+    timeValidHint: 'Meeting start time must be less than end time'
+  },
+  room: {
+    all: 'All',
+    roomManage: 'Meeting room management',
+    add: 'Add',
+    dialogTitle: 'Add a meeting room',
+    name: 'Name',
+    site: 'Site',
+    pleaseChoose: 'please choose...',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    date: 'Date',
+    operation: 'Operation',
+    edit: 'Edit',
+    delete: 'Delete',
+    siteHint: 'please choose the meeting room site',
+    nameHint: 'please input the meeting room name'
+  },
+  site: {
+    dialogTitle: 'Add a site of meeting room',
+    label: 'Label',
+    name: 'Name',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    title: 'Sites of meeting rooms',
+    add: 'Add Site',
+    operation: 'Operation',
+    edit: 'Edit',
+    delete: 'Delete',
+    labelHint: 'please input the site code',
+    nameHint: 'please input the site name'
+  },
+  role: {
+    roleManage: 'Roles Management',
+    addRole: 'Add a role',
+    code: 'Code',
+    name: 'Name',
+    description: 'Description',
+    permission: 'Permission',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    tag: 'Tag',
+    admin: 'System',
+    operation: 'Operation',
+    edit: 'Edit',
+    delete: 'Delete',
+    codeHint: 'please input the code of the role',
+    nameHint: 'please input the name of the role',
+    descripHint: 'please input the description of the role'
+  },
+  user: {
+    userManage: 'Users Management',
+    editUser: 'Edit the user',
+    empNO: 'Employee Number',
+    name: 'Name',
+    site: 'Site',
+    role: 'Role',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    operation: 'Operation',
+    edit: 'Edit'
+  },
+  notice: {
+    notice: 'Notices',
+    noticeManage: 'Notices Management',
+    add: 'Add',
+    dialogTitle: 'Add Notice',
+    content: 'Content',
+    ableSite: 'Visiable sites',
+    pleaseChoose: 'please choose...',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    modifyDate: 'Modify Date',
+    modifyUser: 'Modify User',
+    searchPlaceholder: 'input the key words to search',
+    edit: 'Edit',
+    delete: 'Delete',
+    ableSiteHint: 'please choose the visiable sites of the notice',
+    contentHint: 'please input the content'
   }
 }
