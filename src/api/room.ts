@@ -1,11 +1,13 @@
 import request from '../utils/request'
-import { IBookingRoomInput, IHomeDataResult, IUpdateBookingRoomInput, IRoom } from '@/models/room'
+import { IBookingRoomInput, IHomeDataResult, IUpdateBookingRoomInput, IRoom, IHomeRoom } from '@/models/room'
 
 export interface IRoomAPI {
   /**
    * 获取启用的会议室
    */
   GetActiveRoom (): Promise<IRoom[]>
+
+  GetHomeRoom (): Promise<IHomeRoom[]>
   /**
    * 获取所有会议室
    */
@@ -39,6 +41,9 @@ export interface IRoomAPI {
 }
 
 class RoomAPI implements IRoomAPI {
+  GetHomeRoom (): Promise<IHomeRoom[]> {
+    return request.get<IHomeRoom[]>('room/GetHomeRoom')
+  }
   UpdateBookingInfo (entity: IUpdateBookingRoomInput): Promise<IRoom[]> {
     return request.post<any>('room/UpdateBookingInfo', entity)
   }

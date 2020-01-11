@@ -47,15 +47,15 @@ instance.interceptors.response.use(
   (error) => {
     // 对响应错误做点什么
 
-    if (error.response.status === 401) {
+    if (error.message === 'Network Error') {
+      console.log('连接失败')
+    } else if (error.response.status === 401) {
       // tslint:disable-next-line: no-floating-promises
       router.replace({
         path: '/login'
       })
       location.reload()
     }
-    console.error(error.response.status)
-    debugger
     return Promise.reject(error)
   }
 )

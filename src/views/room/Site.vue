@@ -67,143 +67,143 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import SiteApi from "@/api/admin";
-import { ISite } from "@/models/room";
-import { dateFormat } from "../../utils/date";
-import { CreateSiteEntity, UpdateSiteEntity } from "@/models";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import SiteApi from '@/api/admin'
+import { ISite } from '@/models/room'
+import { dateFormat } from '../../utils/date'
+import { CreateSiteEntity, UpdateSiteEntity } from '@/models'
 @Component({
-  name: "site"
+  name: 'site'
 })
 export default class extends Vue {
-  async mounted() {
-    this.listData = await SiteApi.GetSites();
+  async mounted () {
+    this.listData = await SiteApi.GetSites()
   }
-  listData: ISite[] = [];
+  listData: ISite[] = []
   tableData = [
     {
       id: 1,
-      date: "2020-01-02",
-      label: "龙华",
-      value: "LH"
+      date: '2020-01-02',
+      label: '龙华',
+      value: 'LH'
     },
     {
       id: 2,
-      date: "2020-01-02",
-      label: "贵阳",
-      value: "GY"
+      date: '2020-01-02',
+      label: '贵阳',
+      value: 'GY'
     }
-  ];
+  ]
 
-  dialogVisible = false;
+  dialogVisible = false
   siteForm = {
     id: 0,
-    label: "",
-    value: "",
-    ModifyTime: "",
-    ModifyUser: ""
-  };
-
-  addSite() {
-    this.dialogVisible = true;
+    label: '',
+    value: '',
+    ModifyTime: '',
+    ModifyUser: ''
   }
 
-  validateLabel(rule: any, value: any, callback: any) {
-    if (value === "") {
-      callback(new Error(this.$t("site.labelHint").toString()));
+  addSite () {
+    this.dialogVisible = true
+  }
+
+  validateLabel (rule: any, value: any, callback: any) {
+    if (value === '') {
+      callback(new Error(this.$t('site.labelHint').toString()))
     } else {
-      callback();
+      callback()
     }
   }
-  validateName(rule: any, value: any, callback: any) {
-    if (value === "") {
-      callback(new Error(this.$t("site.nameHint").toString()));
+  validateName (rule: any, value: any, callback: any) {
+    if (value === '') {
+      callback(new Error(this.$t('site.nameHint').toString()))
     } else {
-      callback();
+      callback()
     }
   }
 
   rules = {
-    label: [{ validator: this.validateLabel, trigger: "blur" }],
-    value: [{ validator: this.validateName, trigger: "blur" }]
-  };
-  submitForm(formName: string) {
+    label: [{ validator: this.validateLabel, trigger: 'blur' }],
+    value: [{ validator: this.validateName, trigger: 'blur' }]
+  }
+  submitForm (formName: string) {
     (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
-        this.dialogVisible = false;
+        this.dialogVisible = false
         const entity: CreateSiteEntity = {
           Code: this.siteForm.value,
           Name: this.siteForm.label,
           Level: 1,
           SortIndex: 1,
           Status: 1,
-          Description: "",
-          Remark: ""
-        };
+          Description: '',
+          Remark: ''
+        }
         // 判断是新增还是编辑
         if (this.siteForm.id) {
           const updateEntity: UpdateSiteEntity = {
             CodeId: this.siteForm.id,
             ...entity
-          };
-          await SiteApi.UpdateSite(updateEntity);
-          this.resetForm(formName);
+          }
+          await SiteApi.UpdateSite(updateEntity)
+          this.resetForm(formName)
         } else {
-          await SiteApi.AddSite(entity);
+          await SiteApi.AddSite(entity)
           this.tableData.push({
             id: Math.random(),
             date: dateFormat(new Date()),
             label: this.siteForm.label,
             value: this.siteForm.value
-          });
+          })
         }
-        this.resetForm(formName);
-        this.$message(this.$t("common.saveSuccess").toString());
+        this.resetForm(formName)
+        this.$message(this.$t('common.saveSuccess').toString())
       } else {
-        console.log("error submit!!");
-        return false;
+        console.log('error submit!!')
+        return false
       }
-    });
+    })
   }
 
-  cancelForm(formName: string) {
-    this.dialogVisible = false;
-    this.resetForm(formName);
+  cancelForm (formName: string) {
+    this.dialogVisible = false
+    this.resetForm(formName)
   }
 
-  resetForm(formName: string) {
-    (this.$refs[formName] as any).resetFields();
+  resetForm (formName: string) {
+    (this.$refs[formName] as any).resetFields()
   }
 
-  handleEdit(index: any, row: any) {
-    console.log(index, row);
-    this.siteForm.id = row.CodeId;
-    this.siteForm.label = row.Name;
-    this.siteForm.value = row.Code;
-    this.dialogVisible = true;
+  handleEdit (index: any, row: any) {
+    console.log(index, row)
+    this.siteForm.id = row.CodeId
+    this.siteForm.label = row.Name
+    this.siteForm.value = row.Code
+    this.dialogVisible = true
   }
 
-  handleDelete(index: any, row: any) {
-    this.$confirm(this.$t("common.deleteConfirm").toString(), {
-      cancelButtonText: this.$t("common.cancel").toString(),
-      confirmButtonText: this.$t("common.confirm").toString()
+  handleDelete (index: any, row: any) {
+    this.$confirm(this.$t('common.deleteConfirm').toString(), {
+      cancelButtonText: this.$t('common.cancel').toString(),
+      confirmButtonText: this.$t('common.confirm').toString()
     })
       .then(_ => {
-        //删除操作
-        this.delete(index, row);
+        // 删除操作
+        this.delete(index, row)
       })
       .catch(_ => {
-        console.log("取消了删除");
-      });
+        console.log('取消了删除')
+      })
   }
 
-  async delete(index: any, row: any) {
-    await SiteApi.DeleteSite(row.CodeId);
-    let a = this.tableData.findIndex(p => p.label === row.label);
-    this.tableData.splice(a, 1);
-    console.log(index, row);
-    this.$message(this.$t("common.deleteSuccess").toString());
+  async delete (index: any, row: any) {
+    await SiteApi.DeleteSite(row.CodeId)
+    let a = this.tableData.findIndex(p => p.label === row.label)
+    this.tableData.splice(a, 1)
+    console.log(index, row)
+    this.$message(this.$t('common.deleteSuccess').toString())
   }
 }
 </script>

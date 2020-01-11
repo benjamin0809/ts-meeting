@@ -33,6 +33,15 @@ export interface IHomeDataResult {
   CreatedBy: string
 }
 
+export interface IHomeRoom {
+
+  CodeId: number
+  Code: string
+  SiteName: string
+  RoomID: number
+  RoomName: string
+}
+
 export interface IRoom {
   RoomID: number,
   RoomName: string,

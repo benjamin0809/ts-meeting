@@ -8,7 +8,7 @@ import { SCHEDULER_CN, SCHEDULER_TW, SCHEDULER_US } from '.././constant'
 
 scheduler.config.first_hour = 8
 scheduler.config.last_hour = 22
-scheduler.config.hour_size_px = 80
+scheduler.config.hour_size_px = 66
 scheduler.config.time_step = 15
 scheduler.config.min_grid_size = 20
 scheduler.config.show_loading = true

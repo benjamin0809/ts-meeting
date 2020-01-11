@@ -36,7 +36,7 @@
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
-          <el-col :span="7">
+          <el-col :span="6">
             <el-form-item prop="end">
               <!--               <el-time-picker placeholder="结束时间" v-model="form.end" style="width: 100%;"></el-time-picker> -->
               <el-time-select
@@ -292,8 +292,25 @@ export default class Scheduler extends Vue {
   }
   async mounted () {
     console.log(this.$t('login.byAccount'))
-    this.siteOptions = await AdminApi.GetSites()
-    this.allRomOptions = await RoomApi.GetActiveRoom()
+
+    const rooms = await RoomApi.GetHomeRoom()
+    console.log(rooms)
+    for (let item of rooms) {
+      if (!this.siteOptions.some(x => x.CodeId === item.CodeId)) {
+        this.siteOptions.push({
+          CodeId: item.CodeId,
+          Code: item.Code,
+          Name: item.SiteName
+        })
+      }
+      this.allRomOptions.push({
+        RoomID: item.RoomID,
+        RoomName: item.RoomName,
+        Site: item.Code
+      })
+    }
+    // this.siteOptions = await AdminApi.GetSites()
+    // this.allRomOptions = await RoomApi.GetActiveRoom()
     this.siteValue = this.siteValue || this.siteOptions[0].Code
     this.roomValue = this.allRomOptions[0].RoomID
     this.siteChanged()
@@ -365,22 +382,28 @@ export default class Scheduler extends Vue {
       const startMonth = moment(newDate).format('YYYY-MM')
       const endMonth = moment(newDate).add(7, 'd').format('YYYY-MM')
       console.log(startMonth, endMonth)
-      switch (newMode) {
-        case 'day':
-          break
-        case 'week':
-          if (!this.isloadingData) {
+      if (!this.isloadingData) {
+        switch (newMode) {
+          case 'day':
+            if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
+              this.getMeetingRoomData(startMonth)
+            }
+            break
+            break
+          case 'week':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
               this.getMeetingRoomData(startMonth)
             }
             if (!moduleScheduler.loadedDataMonths.some(m => m === endMonth)) {
               this.getMeetingRoomData(endMonth)
             }
-          }
-          break
-        case 'month':
-          console.log(moment(newDate).add(7, 'd'))
-          break
+            break
+          case 'month':
+            if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
+              this.getMeetingRoomData(startMonth)
+            }
+            break
+        }
       }
     })
   }
@@ -564,10 +587,5 @@ export default class Scheduler extends Vue {
       }
     })
   }
-
-
-
-
-
 }
 </script>
