@@ -236,7 +236,7 @@ export default class extends Vue {
     })
       .then(_ => {
         // 删除操作
-        this.delete(index, row)
+        void this.delete(index, row)
       })
       .catch(_ => {
         console.log('取消了删除')

@@ -2,7 +2,8 @@
   "extends": "tslint-config-standard",
   "rules": {
     "camelcase": [1, {"properties": "never"}],
-    "space-before-function-paren": [false, "never"]
+    "space-before-function-paren": [false, "never"],
+    "no-floating-promises": false
   },
   "globals": {
     "require": true

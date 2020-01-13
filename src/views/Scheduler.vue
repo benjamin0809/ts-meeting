@@ -264,7 +264,6 @@ export default class Scheduler extends Vue {
     room: '',
     hint: ''
   }
-
   // 暂存新增未保存的event id
   indexId = ''
 
@@ -291,7 +290,7 @@ export default class Scheduler extends Vue {
     this.roomOptions = this.allRomOptions.filter(p => p.Site === this.siteValue)
     this.roomValue =
       this.roomOptions.length > 0 ? this.roomOptions[0].RoomID : 0
-    this.refreshScheduler()
+    void this.refreshScheduler()
     this.schedulerOption.Site = this.siteValue
     moduleScheduler.setSchedulerOptions(this.schedulerOption)
   }
@@ -299,7 +298,7 @@ export default class Scheduler extends Vue {
     moduleScheduler.CLEAR_MONTH()
     // debugger;
     moduleScheduler.setSchedulerOptions(this.schedulerOption)
-    return this.refreshScheduler()
+    void this.refreshScheduler()
   }
 
   // 刷新scheduler会议室预定数据
@@ -346,7 +345,7 @@ export default class Scheduler extends Vue {
     let item = this.schedulerData.find(m => m.id.toString() === id) as ISchedulerItem
     const attachEvent = scheduler.getEvent(id)
     this.dialogVisible = true
-    if (item !== undefined) {
+    if (item && item.id > 0) {
       // 修改
       this.form.subject = item.memo
       this.form.remark = item.details
@@ -365,10 +364,7 @@ export default class Scheduler extends Vue {
     console.log('showDialog time:', moment().format('HH:mm:ss'), 'form start: ', this.form.start, ',form end:', this.form.end)
   }
   async mounted() {
-    console.log(this.$t('login.byAccount'))
-
     const rooms = await RoomApi.GetHomeRoom()
-    console.log(rooms)
     for (let item of rooms) {
       if (!this.siteOptions.some(x => x.CodeId === item.CodeId)) {
         this.siteOptions.push({
@@ -383,8 +379,6 @@ export default class Scheduler extends Vue {
         Site: item.Code
       })
     }
-    // this.siteOptions = await AdminApi.GetSites()
-    // this.allRomOptions = await RoomApi.GetActiveRoom()
     this.siteValue = this.siteValue || this.siteOptions[0].Code
     this.roomValue = this.allRomOptions[0].RoomID
     this.siteChanged()
@@ -496,7 +490,7 @@ export default class Scheduler extends Vue {
         }
         this.RecID = 0;
         // 清除dialog form
-        (this.$refs['form'] as any).resetFields()
+        (this.$refs['form'] as any).clearValidate()
       })
       .catch(_ => {
         // console.error("關閉失敗");
@@ -510,7 +504,7 @@ export default class Scheduler extends Vue {
       this.indexId = ''
     }
     this.RecID = 0;
-    (this.$refs['form'] as any).resetFields()
+    (this.$refs['form'] as any).clearValidate()
     this.dialogVisible = false
   }
 
@@ -519,7 +513,7 @@ export default class Scheduler extends Vue {
       .then(async() => {
         await RoomApi.CancelBookingRoom(this.RecID);
         // 清除dialog form
-        (this.$refs['form'] as any).resetFields()
+        (this.$refs['form'] as any).clearValidate()
         this.schedulerData = []
         this.dialogVisible = false
         scheduler.render(new Date(this.crrentDate))
@@ -621,7 +615,7 @@ export default class Scheduler extends Vue {
             scheduler.render(new Date(this.crrentDate))
             await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
             // 清除dialog form
-            (this.$refs['form'] as any).resetFields()
+            (this.$refs['form'] as any).clearValidate()
             this.dialogVisible = false
           } catch (err) {
             Message.error(err.Errmsg || 'Has Error')
@@ -645,7 +639,7 @@ export default class Scheduler extends Vue {
             scheduler.render(new Date(this.crrentDate))
             await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
             // 清除dialog form
-            (this.$refs['form'] as any).resetFields()
+            (this.$refs['form'] as any).clearValidate()
             this.dialogVisible = false
           } catch (err) {
             Message.error(err.Errmsg || 'Has Error')
