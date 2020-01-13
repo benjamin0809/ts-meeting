@@ -4,6 +4,4 @@ declare module '*.vue' {
 }
 declare module 'dhtmlx-scheduler'
 
-
 declare const scheduler: any
-

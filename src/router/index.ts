@@ -60,7 +60,7 @@ const router = new Router({
           component: Room
         }
       ]
-    },{
+    }, {
       path: '/',
       name: 'default',
       redirect: '/scheduler'

@@ -22,34 +22,34 @@ class Scheduler extends VuexModule implements ISchedulerOptions {
   public loadedDataMonths: string[] = []
 
   @Mutation
-  SET_SITE (Site: string) {
+  SET_SITE(Site: string) {
     this.Site = Site
   }
 
   @Mutation
-  SET_ROOMID (RoomId: number) {
+  SET_ROOMID(RoomId: number) {
     this.RoomId = RoomId
   }
 
   @Mutation
-  SET_TYPE (type: 'week' | 'month' | 'day') {
+  SET_TYPE(type: 'week' | 'month' | 'day') {
     this.type = type
   }
 
   @Mutation
-  ADD_MONTH (month: string) {
+  ADD_MONTH(month: string) {
     if (!this.loadedDataMonths.some(m => m === month)) {
       this.loadedDataMonths.push(month)
     }
   }
 
   @Mutation
-  CLEAR_MONTH () {
+  CLEAR_MONTH() {
     this.loadedDataMonths = []
   }
 
   @Action
-  setSchedulerOptions (schedulerOptions: ISchedulerOptions) {
+  setSchedulerOptions(schedulerOptions: ISchedulerOptions) {
     this.SET_ROOMID(schedulerOptions.RoomId)
     this.SET_SITE(schedulerOptions.Site)
     this.SET_TYPE(schedulerOptions.type)

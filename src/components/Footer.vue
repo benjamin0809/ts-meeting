@@ -1,16 +1,14 @@
 <template>
   <el-footer>
-     <el-divider>{{$t('footer.corperation')}}</el-divider>
-    </el-footer>
+    <el-divider>{{ $t('footer.corperation') }}</el-divider>
+  </el-footer>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
 @Component
-export default class Footer extends Vue {
-
-}
+export default class Footer extends Vue {}
 </script>
 
 <style>

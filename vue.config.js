@@ -18,7 +18,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    progress: false,
+    progress: false
   },
   // pwa: {
   //   name: name,

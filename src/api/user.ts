@@ -11,18 +11,12 @@ export const login = (account: string, pwd: string) => {
 export const userLogin = (account: string, password: string) => {
   return new Promise((resolve, reject) => {
     if (!account) {
-      reject({
-        result: false,
-        msg: 'account is empty'
-      })
+      reject(new Error('account is empty'))
       return
     }
 
     if (!password) {
-      reject({
-        result: false,
-        msg: 'password is empty'
-      })
+      reject(new Error('password is empty'))
       return
     }
     // tslint:disable-next-line: no-floating-promises
@@ -36,5 +30,4 @@ export const userLogin = (account: string, password: string) => {
       }
     })
   })
-
 }

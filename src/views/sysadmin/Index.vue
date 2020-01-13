@@ -13,5 +13,4 @@ import Component from 'vue-class-component'
 export default class extends Vue {}
 </script>
 
-<style>
-</style>
+<style></style>

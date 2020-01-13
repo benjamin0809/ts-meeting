@@ -41,36 +41,35 @@ export interface IRoomAPI {
 }
 
 class RoomAPI implements IRoomAPI {
-  GetHomeRoom (): Promise<IHomeRoom[]> {
+  GetHomeRoom(): Promise<IHomeRoom[]> {
     return request.get<IHomeRoom[]>('room/GetHomeRoom')
   }
-  UpdateBookingInfo (entity: IUpdateBookingRoomInput): Promise<IRoom[]> {
+  UpdateBookingInfo(entity: IUpdateBookingRoomInput): Promise<IRoom[]> {
     return request.post<any>('room/UpdateBookingInfo', entity)
   }
-  CancelBookingRoom (RecId: number): Promise<any> {
+  CancelBookingRoom(RecId: number): Promise<any> {
     return request.post<any>('room/CancelBookingRoom', { RecId })
   }
 
-  BookingRoom (entity: IBookingRoomInput): Promise<any[]> {
+  BookingRoom(entity: IBookingRoomInput): Promise<any[]> {
     return request.post<any>('room/BookingRoom', entity)
   }
 
-  GetRoom () {
+  GetRoom() {
     return request.get<IRoom[]>('room/GetRoom', { })
   }
 
-  GetActiveRoom () {
+  GetActiveRoom() {
     return request.get<IRoom[]>('room/GetActiveRoom', { })
   }
 
-  GetHomeData (queryDate: string) {
+  GetHomeData(queryDate: string) {
     return request.get<IHomeDataResult[]>('room/GetHomeData', { params: { queryDate } })
   }
 
-  GetMeetingRoomData (roomId: number, queryDate: string) {
+  GetMeetingRoomData(roomId: number, queryDate: string) {
     return request.get<IHomeDataResult[]>('room/GetMeetingRoomData', { params: { roomId, queryDate } })
   }
-
 }
 
 const instance: IRoomAPI = new RoomAPI()

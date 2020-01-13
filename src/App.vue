@@ -1,13 +1,12 @@
 <template>
   <div id="app">
-    <app-header v-if="user.Id"></app-header>
+    <app-header v-if="user.Id" />
     <el-main>
       <transition name="slide-fade">
         <router-view />
       </transition>
       <!-- <app-footer></app-footer> -->
     </el-main>
-    
   </div>
 </template>
 
@@ -32,9 +31,8 @@ const someModule = namespace('path/to/module')
   }
 })
 export default class App extends Vue {
-
   @State private user!: IUserInfo
-  created () {
+  created() {
     console.log(this.user)
   }
 }

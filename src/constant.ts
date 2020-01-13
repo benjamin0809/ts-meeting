@@ -164,7 +164,9 @@ export const SCHEDULER_TW = {
 export const SCHEDULER_US = {
   date: {
     month_full: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    month_short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], day_full: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], day_short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    month_short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    day_full: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    day_short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   },
   labels: {
     dhx_cal_today_button: 'Today',
@@ -198,9 +200,14 @@ export const SCHEDULER_US = {
     drag_to_move: 'Drag to move',
     message_ok: 'OK',
     message_cancel:
-    'Cancel', next: 'Next', prev: 'Previous',
-    year: 'Year', month: 'Month', day: 'Day',
-    hour: 'Hour', minute: 'Minute',
+    'Cancel',
+    next: 'Next',
+    prev: 'Previous',
+    year: 'Year',
+    month: 'Month',
+    day: 'Day',
+    hour: 'Hour',
+    minute: 'Minute',
     repeat_radio_day: 'Daily',
     repeat_radio_week: 'Weekly',
     repeat_radio_month: 'Monthly',

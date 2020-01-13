@@ -42,7 +42,6 @@ instance.interceptors.response.use(
     } else {
       return Promise.reject(response.data)
     }
-
   },
   (error) => {
     // 对响应错误做点什么
@@ -61,7 +60,7 @@ instance.interceptors.response.use(
 )
 
 class Request {
-  static get<T> (url: string, config?: AxiosRequestConfig | undefined) {
+  static get<T>(url: string, config?: AxiosRequestConfig | undefined) {
     return new Promise<T>((resolve, reject) => {
       instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
         resolve(res.data.Result)
@@ -71,7 +70,7 @@ class Request {
     })
   }
 
-  static post<T> (url: string, data: any, config?: AxiosRequestConfig | undefined) {
+  static post<T>(url: string, data: any, config?: AxiosRequestConfig | undefined) {
     return new Promise<T>((resolve, reject) => {
       instance.post<IResponseResult<T>>(url, data, config).then((res: AxiosResponse<IResponseResult<T>>) => {
         resolve(res.data.Result)

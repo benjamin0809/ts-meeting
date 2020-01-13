@@ -13,7 +13,7 @@
  * @returns {string}
  */
 export const dateFormat = (date: Date | string, sFormat: String = 'yyyy-MM-dd') => {
-  if (typeof(date) === 'string') {
+  if (typeof (date) === 'string') {
     date = new Date(date)
   }
   let time = {
@@ -66,5 +66,4 @@ export const dateFormat = (date: Date | string, sFormat: String = 'yyyy-MM-dd') 
     .replace(/ss/ig, time.TSecond)
     .replace(/s/ig, String(time.Second))
     .replace(/fff/ig, String(time.Millisecond))
-
 }

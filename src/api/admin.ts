@@ -42,28 +42,28 @@ export interface IAdminAPI {
   GetRoom (): Promise<MeetingRoomEntity[]>
 }
 class AdminAPI implements IAdminAPI {
-  DeleteRoom (RoomID: number): Promise<any> {
+  DeleteRoom(RoomID: number): Promise<any> {
     return request.post<any>('admin/DeleteRoom', { RoomID })
   }
-  UpdateRoom (entity: UpdateMeetingRoomEntity): Promise<any> {
+  UpdateRoom(entity: UpdateMeetingRoomEntity): Promise<any> {
     return request.post<any>('admin/UpdateRoom', entity)
   }
-  AddRoom (entity: CreateMeetingRoomEntity): Promise<any> {
+  AddRoom(entity: CreateMeetingRoomEntity): Promise<any> {
     return request.post<any>('admin/AddRoom', entity)
   }
-  GetRoom (): Promise<MeetingRoomEntity[]> {
+  GetRoom(): Promise<MeetingRoomEntity[]> {
     throw request.get<MeetingRoomEntity[]>('admin/GetRoom', { })
   }
-  GetSites (): Promise<ISite[]> {
+  GetSites(): Promise<ISite[]> {
     return request.get<ISite[]>('admin/GetSite', { })
   }
-  DeleteSite (CodeId: number): Promise<any> {
+  DeleteSite(CodeId: number): Promise<any> {
     return request.post<any>('admin/DeleteSite', { CodeId })
   }
-  UpdateSite (entity: UpdateSiteEntity): Promise<any> {
+  UpdateSite(entity: UpdateSiteEntity): Promise<any> {
     return request.post<any>('admin/UpdateSite', entity)
   }
-  AddSite (entity: CreateSiteEntity): Promise<any> {
+  AddSite(entity: CreateSiteEntity): Promise<any> {
     return request.post<any>('admin/AddSite', entity)
   }
 }

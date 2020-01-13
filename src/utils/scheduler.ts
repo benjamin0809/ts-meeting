@@ -1,9 +1,9 @@
 // import 'dhtmlx-scheduler'
 import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.js'
 import 'dhtmlx-scheduler/codebase/ext/dhtmlxscheduler_container_autoresize.js'
-import 'dhtmlx-scheduler/codebase/ext/dhtmlxscheduler_minical.js'
-import 'dhtmlx-scheduler/codebase/locale/locale_cn.js'
-import 'dhtmlx-scheduler/codebase/locale/locale_en.js'
+// import 'dhtmlx-scheduler/codebase/ext/dhtmlxscheduler_minical.js'
+// import 'dhtmlx-scheduler/codebase/locale/locale_cn.js'
+// import 'dhtmlx-scheduler/codebase/locale/locale_en.js'
 import { SCHEDULER_CN, SCHEDULER_TW, SCHEDULER_US } from '.././constant'
 
 scheduler.config.first_hour = 8
@@ -11,7 +11,7 @@ scheduler.config.last_hour = 22
 scheduler.config.hour_size_px = 66
 scheduler.config.time_step = 15
 scheduler.config.min_grid_size = 20
-scheduler.config.show_loading = true
+// scheduler.config.show_loading = true
 scheduler.config.drag_lightbox = false
 scheduler.config.drag_highlight = true
 

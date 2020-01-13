@@ -1,38 +1,70 @@
 <template>
   <div>
     <el-dialog
+      ref="siteDialog"
       :title="$t('site.dialogTitle')"
       :visible.sync="dialogVisible"
       width="30%"
-      ref="siteDialog"
       @close="resetForm('siteForm')"
     >
-      <el-form :model="siteForm" :rules="rules" ref="siteForm">
-        <el-form-item :label="$t('site.label')" prop="label">
-          <el-input type="text" v-model="siteForm.label" auto-complete="off" placeholder="如：龙华"></el-input>
+      <el-form
+        ref="siteForm"
+        :model="siteForm"
+        :rules="rules"
+      >
+        <el-form-item
+          :label="$t('site.label')"
+          prop="label"
+        >
+          <el-input
+            v-model="siteForm.label"
+            type="text"
+            auto-complete="off"
+            placeholder="如：龙华"
+          />
         </el-form-item>
-        <el-form-item :label="$t('site.name')" prop="value">
-          <el-input type="text" v-model="siteForm.value" auto-complete="off" placeholder="LH"></el-input>
+        <el-form-item
+          :label="$t('site.name')"
+          prop="value"
+        >
+          <el-input
+            v-model="siteForm.value"
+            type="text"
+            auto-complete="off"
+            placeholder="LH"
+          />
         </el-form-item>
       </el-form>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelForm('siteForm')">{{$t('room.cancel')}}</el-button>
-        <el-button type="primary" @click="submitForm('siteForm')">{{$t('room.confirm')}}</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="cancelForm('siteForm')">{{ $t('room.cancel') }}</el-button>
+        <el-button
+          type="primary"
+          @click="submitForm('siteForm')"
+        >{{ $t('room.confirm') }}</el-button>
       </span>
     </el-dialog>
 
     <div class="page-title">
-      {{$t('site.title')}}
+      {{ $t('site.title') }}
       <el-button
         size="mini"
         type="primary"
-        @click="addSite"
         style="margin-left:20px;"
-      >{{$t('room.add')}}</el-button>
+        @click="addSite"
+      >
+        {{ $t('room.add') }}
+      </el-button>
     </div>
 
-    <el-table :data="listData" style="width: 100%" :empty-text="$t('common.noData')">
+    <el-table
+      :data="listData"
+      style="width: 100%"
+      :empty-text="$t('common.noData')"
+    >
       <!-- <el-table-column label="日期" width="180">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
@@ -40,13 +72,19 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column :label="$t('site.label')" width="180">
+      <el-table-column
+        :label="$t('site.label')"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.Code }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('site.name')" width="180">
+      <el-table-column
+        :label="$t('site.name')"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.Name }}</span>
         </template>
@@ -54,12 +92,19 @@
 
       <el-table-column :label="$t('site.operation')">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">{{$t('room.edit')}}</el-button>
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)"
+          >
+            {{ $t('room.edit') }}
+          </el-button>
           <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
-          >{{$t('room.delete')}}</el-button>
+          >
+            {{ $t('room.delete') }}
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,7 +122,7 @@ import { CreateSiteEntity, UpdateSiteEntity } from '@/models'
   name: 'site'
 })
 export default class extends Vue {
-  async mounted () {
+  async mounted() {
     this.listData = await SiteApi.GetSites()
   }
   listData: ISite[] = []
@@ -105,18 +150,18 @@ export default class extends Vue {
     ModifyUser: ''
   }
 
-  addSite () {
+  addSite() {
     this.dialogVisible = true
   }
 
-  validateLabel (rule: any, value: any, callback: any) {
+  validateLabel(rule: any, value: any, callback: any) {
     if (value === '') {
       callback(new Error(this.$t('site.labelHint').toString()))
     } else {
       callback()
     }
   }
-  validateName (rule: any, value: any, callback: any) {
+  validateName(rule: any, value: any, callback: any) {
     if (value === '') {
       callback(new Error(this.$t('site.nameHint').toString()))
     } else {
@@ -128,8 +173,8 @@ export default class extends Vue {
     label: [{ validator: this.validateLabel, trigger: 'blur' }],
     value: [{ validator: this.validateName, trigger: 'blur' }]
   }
-  submitForm (formName: string) {
-    (this.$refs[formName] as any).validate(async (valid: boolean) => {
+  submitForm(formName: string) {
+    (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
         this.dialogVisible = false
         const entity: CreateSiteEntity = {
@@ -167,16 +212,16 @@ export default class extends Vue {
     })
   }
 
-  cancelForm (formName: string) {
+  cancelForm(formName: string) {
     this.dialogVisible = false
     this.resetForm(formName)
   }
 
-  resetForm (formName: string) {
+  resetForm(formName: string) {
     (this.$refs[formName] as any).resetFields()
   }
 
-  handleEdit (index: any, row: any) {
+  handleEdit(index: any, row: any) {
     console.log(index, row)
     this.siteForm.id = row.CodeId
     this.siteForm.label = row.Name
@@ -184,7 +229,7 @@ export default class extends Vue {
     this.dialogVisible = true
   }
 
-  handleDelete (index: any, row: any) {
+  handleDelete(index: any, row: any) {
     this.$confirm(this.$t('common.deleteConfirm').toString(), {
       cancelButtonText: this.$t('common.cancel').toString(),
       confirmButtonText: this.$t('common.confirm').toString()
@@ -198,7 +243,7 @@ export default class extends Vue {
       })
   }
 
-  async delete (index: any, row: any) {
+  async delete(index: any, row: any) {
     await SiteApi.DeleteSite(row.CodeId)
     let a = this.tableData.findIndex(p => p.label === row.label)
     this.tableData.splice(a, 1)

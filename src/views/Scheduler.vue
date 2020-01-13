@@ -1,112 +1,187 @@
 <template>
   <div>
     <!-- 会议室预定dialog -->
-    <el-dialog :title="$t('schedulerDialog.title')" :visible.sync="dialogVisible" :before-close="handleClose">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item :label="$t('schedulerDialog.subject')" prop="subject">
-          <el-input v-model="form.subject"></el-input>
+    <el-dialog
+      :title="$t('schedulerDialog.title')"
+      :visible.sync="dialogVisible"
+      :before-close="handleClose"
+    >
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-width="80px"
+      >
+        <el-form-item
+          :label="$t('schedulerDialog.subject')"
+          prop="subject"
+        >
+          <el-input v-model="form.subject" />
         </el-form-item>
-        <el-form-item :label="$t('schedulerDialog.remark')" prop="remark">
-          <el-input type="textarea" v-model="form.remark"></el-input>
+        <el-form-item
+          :label="$t('schedulerDialog.remark')"
+          prop="remark"
+        >
+          <el-input
+            v-model="form.remark"
+            type="textarea"
+          />
         </el-form-item>
-        <el-form-item :label="$t('schedulerDialog.contact')" prop="contact">
-          <el-input v-model="form.contact"></el-input>
+        <el-form-item
+          :label="$t('schedulerDialog.contact')"
+          prop="contact"
+        >
+          <el-input v-model="form.contact" />
         </el-form-item>
         <el-form-item :label="$t('schedulerDialog.meetingTime')">
           <el-col :span="7">
             <el-form-item prop="date">
               <el-date-picker
+                v-model="form.date"
                 type="date"
                 :placeholder="$t('schedulerDialog.chooseDate')"
-                v-model="form.date"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
-              ></el-date-picker>
+              />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="2">-</el-col>
+          <el-col
+            class="line"
+            :span="2"
+          >
+            -
+          </el-col>
           <el-col :span="7">
             <el-form-item prop="start">
               <!--               <el-time-picker placeholder="开始时间" v-model="form.start" style="width: 100%;"></el-time-picker> -->
               <el-time-select
-                :placeholder="$t('schedulerDialog.startTime')"
                 v-model="form.start"
+                :placeholder="$t('schedulerDialog.startTime')"
                 :picker-options="{start: '08:30',step: '00:30',end: '21:00'}"
-              ></el-time-select>
+              />
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="1">-</el-col>
+          <el-col
+            class="line"
+            :span="1"
+          >
+            -
+          </el-col>
           <el-col :span="6">
             <el-form-item prop="end">
               <!--               <el-time-picker placeholder="结束时间" v-model="form.end" style="width: 100%;"></el-time-picker> -->
               <el-time-select
-                :placeholder="$t('schedulerDialog.endTime')"
                 v-model="form.end"
+                :placeholder="$t('schedulerDialog.endTime')"
                 :picker-options="{start: '08:30',step: '00:30',end: '21:00',minTime: form.start}"
-              ></el-time-select>
+              />
             </el-form-item>
           </el-col>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelDialog">{{$t('schedulerDialog.cancel')}}</el-button>
-        <el-button @click="cancelBooking">{{$t('schedulerDialog.delete')}}</el-button>
-        <el-button type="primary" @click="saveDialog('form')">{{$t('schedulerDialog.save')}}</el-button>
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="cancelDialog">{{ $t('schedulerDialog.cancel') }}</el-button>
+        <el-button @click="cancelBooking">{{ $t('schedulerDialog.delete') }}</el-button>
+        <el-button
+          type="primary"
+          @click="saveDialog('form')"
+        >{{ $t('schedulerDialog.save') }}</el-button>
       </span>
     </el-dialog>
 
     <!--公告通知  -->
-    <div class="notice-container" >
+    <div class="notice-container">
       <el-collapse>
-        <el-collapse-item name="1" class="notice">
+        <el-collapse-item
+          name="1"
+          class="notice"
+        >
           <template slot="title">
-            <i class="header-icon el-icon-s-promotion"></i>
-            {{$t('notice.notice')}}
+            <i class="header-icon el-icon-s-promotion" />
+            {{ $t('notice.notice') }}
           </template>
           <!--           <el-table ref="singleTable" :data="showNotices" style="width: 100%">
             <el-table-column type="index" width="30"></el-table-column>
             <el-table-column property="Content"></el-table-column>
           </el-table>-->
 
-          <div v-for="(item, name, index) in showNotices" :key="index" >{{item.Content}}</div>
+          <div
+            v-for="(item, name, index) in showNotices"
+            :key="index"
+          >
+            {{ item.Content }}
+          </div>
         </el-collapse-item>
       </el-collapse>
     </div>
 
     <!--scheduler组件  -->
-    <div ref="container" class="widget-box dhx_cal_container">
+    <div
+      ref="container"
+      class="widget-box dhx_cal_container"
+    >
       <div class="dhx_cal_navline">
-        <div class="dhx_cal_prev_button">&nbsp;</div>
-        <div class="dhx_cal_next_button">&nbsp;</div>
-        <div class="dhx_cal_today_button"></div>
-        <div class="dhx_cal_date"></div>
-        <div class="dhx_cal_tab day_tab" name="day_tab"></div>
-        <div class="dhx_cal_tab week_tab" name="week_tab"></div>
-        <div class="dhx_cal_tab month_tab" name="month_tab"></div>
+        <div class="dhx_cal_prev_button">
+&nbsp;
+        </div>
+        <div class="dhx_cal_next_button">
+&nbsp;
+        </div>
+        <div class="dhx_cal_today_button" />
+        <div class="dhx_cal_date" />
+        <div
+          class="dhx_cal_tab day_tab"
+          name="day_tab"
+        />
+        <div
+          class="dhx_cal_tab week_tab"
+          name="week_tab"
+        />
+        <div
+          class="dhx_cal_tab month_tab"
+          name="month_tab"
+        />
         <!--厂区/会议室选择 -->
-        <div class="dhx_cal_tab site_tab" name="site_tab">
-          <el-select v-model="siteValue" class="site_select" @change="siteChanged">
+        <div
+          class="dhx_cal_tab site_tab"
+          name="site_tab"
+        >
+          <el-select
+            v-model="siteValue"
+            class="site_select"
+            @change="siteChanged"
+          >
             <el-option
               v-for="item in siteOptions"
               :key="item.Code"
               :label="item.Name"
               :value="item.Code"
-            ></el-option>
+            />
           </el-select>
         </div>
-        <div class="dhx_cal_tab room_tab" name="room_tab">
-          <el-select v-model="roomValue" class="room_select" @change="roomChanged">
+        <div
+          class="dhx_cal_tab room_tab"
+          name="room_tab"
+        >
+          <el-select
+            v-model="roomValue"
+            class="room_select"
+            @change="roomChanged"
+          >
             <el-option
               v-for="item in roomOptions"
               :key="item.RoomID"
               :label="item.RoomName"
               :value="item.RoomID"
-            ></el-option>
+            />
           </el-select>
         </div>
       </div>
-      <div class="dhx_cal_header"></div>
-      <div class="dhx_cal_data"></div>
+      <div class="dhx_cal_header" />
+      <div class="dhx_cal_data" />
     </div>
   </div>
 </template>
@@ -159,7 +234,7 @@
   text-align: left;
 }
 </style>
- 
+
 <script lang='ts'>
 import Vue from 'vue'
 
@@ -210,7 +285,7 @@ export default class Scheduler extends Vue {
   roomValue = moduleScheduler.RoomId
   crrentDate = new Date()
   RecID = 0
-  siteChanged () {
+  siteChanged() {
     // console.log(this.siteValue)
     // this.roomOptions = getSiteRooms(this.siteValue)
     this.roomOptions = this.allRomOptions.filter(p => p.Site === this.siteValue)
@@ -220,21 +295,21 @@ export default class Scheduler extends Vue {
     this.schedulerOption.Site = this.siteValue
     moduleScheduler.setSchedulerOptions(this.schedulerOption)
   }
-  roomChanged () {
+  roomChanged() {
     moduleScheduler.CLEAR_MONTH()
     // debugger;
     moduleScheduler.setSchedulerOptions(this.schedulerOption)
-    this.refreshScheduler()
+    return this.refreshScheduler()
   }
 
   // 刷新scheduler会议室预定数据
-  async refreshScheduler () {
+  async refreshScheduler() {
     console.log(this.roomValue)
     this.schedulerData = []
     await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'))
   }
 
-  async getMeetingRoomData (month: string) {
+  async getMeetingRoomData(month: string) {
     try {
       this.isloadingData = true
       const data = await RoomApi.GetMeetingRoomData(this.roomValue, month)
@@ -242,7 +317,7 @@ export default class Scheduler extends Vue {
       const list: ISchedulerItem[] = []
       data.forEach((item) => {
         const schedulerItem: ISchedulerItem = {
-          id : item.RecID,
+          id: item.RecID,
           start_date: item.Start_Date,
           end_date: item.End_Date,
           text: item.Text,
@@ -261,19 +336,18 @@ export default class Scheduler extends Vue {
     }
   }
 
-  renderSchedulerData () {
+  renderSchedulerData() {
     scheduler.clearAll()
     scheduler.parse(this.schedulerData, 'json')
     scheduler.updateView()
   }
 
-  showDialog (id: string) {
-    let item = this.schedulerData.find(m => m.id.toString() === id)
+  showDialog(id: string) {
+    let item = this.schedulerData.find(m => m.id.toString() === id) as ISchedulerItem
     const attachEvent = scheduler.getEvent(id)
     this.dialogVisible = true
     if (item !== undefined) {
       // 修改
-      item = item as ISchedulerItem
       this.form.subject = item.memo
       this.form.remark = item.details
       this.form.contact = item.tel
@@ -290,7 +364,7 @@ export default class Scheduler extends Vue {
 
     console.log('showDialog time:', moment().format('HH:mm:ss'), 'form start: ', this.form.start, ',form end:', this.form.end)
   }
-  async mounted () {
+  async mounted() {
     console.log(this.$t('login.byAccount'))
 
     const rooms = await RoomApi.GetHomeRoom()
@@ -323,6 +397,7 @@ export default class Scheduler extends Vue {
     scheduler.attachEvent('onDragEnd', (id: string) => {
       console.log('onDragEnd showDialog id:', id)
       this.showDialog(id)
+      return false
     })
 
     scheduler.templates.month_date_class = (date: any, today: any) => {
@@ -386,21 +461,20 @@ export default class Scheduler extends Vue {
         switch (newMode) {
           case 'day':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth)
             }
-            break
             break
           case 'week':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth)
             }
             if (!moduleScheduler.loadedDataMonths.some(m => m === endMonth)) {
-              this.getMeetingRoomData(endMonth)
+              return this.getMeetingRoomData(endMonth)
             }
             break
           case 'month':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth)
             }
             break
         }
@@ -408,11 +482,11 @@ export default class Scheduler extends Vue {
     })
   }
 
-  destroyed () {
+  destroyed() {
     console.log('destroyed')
     moduleScheduler.CLEAR_MONTH()
   }
-  handleClose (done: any) {
+  handleClose(done: any) {
     this.$confirm(this.$t('schedulerDialog.closeHint').toString())
       .then(_ => {
         done()
@@ -429,7 +503,7 @@ export default class Scheduler extends Vue {
       })
   }
 
-  cancelDialog () {
+  cancelDialog() {
     // 清除dialog form
     if (this.indexId !== '') {
       scheduler.deleteEvent(this.indexId)
@@ -440,9 +514,9 @@ export default class Scheduler extends Vue {
     this.dialogVisible = false
   }
 
-  cancelBooking () {
-    this.$confirm(this.$t('schedulerDialog.cancelHint').toString(),{ type: 'warning' })
-      .then(async () => {
+  cancelBooking() {
+    this.$confirm(this.$t('schedulerDialog.cancelHint').toString(), { type: 'warning' })
+      .then(async() => {
         await RoomApi.CancelBookingRoom(this.RecID);
         // 清除dialog form
         (this.$refs['form'] as any).resetFields()
@@ -457,14 +531,14 @@ export default class Scheduler extends Vue {
   }
 
   // dialog form表单验证
-  validateSubject (rule: any, value: any, callback: any) {
+  validateSubject(rule: any, value: any, callback: any) {
     if (value === '') {
       callback(new Error(this.$t('schedulerDialog.subjectHint').toString()))
     } else {
       callback()
     }
   }
-  validateContact (rule: any, value: any, callback: any) {
+  validateContact(rule: any, value: any, callback: any) {
     if (value === '') {
       callback(new Error(this.$t('schedulerDialog.contactHint').toString()))
     // } else if (/(^(\d{3,4}-)?\d{5,9})$|(1[3|5|7|8]\d{9})/.test(value)) {
@@ -474,8 +548,8 @@ export default class Scheduler extends Vue {
     }
   }
 
-  validateDate (rule: any, value: any, callback: any) {
-    if (this.form.date === null) {
+  validateDate(rule: any, value: any, callback: any) {
+    if (this.form.date === '') {
       callback(new Error(this.$t('schedulerDialog.dateInputHint').toString()))
     } else {
       if (moment(this.form.date).isBefore(moment(), 'day')) {
@@ -485,8 +559,8 @@ export default class Scheduler extends Vue {
       }
     }
   }
-  validateStart (rule: any, value: any, callback: any) {
-    if (this.form.start === null) {
+  validateStart(rule: any, value: any, callback: any) {
+    if (this.form.start === '') {
       callback(new Error(this.$t('schedulerDialog.startHint').toString()))
     } else {
       let start = new Date(this.form.start)
@@ -498,8 +572,8 @@ export default class Scheduler extends Vue {
       }
     }
   }
-  validateEnd (rule: any, value: any, callback: any) {
-    if (this.form.end === null) {
+  validateEnd(rule: any, value: any, callback: any) {
+    if (this.form.end === '') {
       callback(new Error(this.$t('schedulerDialog.endHint').toString()))
     } else {
       let start = new Date(this.form.start)
@@ -521,17 +595,16 @@ export default class Scheduler extends Vue {
   }
 
   // 保存 dialog form
-  saveDialog (formName: string) {
-    (this.$refs[formName] as any).validate(async (valid: boolean) => {
+  saveDialog(formName: string) {
+    (this.$refs[formName] as any).validate(async(valid: boolean) => {
       if (valid) {
-
         const BookingEntity: IBookingRoomEntity = {
           MeetingMemo: this.form.subject,
           StartTime: this.form.date + ' ' + this.form.start,
           EndTime: this.form.date + ' ' + this.form.end,
           Remark: this.form.remark,
           Tel: this.form.contact,
-          ExtString1 : '',
+          ExtString1: '',
           RoomID: this.roomValue
         }
 

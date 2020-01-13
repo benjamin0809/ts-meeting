@@ -27,32 +27,32 @@ class User extends VuexModule implements IUserInfo {
   public Id = initVal.Id
 
   @Mutation
-  SET_NAME (userName: string) {
+  SET_NAME(userName: string) {
     this.UserName = userName
   }
 
   @Mutation
-  SET_TOKEN (Token: string) {
+  SET_TOKEN(Token: string) {
     this.Token = Token
   }
 
   @Mutation
-  SET_USERNO (userNo: string) {
+  SET_USERNO(userNo: string) {
     this.UserNo = userNo
   }
 
   @Mutation
-  SET_EMAIL (Email: string) {
+  SET_EMAIL(Email: string) {
     this.UserNo = Email
   }
 
   @Mutation
-  SET_ID (Id: number) {
+  SET_ID(Id: number) {
     this.Id = Id
   }
 
   @Mutation
-  LOGOUT () {
+  LOGOUT() {
     sessionStorage.removeItem('user')
     this.UserName = ''
     this.Email = ''
@@ -61,10 +61,9 @@ class User extends VuexModule implements IUserInfo {
     this.Token = ''
   }
   @Action
-  public async login (userinfo: { account: string, password: string }) {
-
+  public async login(userinfo: { account: string, password: string }) {
     try {
-      const pwd = DesHelper.DesEncrypt(userinfo.password,SCERET)
+      const pwd = DesHelper.DesEncrypt(userinfo.password, SCERET)
       console.log(userinfo.account, pwd)
       const data = await login(userinfo.account, pwd)
 
@@ -81,7 +80,7 @@ class User extends VuexModule implements IUserInfo {
   }
 
   @Action
-  logout () {
+  logout() {
     this.LOGOUT()
   }
 }
