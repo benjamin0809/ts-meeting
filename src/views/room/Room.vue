@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding:0px 40px 20px 20px;">
     <div class="page-title">
       {{ $t('room.roomManage') }}
       <el-button
@@ -11,57 +11,74 @@
         {{ $t('room.add') }}
       </el-button>
     </div>
-
     <el-dialog
-      ref="roomDialog"
-      :title="$t('room.dialogTitle')"
+      :title="
+        roomForm.RoomID ? $t('room.dialogTitle1') : $t('room.dialogTitle')
+      "
       :visible.sync="dialogVisible"
       width="30%"
       @close="resetForm('roomForm')"
     >
       <el-form
-        ref="roomForm"
         :model="roomForm"
         :rules="rules"
+        ref="roomForm"
+        label-width="100px"
       >
-        <el-form-item
-          :label="$t('room.name')"
-          prop="name"
-        >
+        <el-form-item :label="$t('room.name')" prop="name">
           <el-input
-            v-model="roomForm.name"
             type="text"
+            v-model="roomForm.RoomName"
             auto-complete="off"
             placeholder
-          />
+          ></el-input>
         </el-form-item>
-        <el-form-item
-          :label="$t('room.site')"
-          prop="site"
-        >
+        <el-form-item :label="$t('room.site')" prop="site">
           <el-select
-            v-model="roomForm.site"
+            v-model="roomForm.Site"
             :placeholder="$t('room.pleaseChoose')"
           >
             <el-option
               v-for="item in siteData"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+              :key="item.CodeId"
+              :label="item.Name"
+              :value="item.Code"
+            ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('room.deptCode')" prop="deptId">
+          <el-input
+            type="text"
+            v-model="roomForm.DeptID"
+            auto-complete="off"
+            placeholder
+          ></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('room.position')" prop="position">
+          <el-input
+            type="text"
+            v-model="roomForm.Position"
+            auto-complete="off"
+            placeholder
+          ></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('room.device')" prop="device">
+          <el-input
+            type="text"
+            v-model="roomForm.Device"
+            auto-complete="off"
+            placeholder
+          ></el-input>
         </el-form-item>
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="cancelForm('roomForm')">{{ $t('room.cancel') }}</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm('roomForm')"
-        >{{ $t('room.confirm') }}</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelForm('roomForm')">{{
+          $t('room.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="submitForm('roomForm')">{{
+          $t('room.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
 
@@ -71,42 +88,63 @@
           <i class="el-icon-date" />
           {{ $t('room.all') }}
         </span>
+        <!--         所有会议室 -->
         <el-table
-          :data="roomData"
+          :data="listData"
+          border
           style="width: 100%"
           :empty-text="$t('common.noData')"
         >
           <el-table-column
-            :label="$t('room.date')"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <i class="el-icon-time" />
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
+            prop="RoomName"
             :label="$t('room.name')"
-            width="500"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-
+            width="200"
+          ></el-table-column>
           <el-table-column
-            :label="$t('room.site')"
-            width="180"
-          >
+            prop="Position"
+            :label="$t('room.position')"
+            width="150"
+          ></el-table-column>
+          <el-table-column :label="$t('room.site')" width="100" align="center">
             <template slot-scope="scope">
-              <el-tag size="medium">
-                {{ scope.row.site }}
-              </el-tag>
+              <el-tag size="medium">{{ scope.row.Site }}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column
+            prop="StatusId"
+            :label="$t('room.valid')"
+            width="100"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="Device"
+            :label="$t('room.device')"
+            width="200"
+          ></el-table-column>
+          <el-table-column
+            prop="CreatedBy"
+            :label="$t('site.creator')"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="CreatedTime"
+            :label="$t('site.createTime')"
+            sortable
+            width="160"
+          ></el-table-column>
+          <el-table-column
+            prop="LastUpdatedBy"
+            :label="$t('site.updator')"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="LastUpdatedTime"
+            :label="$t('site.updateTime')"
+            sortable
+            width="160"
+          ></el-table-column>
 
-          <el-table-column :label="$t('room.operation')">
+          <el-table-column :label="$t('room.operation')" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -125,47 +163,56 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane
-        v-for="item in siteData"
-        :key="item.label"
-        :label="item.label"
-      >
+      <!--         厂区会议室 -->
+      <el-tab-pane v-for="item in siteData" :label="item.Name" :key="item.Code">
         <el-table
-          :data="roomData.filter(p => p.site===item.value)"
+          :data="listData.filter(p => p.Site == item.Code)"
           style="width: 100%"
           :empty-text="$t('common.noData')"
         >
           <el-table-column
-            :label="$t('room.date')"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <i class="el-icon-time" />
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column
+            prop="RoomName"
             :label="$t('room.name')"
-            width="500"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.name }}</span>
-            </template>
-          </el-table-column>
-
+            width="200"
+          ></el-table-column>
           <el-table-column
-            :label="$t('room.site')"
-            width="180"
-          >
+            prop="Position"
+            :label="$t('room.position')"
+            width="150"
+          ></el-table-column>
+          <el-table-column :label="$t('room.site')" width="100" align="center">
             <template slot-scope="scope">
-              <el-tag size="medium">
-                {{ scope.row.site }}
-              </el-tag>
+              <el-tag size="medium">{{ scope.row.Site }}</el-tag>
             </template>
           </el-table-column>
-          <!-- align="right" -->
-          <el-table-column :label="$t('room.operation')">
+          <el-table-column
+            prop="StatusId"
+            :label="$t('room.valid')"
+            width="100"
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="Device"
+            :label="$t('room.device')"
+            width="200"
+          ></el-table-column>
+          <el-table-column
+            prop="CreatedBy"
+            :label="$t('site.creator')"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="CreatedTime"
+            :label="$t('site.createTime')"
+            sortable
+            width="160"
+          ></el-table-column>
+          <el-table-column
+            prop="LastUpdatedBy"
+            :label="$t('site.updator')"
+            width="150"
+          ></el-table-column>
+          <el-table-column :label="$t('room.operation')" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -190,59 +237,54 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import moment from 'moment'
 import Component from 'vue-class-component'
 import { dateFormat } from '../../utils/date'
+import RoomApi from '@/api/admin'
+import {
+  UpdateSiteEntity,
+  CreateSiteEntity,
+  ISite,
+  IRoom,
+  UpdateMeetingRoomEntity,
+  CreateMeetingRoomEntity,
+  MeetingRoomEntity
+} from '@/models'
+
 @Component({
   name: 'manage'
 })
 export default class extends Vue {
-  siteData = [
-    {
-      date: '2020-01-02',
-      label: '龙华',
-      value: 'LH'
-    },
-    {
-      date: '2020-01-02',
-      label: '贵阳',
-      value: 'GY'
-    }
-  ]
+  listData: MeetingRoomEntity[] = []
+  siteData: ISite[] = []
+  async mounted() {
+    this.siteData = await RoomApi.GetSites()
+    this.refreshList()
+  }
 
-  roomData = [
-    {
-      id: 1,
-      date: '2016-05-02',
-      name: 'E7棟4樓視訊會議室2',
-      site: 'LH'
-    },
-    {
-      id: 2,
-      date: '2016-05-04',
-      name: 'E7棟4樓視訊會議室1',
-      site: 'LH'
-    },
-    {
-      id: 3,
-      date: '2016-05-01',
-      name: '貴陽1.5F教育訓練室（一）',
-      site: 'GY'
-    },
-    {
-      id: 4,
-      date: '2016-05-03',
-      name: '貴陽1.5F教育訓練室（二）',
-      site: 'GY'
-    }
-  ]
+  async refreshList() {
+    this.listData = await RoomApi.GetRoom()
+    console.log('allrooms', this.listData)
+    this.listData.forEach(item => {
+      item.CreatedTime &&
+        (item.CreatedTime = moment(item.CreatedTime).format('YYYY-MM-DD HH:mm:ss'))
+
+      item.LastUpdatedTime &&
+        (item.LastUpdatedTime = moment(item.LastUpdatedTime).format('YYYY-MM-DD HH:mm:ss'))
+    })
+  }
 
   dialogVisible = false
-  roomForm = {
-    id: 0,
-    name: '',
-    site: '',
-    ModifyTime: '',
-    ModifyUser: ''
+  roomForm: IRoom = {
+    RoomID: 0,
+    RoomName: '',
+    Site: '',
+    DeptID: '',
+    Position: '',
+    StatusID: 1,
+    ExtInt1: 0,
+    ExtInt2: 0,
+    Device: ''
   }
 
   addRoom() {
@@ -250,14 +292,14 @@ export default class extends Vue {
   }
 
   validateName(rule: any, value: any, callback: any) {
-    if (value === '') {
+    if (this.roomForm.RoomName === '') {
       callback(new Error(this.$t('room.nameHint').toString()))
     } else {
       callback()
     }
   }
   validateSite(rule: any, value: any, callback: any) {
-    if (this.roomForm.site === '') {
+    if (this.roomForm.Site === '') {
       callback(new Error(this.$t('room.siteHint').toString()))
     } else {
       callback()
@@ -270,28 +312,36 @@ export default class extends Vue {
   }
 
   submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
         this.dialogVisible = false
-        // 判断是新增还是编辑
-        const index = this.roomData.findIndex(p => p.id === this.roomForm.id)
-        if (index > -1) {
-          let updateItem = this.roomData.find(p => p.id === this.roomForm.id)
-          if (updateItem) {
-            updateItem.name = this.roomForm.name
-            updateItem.site = this.roomForm.site
-          }
-          // this.resetForm(formName);
-        } else {
-          this.roomData.push({
-            id: Math.random(),
-            date: dateFormat(new Date()),
-            name: this.roomForm.name,
-            site: this.roomForm.site
-          })
+        const entity: CreateMeetingRoomEntity = {
+          RoomName: this.roomForm.RoomName,
+          DeptID: this.roomForm.DeptID,
+          Position: this.roomForm.Position,
+          StatusID: this.roomForm.StatusID,
+          ExtInt1: this.roomForm.ExtInt1,
+          ExtInt2: this.roomForm.ExtInt2,
+          Device: this.roomForm.Device,
+          Site: this.roomForm.Site
         }
-
+        console.log('submit:',this.roomForm)
+        // 判断是新增还是编辑
+        if (this.roomForm.RoomID) {
+          const updateEntity: UpdateMeetingRoomEntity = {
+            RoomID: this.roomForm.RoomID,
+            ...entity
+          }
+          console.log('updateEntity',updateEntity)
+          await RoomApi.UpdateRoom(updateEntity)
+          this.resetForm(formName)
+        } else {
+          // 添加到數據表中
+          await RoomApi.AddRoom(entity)
+        }
         this.resetForm(formName)
+        // 更新頁面數據
+        this.refreshList()
         this.$message(this.$t('common.saveSuccess').toString())
       } else {
         console.log('error submit!!')
@@ -307,13 +357,29 @@ export default class extends Vue {
 
   resetForm(formName: string) {
     (this.$refs[formName] as any).resetFields()
+    this.roomForm = {
+      RoomID: 0,
+      RoomName: '',
+      Site: '',
+      DeptID: '',
+      Position: '',
+      StatusID: 1,
+      ExtInt1: 0,
+      ExtInt2: 0,
+      Device: ''
+    }
   }
 
   handleEdit(index: any, row: any) {
     console.log(index, row)
-    this.roomForm.id = row.id
-    this.roomForm.name = row.name
-    this.roomForm.site = row.site
+    this.roomForm.RoomID = row.RoomID
+    this.roomForm.RoomName = row.RoomName
+    this.roomForm.Site = row.Site
+    this.roomForm.DeptID = row.DeptID
+    this.roomForm.Position = row.Position
+    this.roomForm.StatusID = row.StatusID
+    this.roomForm.Device = row.Device
+    console.log('editRoom:',this.roomForm)
     this.dialogVisible = true
   }
 
@@ -324,14 +390,18 @@ export default class extends Vue {
     })
       .then(_ => {
         // 删除操作
-        let a = this.roomData.findIndex(p => p.name === row.name)
-        this.roomData.splice(a, 1)
-        console.log(index, row)
-        this.$message(this.$t('common.deleteSuccess').toString())
+        this.delete(index, row)
       })
       .catch(_ => {
         console.log('取消了删除')
       })
+  }
+  async delete(index: any, row: any) {
+    // 接口刪除
+    await RoomApi.DeleteRoom(row.RoomID)
+    this.$message(this.$t('common.deleteSuccess').toString())
+    // 更新頁面數據
+    this.refreshList()
   }
 }
 </script>

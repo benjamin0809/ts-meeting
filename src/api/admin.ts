@@ -1,5 +1,5 @@
 import request from '../utils/request'
-import { UpdateSiteEntity, CreateSiteEntity, ISite, UpdateMeetingRoomEntity, CreateMeetingRoomEntity, MeetingRoomEntity } from '@/models'
+import { UpdateSiteEntity, CreateSiteEntity, ISite, IRoom, UpdateMeetingRoomEntity, CreateMeetingRoomEntity, MeetingRoomEntity } from '@/models'
 
 export interface IAdminAPI {
   /**
@@ -52,7 +52,7 @@ class AdminAPI implements IAdminAPI {
     return request.post<any>('admin/AddRoom', entity)
   }
   GetRoom(): Promise<MeetingRoomEntity[]> {
-    throw request.get<MeetingRoomEntity[]>('admin/GetRoom', { })
+    return request.get<MeetingRoomEntity[]>('admin/GetRoom', { })
   }
   GetSites(): Promise<ISite[]> {
     return request.get<ISite[]>('admin/GetSite', { })

@@ -3,20 +3,14 @@
     <div class="box">
       <div class="left-box">
         <el-carousel indicator-position="outside">
-          <el-carousel-item
-            v-for="item in 4"
-            :key="item"
-          >
+          <el-carousel-item v-for="item in 4" :key="item">
             <h3>{{ item }}</h3>
           </el-carousel-item>
         </el-carousel>
       </div>
 
       <div class="right-box">
-        <el-tabs
-          type="border-card"
-          class="login-card"
-        >
+        <el-tabs type="border-card" class="login-card">
           <el-tab-pane :label="$t('login.byAccount')">
             <el-form
               ref="ruleForm2"
@@ -26,20 +20,14 @@
               label-width="120px"
               class="demo-ruleForm"
             >
-              <el-form-item
-                :label="$t('login.account')"
-                prop="account"
-              >
+              <el-form-item :label="$t('login.account')" prop="account">
                 <el-input
                   v-model="ruleForm2.account"
                   type="text"
                   auto-complete="off"
                 />
               </el-form-item>
-              <el-form-item
-                :label="$t('login.pass')"
-                prop="pass"
-              >
+              <el-form-item :label="$t('login.pass')" prop="pass">
                 <el-input
                   v-model="ruleForm2.pass"
                   type="password"
@@ -47,23 +35,16 @@
                 />
               </el-form-item>
               <el-form-item>
-                <el-button
-                  type="primary"
-                  @click="submitForm('ruleForm2')"
-                >
-                  {{ $t('login.submit') }}
-                </el-button>
-                <el-button @click="resetForm('ruleForm2')">
-                  {{ $t('login.reset') }}
-                </el-button>
+                <el-button type="primary" @click="submitForm('ruleForm2')">{{
+                  $t('login.submit')
+                }}</el-button>
+                <el-button @click="resetForm('ruleForm2')">{{
+                  $t('login.reset')
+                }}</el-button>
               </el-form-item>
             </el-form>
             <!--      workflow登录提示 -->
-            <div
-              v-for="(item,index) in showHints"
-              :key="index"
-              class="hint"
-            >
+            <div v-for="(item, index) in showHints" :key="index" class="hint">
               {{ item.index }}. {{ item.content }}
             </div>
             <!--      选择语言 -->
@@ -75,15 +56,12 @@
                 type="primary"
                 plain
                 @click="changeLang(lang)"
+                >{{ lang.lang }}</el-button
               >
-                {{ lang.lang }}
-              </el-button>
             </el-row>
           </el-tab-pane>
 
-          <el-tab-pane :label="$t('login.byiProud')">
-            Config
-          </el-tab-pane>
+          <el-tab-pane :label="$t('login.byiProud')">Config</el-tab-pane>
         </el-tabs>
       </div>
       <!--     -->
@@ -97,7 +75,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Action } from 'vuex-class'
 import { DesHelper } from '@/utils/des'
-import { LANGUAGES } from '@/constant'
+import { LANGUAGES, LOGIN_HINTS } from '@/constant'
 @Component
 export default class extends Vue {
   @Action('login') private login!: any
@@ -108,19 +86,10 @@ export default class extends Vue {
     window.location.reload()
   }
 
-  showHints = [
-    { index: 1, content: '用戶密碼與Workflow帳號相同;' },
-    {
-      index: 2,
-      content:
-        '如無Workflow帳號員工，請到http://workflow.fih-foxconn.com網站進行帳號申請;'
-    },
-    {
-      index: 3,
-      content:
-        '如用戶密碼忘記，可打560-106要求重置密碼或到http://workflow.fih-foxconn.com網站恢複密碼。'
-    }
-  ]
+  hints = LOGIN_HINTS
+  hintItem = this.hints.find(p => p.lang === localStorage.getItem('lang'))
+
+  showHints = this.hintItem && this.hintItem.hints
 
   /*   checkAge (rule: any, value: any, callback: any) {
     if (!value) {
@@ -152,7 +121,8 @@ export default class extends Vue {
       callback(new Error(this.$t('login.passHint').toString()))
     } else {
       if (this.ruleForm2.checkPass !== '') {
-        (this.$refs.ruleForm2 as any).validateField('checkPass')
+        console.log('')
+        ;(this.$refs.ruleForm2 as any).validateField('checkPass')
       }
       callback()
     }
@@ -214,7 +184,7 @@ export default class extends Vue {
 <style lang="scss" scope>
 #login::after {
   clear: both;
-  content: "";
+  content: '';
   display: block;
 }
 #login {
@@ -227,7 +197,7 @@ export default class extends Vue {
 }
 .box::after {
   clear: both;
-  content: "";
+  content: '';
   display: block;
 }
 

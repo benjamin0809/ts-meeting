@@ -23,15 +23,9 @@
       </el-submenu>
 
       <el-submenu index="3">
-        <template slot="title">
-          {{ user.UserNo }}
-        </template>
-        <el-menu-item index="3-1">
-          {{ $t('menu.userInfo') }}
-        </el-menu-item>
-        <el-menu-item index="3-2">
-          {{ $t('menu.setting') }}
-        </el-menu-item>
+        <template slot="title">{{user.UserNo}}</template>
+        <el-menu-item index="/user/profile">{{$t('menu.userInfo')}}</el-menu-item>
+        <el-menu-item index="/user/setting">{{$t('menu.setting')}}</el-menu-item>
 
         <el-menu-item index="/login">
           {{ $t('menu.exit') }}

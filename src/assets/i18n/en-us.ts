@@ -6,7 +6,8 @@ module.exports = {
     confirm: 'Confirm',
     noData: 'No any data now.',
     deleteSuccess: 'Deleted successfully~',
-    saveSuccess: 'Saved successfully~'
+    saveSuccess: 'Saved successfully~',
+    numberHint: 'please input a number'
   },
 
   menu: {
@@ -68,8 +69,13 @@ module.exports = {
     roomManage: 'Meeting room management',
     add: 'Add',
     dialogTitle: 'Add a meeting room',
+    dialogTitle1: 'Edit the meeting room',
     name: 'Name',
     site: 'Site',
+    valid: 'Valid',
+    device: 'Device',
+    position: 'Position',
+    deptCode: 'DeptCode',
     pleaseChoose: 'please choose...',
     cancel: 'Cancel',
     confirm: 'Confirm',
@@ -82,8 +88,18 @@ module.exports = {
   },
   site: {
     dialogTitle: 'Add a site of meeting room',
-    label: 'Label',
+    dialogTitle1: 'Edit the site of meeting room',
+    code: 'Code',
     name: 'Name',
+    level: 'Level',
+    sort: 'Sequence',
+    status: 'Enable',
+    description: 'Description',
+    remark: 'Remark',
+    creator: 'Creator',
+    createTime: 'Create Time',
+    updator: 'Updator',
+    updateTime: 'Update Time',
     cancel: 'Cancel',
     confirm: 'Confirm',
     title: 'Sites of meeting rooms',

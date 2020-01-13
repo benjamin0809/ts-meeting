@@ -46,12 +46,31 @@ export interface IRoom {
   RoomID: number,
   RoomName: string,
   Site: string
+  DeptID?: string
+  Position?: string
+  StatusID?: number
+  CreatedBy?: string,
+  CreatedTime?: string,
+  LastUpdatedBy?: string,
+  LastUpdatedTime?: string,
+  ExtInt1?: number
+  ExtInt2?: number
+  Device?: string
 }
 
 export interface ISite {
   CodeId: number,
-  Code: string
-  Name: string
+  Code: string,
+  Name: string,
+  Level?: number,
+  SortIndex?: number,
+  Status?: number,
+  Description?: string,
+  Remark?: string,
+  CreatedBy?: string,
+  CreatedTime?: string,
+  LastUpdatedBy?: string,
+  LastUpdatedTime?: string
 }
 export interface ISchedulerItem {
   id: number

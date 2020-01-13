@@ -229,3 +229,31 @@ export const SCHEDULER_US = {
     day_for_recurring: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   }
 }
+
+export const LOGIN_HINTS = [
+  {
+    lang: 'zh-cn',
+    hints: [
+      { index: 1,content: '用户密码与Workflow帐号相同; ' },
+      { index: 2,content: '如无Workflow帐号员工，请到http://workflow.fih-foxconn.com网站进行帐号申请;' },
+      { index: 3,content: '如用户密码忘记，可打560-106要求重置密码或到http://workflow.fih-foxconn.com网站恢复密码。' }
+    ]
+  },
+  {
+    lang: 'zh-tw',
+    hints: [
+      { index: 1,content: '用戶密碼與Workflow帳號相同; ' },
+      { index: 2,content: '如無Workflow帳號員工，請到http://workflow.fih-foxconn.com網站進行帳號申請;' },
+      { index: 3,content: '如用戶密碼忘記，可打560-106要求重置密碼或到http://workflow.fih-foxconn.com網站恢複密碼。' }
+    ]
+  },
+  {
+    lang: 'en-us',
+    hints: [
+      { index: 1,content: 'The user password is the same as the workflow account;' },
+      { index: 2,content: 'If there is no employee with workflow account, please go to http://workflow.fih-foxconn.com to apply for the account;' },
+      { index: 3,content: 'If you forget your password, you can call 560-106 to reset it or go to http://workflow.fih-foxconn.com to restore it.' }
+    ]
+  }
+
+]

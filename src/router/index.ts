@@ -9,6 +9,9 @@ import RoleManage from '@/views/sysadmin/RoleManage.vue'
 import Room from '@/views/room/Room.vue'
 import Site from '@/views/room/Site.vue'
 import Index from '@/views/room/Index.vue'
+import User from '@/views/user/Index.vue'
+import Profile from '@/views/user/Profile.vue'
+import Setting from '@/views/user/Setting.vue'
 import UserManage from '@/views/sysadmin/UserManage.vue'
 Vue.use(Router)
 
@@ -64,6 +67,23 @@ const router = new Router({
       path: '/',
       name: 'default',
       redirect: '/scheduler'
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: User,
+      children: [
+        {
+          path: '/user/profile',
+          name: 'profile',
+          component: Profile
+        },
+        {
+          path: '/user/setting',
+          name: 'setting',
+          component: Setting
+        }
+      ]
     }
   ]
 })
