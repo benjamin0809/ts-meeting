@@ -46,6 +46,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('room.valid')" prop="valid">
+          <el-radio-group v-model="roomForm.StatusID">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">不启用</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item :label="$t('room.deptCode')" prop="deptId">
           <el-input
             type="text"
@@ -111,7 +117,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="StatusId"
+            prop="StatusID"
             :label="$t('room.valid')"
             width="100"
             align="center"
@@ -186,7 +192,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="StatusId"
+            prop="StatusID"
             :label="$t('room.valid')"
             width="100"
             align="center"
@@ -208,9 +214,15 @@
             width="160"
           ></el-table-column>
           <el-table-column
-            prop="LastUpdatedBy"
+            prop="LastUpdateBy"
             :label="$t('site.updator')"
             width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="LastUpdatedTime"
+            :label="$t('site.updateTime')"
+            sortable
+            width="160"
           ></el-table-column>
           <el-table-column :label="$t('room.operation')" align="center">
             <template slot-scope="scope">
