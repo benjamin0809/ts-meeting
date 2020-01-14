@@ -9,7 +9,9 @@ module.exports = {
     noData: '暫無數據',
     deleteSuccess: '刪除成功~',
     saveSuccess: '保存成功~',
-    numberHint: '請輸入數字'
+    numberHint: '請輸入數字',
+    enable: '啟用',
+    disable: '不啟用'
   },
   menu: {
     home: '首頁',

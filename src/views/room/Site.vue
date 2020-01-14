@@ -32,8 +32,8 @@
         </el-form-item>
         <el-form-item :label="$t('site.valid')" prop="valid">
           <el-radio-group v-model="siteForm.Status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">不启用</el-radio>
+            <el-radio :label="1">{{$t('common.enable')}}</el-radio>
+            <el-radio :label="0">{{$t('common.disable')}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('site.level')" prop="level">

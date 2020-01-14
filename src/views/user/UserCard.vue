@@ -21,10 +21,10 @@
       </div>
       <div class="box-center">
         <div class="user-name text-center">
-          {{ user.UserName }} ({{ user.UserNo }})
+        {{ user.UserName }} 
         </div>
         <div class="user-role text-center text-muted">
-          admin
+         {{ user.UserNo }} 
         </div>
       </div>
     </div>
@@ -32,18 +32,18 @@
     <div class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header">
-          <span>Education</span>
+          <span><i class="el-icon-s-custom"></i>&nbsp;Role</span>
         </div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            JS in Computer Science from the University of Technology
+            <el-tag>系統管理員</el-tag>
           </div>
         </div>
       </div>
 
       <div class="user-skills user-bio-section">
         <div class="user-bio-section-header">
-          <span>Skills</span>
+          <span><i class="el-icon-menu"></i>&nbsp;Permission</span>
         </div>
         <div class="user-bio-section-body">
           <div class="progress-item">
@@ -89,6 +89,7 @@ export default class UserCard extends Vue {
   height = '100px'
   width = '100px'
   defaultAvatar = './icon.gif'
+
 }
 </script>
 

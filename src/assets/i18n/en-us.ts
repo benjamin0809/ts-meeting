@@ -7,7 +7,9 @@ module.exports = {
     noData: 'No any data now.',
     deleteSuccess: 'Deleted successfully~',
     saveSuccess: 'Saved successfully~',
-    numberHint: 'please input a number'
+    numberHint: 'please input a number',
+    enable: 'Enable',
+    disable: 'Disable'
   },
 
   menu: {

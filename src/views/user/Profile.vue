@@ -5,14 +5,14 @@
   >
     <el-row :gutter="20">
       <el-col
-        :span="6"
+        :span="4"
         :xs="24"
       >
         <user-card :user="user" />
       </el-col>
 
       <el-col
-        :span="18"
+        :span="20"
         :xs="24"
       >
         <el-card>
@@ -24,7 +24,7 @@
               <reservation />
             </el-tab-pane>
             <el-tab-pane
-              label="Timeline"
+              label="我的足跡"
               name="timeline"
             >
               <timeline />

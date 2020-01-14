@@ -48,8 +48,8 @@
         </el-form-item>
         <el-form-item :label="$t('room.valid')" prop="valid">
           <el-radio-group v-model="roomForm.StatusID">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">不启用</el-radio>
+            <el-radio :label="1">{{$t('common.enable')}}</el-radio>
+            <el-radio :label="0">{{$t('common.disable')}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('room.deptCode')" prop="deptId">
@@ -139,7 +139,7 @@
             width="160"
           ></el-table-column>
           <el-table-column
-            prop="LastUpdatedBy"
+            prop="LastUpdateBy"
             :label="$t('site.updator')"
             width="150"
           ></el-table-column>
