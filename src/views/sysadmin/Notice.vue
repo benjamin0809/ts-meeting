@@ -19,25 +19,15 @@
       width="30%"
       @close="resetForm('noticeForm')"
     >
-      <el-form
-        ref="noticeForm"
-        :model="noticeForm"
-        :rules="rules"
-      >
-        <el-form-item
-          :label="$t('notice.content')"
-          prop="content"
-        >
+      <el-form ref="noticeForm" :model="noticeForm" :rules="rules">
+        <el-form-item :label="$t('notice.content')" prop="Content">
           <el-input
             v-model="noticeForm.Content"
             type="text"
             auto-complete="off"
           />
         </el-form-item>
-        <el-form-item
-          :label="$t('notice.ableSite')"
-          prop="site"
-        >
+<!--         <el-form-item :label="$t('notice.ableSite')" prop="site">
           <el-select
             v-model="noticeForm.Sites"
             :placeholder="$t('notice.pleaseChoose')"
@@ -50,20 +40,14 @@
               :value="item.value"
             />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="cancelForm('noticeForm')">{{
           $t('notice.cancel')
         }}</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm('noticeForm')"
-        >{{
+        <el-button type="primary" @click="submitForm('noticeForm')">{{
           $t('notice.confirm')
         }}</el-button>
       </span>
@@ -71,7 +55,7 @@
 
     <el-table
       :data="
-        tableData.filter(
+        listData.filter(
           data =>
             !search || data.Content.toLowerCase().includes(search.toLowerCase())
         )
@@ -81,18 +65,15 @@
     >
       <el-table-column
         :label="$t('notice.modifyDate')"
-        prop="ModifyDate"
+        prop="LastUpdatedTime"
         width="150"
       />
       <el-table-column
         :label="$t('notice.modifyUser')"
-        prop="ModifyUser"
+        prop="LastUpdatedBy"
         width="130"
       />
-      <el-table-column
-        :label="$t('notice.content')"
-        prop="Content"
-      />
+      <el-table-column :label="$t('notice.content')" prop="Content" />
       <el-table-column align="center">
         <template slot="header">
           <el-input
@@ -102,10 +83,7 @@
           />
         </template>
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
             {{ $t('notice.edit') }}
           </el-button>
           <el-button
@@ -124,32 +102,46 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { getShowNotices } from '../../api/notice'
+import { INotice, CreateNoticeEntity, UpdateNoticeEntity } from '@/models'
+import NoticeApi from '@/api/notice'
+import moment from 'moment'
 import { dateFormat } from '../../utils/date'
 @Component
 export default class Notice extends Vue {
   search = ''
-  siteData = [
-    {
-      date: '2020-01-02',
-      label: '龙华',
-      value: 'LH'
-    },
-    {
-      date: '2020-01-02',
-      label: '贵阳',
-      value: 'GY'
-    }
-  ]
 
-  tableData = getShowNotices()
+  listData: INotice[] = []
+  async mounted() {
+    this.refreshList()
+  }
 
-  noticeForm = {
-    Id: 0,
-    ModifyDate: '',
-    ModifyUser: '李如梦',
+  async refreshList() {
+    this.listData = await NoticeApi.GetNotices()
+    this.listData.forEach(item => {
+      item.CreatedTime &&
+        (item.CreatedTime = moment(item.CreatedTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ))
+
+      item.LastUpdatedTime &&
+        (item.LastUpdatedTime = moment(item.LastUpdatedTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ))
+    })
+    console.log('allNotices', this.listData)
+  }
+
+  noticeForm: INotice = {
+    AnnounceId: 0,
+    Title: '',
     Content: '',
-    Sites: []
+    Type: '',
+    AttFileLength: 0,
+    AttFileNameOri: '',
+    AttFileNameUni: '',
+    EffectedDate: '',
+    Status: 1,
+    Remark: ''
   }
 
   dialogVisible = false
@@ -157,13 +149,13 @@ export default class Notice extends Vue {
     this.dialogVisible = true
   }
 
-  validateSite(rule: any, value: any, callback: any) {
+  /*   validateSite(rule: any, value: any, callback: any) {
     if (this.noticeForm.Sites.length === 0) {
       callback(new Error(this.$t('notice.ableSiteHint').toString()))
     } else {
       callback()
     }
-  }
+  } */
   validateContent(rule: any, value: any, callback: any) {
     if (this.noticeForm.Content === '') {
       callback(new Error(this.$t('notice.contentHint').toString()))
@@ -172,32 +164,39 @@ export default class Notice extends Vue {
     }
   }
   rules = {
-    content: [{ validator: this.validateContent, trigger: 'blur' }],
-    site: [{ validator: this.validateSite, trigger: 'blur' }]
+    content: [{ validator: this.validateContent, trigger: 'blur' }]
+    // site: [{ validator: this.validateSite, trigger: 'blur' }]
   }
 
   submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
         this.dialogVisible = false
+        const entity: CreateNoticeEntity = {
+          Title: this.noticeForm.Title,
+          Content: this.noticeForm.Content,
+          Type: this.noticeForm.Type,
+          AttFileLength: this.noticeForm.AttFileLength,
+          AttFileNameOri: this.noticeForm.AttFileNameOri,
+          AttFileNameUni: this.noticeForm.AttFileNameUni,
+          EffectedDate: this.noticeForm.EffectedDate,
+          Status: this.noticeForm.Status,
+          Remark: this.noticeForm.Remark
+        }
         // 判断是新增还是编辑
-        const index = this.tableData.findIndex(p => p.Id === this.noticeForm.Id)
-        if (index > -1) {
-          let updateItem = this.tableData.find(p => p.Id === this.noticeForm.Id)
-          if (updateItem) {
-            updateItem.Content = this.noticeForm.Content
-            // updateItem.site = this.roomForm.site;
+        if (this.noticeForm.AnnounceId) {
+          const updateEntity: UpdateNoticeEntity = {
+            AnnounceId: this.noticeForm.AnnounceId,
+            ...entity
           }
-          // this.resetForm(formName);
+          await NoticeApi.UpdateNotice(updateEntity)
         } else {
-          this.tableData.push({
-            Id: Math.random(),
-            ModifyDate: dateFormat(new Date()),
-            Content: this.noticeForm.Content,
-            ModifyUser: '李如梦'
-          })
+          // 添加到數據表中
+          await NoticeApi.AddNotice(entity)
         }
         this.$message(this.$t('common.saveSuccess').toString())
+        // 更新頁面數據
+        this.refreshList()
         this.resetForm(formName)
       } else {
         console.log('error submit!!')
@@ -213,12 +212,32 @@ export default class Notice extends Vue {
 
   resetForm(formName: string) {
     (this.$refs[formName] as any).resetFields()
+    this.noticeForm = {
+      AnnounceId: 0,
+      Title: '',
+      Content: '',
+      Type: '',
+      AttFileLength: 0,
+      AttFileNameOri: '',
+      AttFileNameUni: '',
+      EffectedDate: '',
+      Status: 1,
+      Remark: ''
+    }
   }
 
   handleEdit(index: any, row: any) {
     console.log(index, row)
-    this.noticeForm.Id = row.Id
+    this.noticeForm.AnnounceId = row.AnnounceId
+    this.noticeForm.Title = row.Title
     this.noticeForm.Content = row.Content
+    this.noticeForm.Title = row.Title
+    this.noticeForm.Type = row.Type
+    this.noticeForm.AttFileLength = row.AttFileLength
+    this.noticeForm.AttFileNameOri = row.AttFileNameOri
+    this.noticeForm.EffectedDate = row.EffectedDate
+    this.noticeForm.Status = row.Status
+    this.noticeForm.Remark = row.Remark
     this.dialogVisible = true
   }
 
@@ -229,14 +248,20 @@ export default class Notice extends Vue {
     })
       .then(_ => {
         // 删除操作
-        let a = this.tableData.findIndex(p => p.Id === row.Id)
-        this.tableData.splice(a, 1)
-        console.log(index, row)
-        this.$message(this.$t('common.deleteSuccess').toString())
+        void this.delete(index, row)
       })
       .catch(_ => {
         console.log('取消了删除')
       })
+  }
+  async delete(index: any, row: any) {
+    // 接口刪除
+    console.log(row.AnnounceId)
+    await NoticeApi.DeleteNotice(row.AnnounceId)
+
+    this.$message(this.$t('common.deleteSuccess').toString())
+    // 更新頁面數據
+    this.refreshList()
   }
 }
 </script>

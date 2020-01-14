@@ -245,7 +245,6 @@ import { Message } from 'element-ui'
 import { moduleScheduler } from '@/store/scheduler'
 import RoomApi from '@/api/room'
 import AdminApi from '@/api/admin'
-import { getShowNotices } from '../api/notice'
 import { dateFormat } from '../utils/date'
 import { IRoom, ISite, ISchedulerItem, IBookingRoomInput, IBookingRoomEntity, IUpdateBookingRoomEntity, IUpdateBookingRoomInput } from '../models'
 import { ISchedulerOptions } from '../models/scheduler'
@@ -275,7 +274,7 @@ export default class Scheduler extends Vue {
     Site: moduleScheduler.Site
   }
   // 获取首页公告通知
-  showNotices = getShowNotices()
+  showNotices = []
   // 获取site/room
   siteOptions: ISite[] = []
   siteValue = moduleScheduler.Site
