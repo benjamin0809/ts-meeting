@@ -114,7 +114,9 @@ module.exports = {
   },
   role: {
     roleManage: 'Roles Management',
+    add: 'Add',
     addRole: 'Add a role',
+    editRole: 'Edit the role',
     code: 'Code',
     name: 'Name',
     description: 'Description',

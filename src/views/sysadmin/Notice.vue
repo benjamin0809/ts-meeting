@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding:20px 40px 20px 20px;">
     <div class="page-title">
       {{ $t('notice.noticeManage') }}
       <el-button
@@ -105,7 +105,6 @@ import Component from 'vue-class-component'
 import { INotice, CreateNoticeEntity, UpdateNoticeEntity } from '@/models'
 import NoticeApi from '@/api/notice'
 import moment from 'moment'
-import { dateFormat } from '../../utils/date'
 @Component
 export default class Notice extends Vue {
   search = ''

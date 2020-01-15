@@ -117,7 +117,9 @@ module.exports = {
   },
   role: {
     roleManage: '角色管理',
+    add: '添加',
     addRole: '添加角色',
+    editRole: '編輯角色',
     code: '角色代碼',
     name: '角色名稱',
     description: '角色描述',

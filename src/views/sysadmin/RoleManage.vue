@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding:20px 40px 20px 20px;">
     <div class="page-title">
       {{ $t('role.roleManage') }}
       <el-button
@@ -8,13 +8,13 @@
         style="margin-left:20px;"
         @click="addRole"
       >
-        {{ $t('role.addRole') }}
+        {{ $t('role.add') }}
       </el-button>
     </div>
 
     <el-dialog
       ref="roleDialog"
-      :title="$t('role.addRole')"
+      :title="roleForm.RoleID ? $t('role.editRole') : $t('role.addRole')"
       :visible.sync="dialogVisible"
       width="30%"
       @close="resetForm('roleForm')"
@@ -25,34 +25,26 @@
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item
-          :label="$t('role.code')"
-          prop="code"
-        >
+        <el-form-item :label="$t('role.code')">
           <el-input
-            v-model="roleForm.code"
+            v-model="roleForm.RoleType"
+            type="text"
+            auto-complete="off"
+            placeholder
+            :disabled="true"
+          />
+        </el-form-item>
+        <el-form-item :label="$t('role.name')" prop="name">
+          <el-input
+            v-model="roleForm.RoleName"
             type="text"
             auto-complete="off"
             placeholder
           />
         </el-form-item>
-        <el-form-item
-          :label="$t('role.name')"
-          prop="name"
-        >
+        <el-form-item :label="$t('role.description')" prop="description">
           <el-input
-            v-model="roleForm.name"
-            type="text"
-            auto-complete="off"
-            placeholder
-          />
-        </el-form-item>
-        <el-form-item
-          :label="$t('role.description')"
-          prop="description"
-        >
-          <el-input
-            v-model="roleForm.description"
+            v-model="roleForm.Description"
             type="text"
             auto-complete="off"
             placeholder
@@ -68,17 +60,11 @@
         </el-form-item>
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="cancelForm('roleForm')">{{
           $t('role.cancel')
         }}</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm('roleForm')"
-        >{{
+        <el-button type="primary" @click="submitForm('roleForm')">{{
           $t('role.confirm')
         }}</el-button>
       </span>
@@ -91,45 +77,41 @@
       :empty-text="$t('common.noData')"
     >
       <el-table-column
-        prop="code"
+        prop="RoleType"
         :label="$t('role.code')"
         width="180"
         align="center"
       />
       <el-table-column
-        prop="name"
+        prop="RoleName"
         :label="$t('role.name')"
         width="180"
         align="center"
       />
-      <el-table-column
-        prop="description"
-        :label="$t('role.description')"
-      />
-      <el-table-column
-        prop="tag"
-        :label="$t('role.tag')"
-        width="180"
-        align="center"
-      >
+      <el-table-column prop="Description" :label="$t('role.description')" />
+      <el-table-column :label="$t('role.tag')" width="180" align="center">
         <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.tag"
-            :type="scope.row.tag === '系统' ? 'primary' : 'success'"
-          >
-            {{ scope.row.tag }}
+          <el-tag v-if="scope.row.RoleType === 1" type="primary">
+            {{ $t('role.admin') }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('role.operation')"
+        prop="CreateUser"
+        :label="$t('site.creator')"
         align="center"
-      >
+        width="150"
+      ></el-table-column>
+      <el-table-column
+        prop="CreateDate"
+        :label="$t('site.createTime')"
+        align="center"
+        sortable
+        width="160"
+      ></el-table-column>
+      <el-table-column :label="$t('role.operation')" align="center">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="handleEdit(scope.$index, scope.row)"
-          >
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">
             {{ $t('role.edit') }}
           </el-button>
           <el-button
@@ -148,7 +130,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { dateFormat } from '../../utils/date'
+import { IRole, CreateRoleEntity, UpdateRoleEntity } from '@/models'
+import RoleApi from '@/api/role'
+import moment from 'moment'
 @Component
 export default class RoleManage extends Vue {
   menus = [
@@ -208,93 +192,78 @@ export default class RoleManage extends Vue {
     children: 'children',
     label: 'label'
   }
+  tableData: IRole[] = []
+  async mounted() {
+    this.refreshList()
+  }
 
-  tableData = [
-    {
-      id: 1,
-      code: 'Admin',
-      name: '系统管理员',
-      description: 'Super Administrator. Have access to view all pages.',
-      tag: '系统'
-    },
-    {
-      id: 2,
-      code: 'SiteAdmin',
-      name: '厂区管理员',
-      description: '可以维护对应厂区的会议室信息及公告通知'
-    },
-    {
-      id: 3,
-      code: 'User',
-      name: '默认普通用户',
-      description: '只能预订会议室',
-      tag: '默认'
-    }
-  ]
+  async refreshList() {
+    this.tableData = await RoleApi.GetRoles()
+    this.tableData.forEach(item => {
+      item.CreateDate &&
+        (item.CreateDate = moment(item.CreateDate).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ))
+    })
+    console.log('allRoles', this.tableData)
+    this.roleForm.RoleType = this.tableData.length + 1
+  }
 
   dialogVisible = false
-  roleForm = {
-    id: 0,
-    code: '',
-    name: '',
-    description: '',
-    ModifyTime: '',
-    ModifyUser: ''
+  roleForm: IRole = {
+    RoleID: 0,
+    RoleType: this.tableData.length + 1,
+    RoleName: '',
+    Description: ''
   }
 
   addRole() {
     this.dialogVisible = true
   }
 
-  validateCode(rule: any, value: any, callback: any) {
-    if (value === '') {
-      callback(new Error(this.$t('role.codeHint').toString()))
-    } else {
-      callback()
-    }
-  }
   validateName(rule: any, value: any, callback: any) {
-    if (value === '') {
+    if (this.roleForm.RoleName === '') {
       callback(new Error(this.$t('role.nameHint').toString()))
     } else {
       callback()
     }
   }
   validateDescription(rule: any, value: any, callback: any) {
-    if (value === '') {
+    if (this.roleForm.Description === '') {
       callback(new Error(this.$t('role.descripHint').toString()))
     } else {
       callback()
     }
   }
   rules = {
-    code: [{ validator: this.validateCode, trigger: 'blur' }],
     name: [{ validator: this.validateName, trigger: 'blur' }],
     description: [{ validator: this.validateDescription, trigger: 'blur' }]
   }
   submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
         this.dialogVisible = false
         // 判断是新增还是编辑
-        const index = this.tableData.findIndex(p => p.id === this.roleForm.id)
-        if (index > -1) {
-          let updateItem = this.tableData.find(p => p.id === this.roleForm.id)
-          if (updateItem) {
-            updateItem.code = this.roleForm.code
-            updateItem.name = this.roleForm.name
-            updateItem.description = this.roleForm.description
-          }
-        } else {
-          this.tableData.push({
-            id: Math.random(),
-            code: this.roleForm.code,
-            name: this.roleForm.name,
-            description: this.roleForm.description
-          })
+        const entity: CreateRoleEntity = {
+          RoleType: this.roleForm.RoleType,
+          RoleName: this.roleForm.RoleName,
+          Description: this.roleForm.Description
         }
-        this.resetForm(formName)
+        // 判断是新增还是编辑
+        if (this.roleForm.RoleID) {
+          const updateEntity: UpdateRoleEntity = {
+            RoleID: this.roleForm.RoleID,
+            ...entity
+          }
+          await RoleApi.UpdateRole(updateEntity)
+        } else {
+          // 添加到數據表中
+          await RoleApi.AddRole(entity)
+        }
         this.$message(this.$t('common.saveSuccess').toString())
+        // 更新頁面數據
+        this.refreshList()
+        this.resetForm(formName)
       } else {
         console.log('error submit!!')
         return false
@@ -309,14 +278,20 @@ export default class RoleManage extends Vue {
 
   resetForm(formName: string) {
     (this.$refs[formName] as any).resetFields()
+    this.roleForm = {
+      RoleID: 0,
+      RoleType: this.tableData.length + 1,
+      RoleName: '',
+      Description: ''
+    }
   }
 
   handleEdit(index: any, row: any) {
     console.log(index, row)
-    this.roleForm.id = row.id
-    this.roleForm.code = row.code
-    this.roleForm.name = row.name
-    this.roleForm.description = row.description
+    this.roleForm.RoleID = row.RoleID
+    this.roleForm.RoleType = row.RoleType
+    this.roleForm.RoleName = row.RoleName
+    this.roleForm.Description = row.Description
     this.dialogVisible = true
   }
   handleDelete(index: any, row: any) {
@@ -326,14 +301,18 @@ export default class RoleManage extends Vue {
     })
       .then(_ => {
         // 删除操作
-        let a = this.tableData.findIndex(p => p.id === row.id)
-        this.tableData.splice(a, 1)
-        console.log(index, row)
-        this.$message(this.$t('common.deleteSuccess').toString())
+        void this.delete(index, row)
       })
       .catch(_ => {
         console.log('取消了删除')
       })
+  }
+  async delete(index: any, row: any) {
+    // 接口刪除
+    await RoleApi.DeleteRole(row.RoleID)
+    this.$message(this.$t('common.deleteSuccess').toString())
+    // 更新頁面數據
+    this.refreshList()
   }
 }
 </script>
