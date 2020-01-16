@@ -48,8 +48,8 @@
         </el-form-item>
         <el-form-item :label="$t('room.valid')" prop="valid">
           <el-radio-group v-model="roomForm.StatusID">
-            <el-radio :label="1">{{$t('common.enable')}}</el-radio>
-            <el-radio :label="0">{{$t('common.disable')}}</el-radio>
+            <el-radio :label="1">{{ $t('common.enable') }}</el-radio>
+            <el-radio :label="0">{{ $t('common.disable') }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="$t('room.deptCode')" prop="deptId">
@@ -97,6 +97,7 @@
         <!--         所有会议室 -->
         <el-table
           :data="listData"
+          :loading="loading"
           border
           style="width: 100%"
           :empty-text="$t('common.noData')"
@@ -113,7 +114,7 @@
           ></el-table-column>
           <el-table-column :label="$t('room.site')" width="100" align="center">
             <template slot-scope="scope">
-              <el-tag size="medium">{{ scope.row.Site }}</el-tag>
+              <el-tag size="medium">{{ translateSite(scope.row.Site) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -269,21 +270,33 @@ import {
 export default class extends Vue {
   listData: MeetingRoomEntity[] = []
   siteData: ISite[] = []
+  loading = false
   async mounted() {
     this.siteData = await RoomApi.GetSites()
+    this.loading = true
     this.refreshList()
   }
 
   async refreshList() {
-    this.listData = await RoomApi.GetRoom()
-    console.log('allrooms', this.listData)
-    this.listData.forEach(item => {
-      item.CreatedTime &&
-        (item.CreatedTime = moment(item.CreatedTime).format('YYYY-MM-DD HH:mm:ss'))
+    try {
+      this.listData = await RoomApi.GetRoom()
+      console.log('allrooms', this.listData)
+      this.listData.forEach(item => {
+        item.CreatedTime &&
+          (item.CreatedTime = moment(item.CreatedTime).format(
+            'YYYY-MM-DD HH:mm:ss'
+          ))
 
-      item.LastUpdatedTime &&
-        (item.LastUpdatedTime = moment(item.LastUpdatedTime).format('YYYY-MM-DD HH:mm:ss'))
-    })
+        item.LastUpdatedTime &&
+          (item.LastUpdatedTime = moment(item.LastUpdatedTime).format(
+            'YYYY-MM-DD HH:mm:ss'
+          ))
+      })
+    } catch (e) {
+      console.error(e)
+    } finally {
+      this.loading = false
+    }
   }
 
   dialogVisible = false
@@ -303,6 +316,13 @@ export default class extends Vue {
     this.dialogVisible = true
   }
 
+  translateSite(siteCode: string) {
+    const site: any = this.siteData.find(x => x.Code === siteCode)
+    if (!site) {
+      return site.Name
+    }
+    return siteCode
+  }
   validateName(rule: any, value: any, callback: any) {
     if (this.roomForm.RoomName === '') {
       callback(new Error(this.$t('room.nameHint').toString()))
@@ -337,14 +357,14 @@ export default class extends Vue {
           Device: this.roomForm.Device,
           Site: this.roomForm.Site
         }
-        console.log('submit:',this.roomForm)
+        console.log('submit:', this.roomForm)
         // 判断是新增还是编辑
         if (this.roomForm.RoomID) {
           const updateEntity: UpdateMeetingRoomEntity = {
             RoomID: this.roomForm.RoomID,
             ...entity
           }
-          console.log('updateEntity',updateEntity)
+          console.log('updateEntity', updateEntity)
           await RoomApi.UpdateRoom(updateEntity)
           this.resetForm(formName)
         } else {
@@ -391,7 +411,7 @@ export default class extends Vue {
     this.roomForm.Position = row.Position
     this.roomForm.StatusID = row.StatusID
     this.roomForm.Device = row.Device
-    console.log('editRoom:',this.roomForm)
+    console.log('editRoom:', this.roomForm)
     this.dialogVisible = true
   }
 

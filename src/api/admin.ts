@@ -38,6 +38,7 @@ export interface IAdminAPI {
   AddRoom (entity: CreateMeetingRoomEntity): Promise<any>
   /**
    * 获取会议室
+   * @returns 会议室列表
    */
   GetRoom (): Promise<MeetingRoomEntity[]>
 }
