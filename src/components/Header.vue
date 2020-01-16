@@ -78,21 +78,20 @@ import Vue from 'vue'
 import { LANGUAGES } from '@/constant'
 import { IUserInfo } from '@/models'
 import Component from 'vue-class-component'
+import { moduleUser } from '@/store/user'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 @Component
 export default class Header extends Vue {
+  @State private user!: IUserInfo
   languages = LANGUAGES
   activeIndex = '1'
   activeIndex2 = '1'
-  @State private user!: IUserInfo
   handleSelect(key: string, keyPath: any) {
     if (LANGUAGES.some(p => p.code === key)) {
       this.selectLanguage(key)
     } else {
       if (key === '/login') {
-        this.$store.dispatch('logout').catch(err => {
-          console.error(err)
-        })
+        moduleUser.logout()
       } this.$router.push(key).catch(() => {
         // console.error(err)
       })

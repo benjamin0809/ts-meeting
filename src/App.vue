@@ -2,7 +2,9 @@
   <div id="app">
     <app-header v-if="user.Id" />
     <el-main>
-      <transition name="slide-fade">
+      <transition 
+      name="fade-transform"
+      mode="out-in">
         <router-view />
       </transition>
       <!-- <app-footer></app-footer> -->

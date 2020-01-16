@@ -13,8 +13,8 @@
         <el-tabs type="border-card" class="login-card">
           <el-tab-pane :label="$t('login.byAccount')">
             <el-form
-              ref="ruleForm2"
-              :model="ruleForm2"
+              ref="ruleForm"
+              :model="ruleForm"
               status-icon
               :rules="rules2"
               label-width="120px"
@@ -22,23 +22,26 @@
             >
               <el-form-item :label="$t('login.account')" prop="account">
                 <el-input
-                  v-model="ruleForm2.account"
+                  v-model="ruleForm.account"
                   type="text"
                   auto-complete="off"
                 />
               </el-form-item>
               <el-form-item :label="$t('login.pass')" prop="pass">
                 <el-input
-                  v-model="ruleForm2.pass"
+                  v-model="ruleForm.pass"
                   type="password"
                   auto-complete="off"
                 />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm2')">{{
-                  $t('login.submit')
-                }}</el-button>
-                <el-button @click="resetForm('ruleForm2')">{{
+                <el-button
+                  type="primary" native-type="submit"
+                  @click="submitForm('ruleForm')"
+                  :loading="loading"
+                  >{{ $t('login.submit') }}</el-button
+                >
+                <el-button @click="resetForm('ruleForm')" :disabled="loading">{{
                   $t('login.reset')
                 }}</el-button>
               </el-form-item>
@@ -76,9 +79,10 @@ import Component from 'vue-class-component'
 import { Action } from 'vuex-class'
 import { DesHelper } from '@/utils/des'
 import { LANGUAGES, LOGIN_HINTS } from '@/constant'
+import { moduleUser } from '@/store/user'
 @Component
 export default class extends Vue {
-  @Action('login') private login!: any
+  loading = false
   langs = LANGUAGES
   changeLang(lang: any) {
     this.$i18n.locale = lang.code
@@ -90,23 +94,6 @@ export default class extends Vue {
   hintItem = this.hints.find(p => p.lang === localStorage.getItem('lang'))
 
   showHints = this.hintItem && this.hintItem.hints
-
-  /*   checkAge (rule: any, value: any, callback: any) {
-    if (!value) {
-      return callback(new Error('Please input the age'))
-    }
-    setTimeout(() => {
-      if (!Number.isInteger(value)) {
-        callback(new Error('Please input digits'))
-      } else {
-        if (value < 18) {
-          callback(new Error('Age must be greater than 18'))
-        } else {
-          callback()
-        }
-      }
-    }, 1000)
-  } */
 
   validateAccount(rule: any, value: any, callback: any) {
     if (value === '') {
@@ -120,29 +107,18 @@ export default class extends Vue {
     if (value === '') {
       callback(new Error(this.$t('login.passHint').toString()))
     } else {
-      if (this.ruleForm2.checkPass !== '') {
+      if (this.ruleForm.checkPass !== '') {
         console.log('')
-        ;(this.$refs.ruleForm2 as any).validateField('checkPass')
+        ;(this.$refs.ruleForm as any).validateField('checkPass')
       }
       callback()
     }
   }
 
-  /*   validatePass2 (rule: any, value: any, callback: any) {
-    if (value === '') {
-      callback(new Error('Please input the password again'))
-    } else if (value !== this.ruleForm2.pass) {
-      callback(new Error("Two inputs don't match!"))
-    } else {
-      callback()
-    }
-  } */
-
-  ruleForm2 = {
+  ruleForm = {
     account: '',
     pass: '',
-    checkPass: '',
-    age: ''
+    checkPass: ''
   }
 
   rules2 = {
@@ -151,20 +127,26 @@ export default class extends Vue {
   }
 
   submitForm(formName: string) {
-    (this.$refs[formName] as any).validate((valid: boolean) => {
+    // submit
+    (this.$refs[formName] as any).validate(async (valid: boolean) => {
       if (valid) {
-        this.login({
-          account: this.ruleForm2.account,
-          password: this.ruleForm2.pass
-        })
-          .then((res: any) => {
-            this.$router.push('/scheduler').catch(err => {
-              console.error(err)
-            })
+        this.loading = true
+        try {
+          await moduleUser.login({
+            account: this.ruleForm.account,
+            password: this.ruleForm.pass
           })
-          .catch((e: any) => {
-            Message.error(e.msg || 'Has Error')
+          this.loading = false
+          let defaultRoute = '/scheduler'
+          if (this.$route.query.redirect) {
+            defaultRoute = this.$route.query.redirect as string
+          }
+          this.$router.push(defaultRoute).catch(err => {
+            console.error(err)
           })
+        } catch (e) {
+          this.loading = false
+        }
       } else {
         console.log('error submit!!')
         return false
@@ -176,7 +158,7 @@ export default class extends Vue {
   }
 
   created() {
-    console.log(DesHelper.DesEncrypt('123', '123'))
+    // console.log(DesHelper.DesEncrypt('123', '123'))
   }
 }
 </script>
@@ -189,6 +171,7 @@ export default class extends Vue {
 }
 #login {
   position: relative;
+  background: url('/assets/login.jpg')
 }
 
 .box {

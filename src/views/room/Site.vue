@@ -125,7 +125,13 @@
         :label="$t('site.status')"
         align="center"
         width="130"
-      ></el-table-column>
+          
+      >
+      <template slot-scope="scope">
+        <el-checkbox :checked="!!scope.row.Status" disabled=""></el-checkbox>
+           
+        </template>
+        </el-table-column>
       <el-table-column
         prop="Description"
         :label="$t('site.description')"
@@ -197,6 +203,7 @@ export default class extends Vue {
   listData: ISite[] = []
 
   async mounted() {
+    console.log(' site mounted')
     this.refreshList()
   }
 

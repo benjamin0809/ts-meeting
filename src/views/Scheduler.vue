@@ -608,7 +608,7 @@ export default class Scheduler extends Vue {
           }
           try {
             await RoomApi.BookingRoom(input)
-            console.log('预订成功')
+            this.$message('预订成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
             scheduler.render(new Date(this.crrentDate))
@@ -632,11 +632,11 @@ export default class Scheduler extends Vue {
           }
           try {
             await RoomApi.UpdateBookingInfo(input)
-            console.log('修改成功')
+            this.$message('修改成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
-            scheduler.render(new Date(this.crrentDate))
-            await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
+            scheduler.render(new Date(this.crrentDate));
+            // await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'));
             // 清除dialog form
             (this.$refs['form'] as any).clearValidate()
             this.dialogVisible = false

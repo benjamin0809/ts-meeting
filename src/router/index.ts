@@ -12,9 +12,10 @@ import Index from '@/views/room/Index.vue'
 import User from '@/views/user/Index.vue'
 import Profile from '@/views/user/Profile.vue'
 import Setting from '@/views/user/Setting.vue'
-import UserManage from '@/views/sysadmin/UserManage.vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 Vue.use(Router)
-
+NProgress.configure({ showSpinner: false })
 const router = new Router({
   routes: [
     {
@@ -88,11 +89,21 @@ const router = new Router({
   ]
 })
 router.beforeEach((to: Route, from: Route, next: any) => {
+  NProgress.start()
   // ...判断session是否过期
   if (moduleUser.Id > 0 || to.name === 'login') {
     next()
   } else {
+    moduleUser.logout()
     next(`/login?redirect=${to.path}`)
   }
 })
+
+router.afterEach(() => {
+  setTimeout(() => {
+    NProgress.done()
+  }, 2000)
+
+})
+
 export default router
