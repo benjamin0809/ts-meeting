@@ -1,8 +1,23 @@
 <template>
-  <div>
+  <div style="padding:20px 40px 20px 20px;">
     <div class="page-title">
-      {{ $t('user.userManage') }}
-      <!-- <el-button size="mini" type="primary" @click="addRole" style="margin-left:20px;">添加用户</el-button> -->
+      <span style="display: inline-block;width:60%">{{
+        $t('user.userManage')
+      }}</span>
+      <el-input
+        v-model="searchKey"
+        type="text"
+        auto-complete="off"
+        placeholder="输入工号搜索..."
+        class="search-user"
+      />
+      <el-button
+        @click="searchUser"
+        size="mini"
+        type="primary"
+        style="margin-left:20px;"
+        >搜索用户</el-button
+      >
     </div>
 
     <el-dialog
@@ -18,114 +33,96 @@
         :rules="rules"
         label-width="100px"
       >
-        <el-form-item
-          :label="$t('user.empNO')"
-          prop="code"
-        >
+        <el-form-item :label="$t('user.empNO')" prop="code">
           <el-input
-            v-model="userForm.empNumber"
+            v-model="userForm.UserID"
             :disabled="true"
             type="text"
             auto-complete="off"
             placeholder
           />
         </el-form-item>
-        <el-form-item
-          :label="$t('user.name')"
-          prop="name"
-        >
+        <el-form-item :label="$t('user.name')" prop="name">
           <el-input
-            v-model="userForm.name"
+            v-model="userForm.UserName"
             :disabled="true"
             type="text"
             auto-complete="off"
             placeholder
           />
         </el-form-item>
-        <el-form-item
-          :label="$t('user.site')"
-          prop="description"
-        >
+        <el-form-item :label="$t('schedulerDialog.contact')" prop="description">
           <el-input
-            v-model="userForm.site"
-            :disabled="true"
+            v-model="userForm.Tel"
             type="text"
             auto-complete="off"
             placeholder
           />
         </el-form-item>
 
-        <el-form-item
-          :label="$t('user.role')"
-          prop="role"
-        >
-          <el-radio-group v-model="userForm.role">
+        <el-form-item :label="$t('user.role')" prop="role">
+          <el-radio-group v-model="userForm.RoleID">
             <el-radio
               v-for="item of roleData"
-              :key="item.code"
-              :label="item.code"
+              :key="item.RoleID"
+              :label="item.RoleID"
             >
-              {{ item.name }}
+              {{ item.RoleName }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
 
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="cancelForm('userForm')">{{ $t('user.cancel') }}</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm('userForm')"
-        >{{ $t('user.confirm') }}</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelForm('userForm')">{{
+          $t('user.cancel')
+        }}</el-button>
+        <el-button type="primary" @click="submitForm('userForm')">{{
+          $t('user.confirm')
+        }}</el-button>
       </span>
     </el-dialog>
 
     <el-table
-      :data="userData"
+      :data="showData"
       border
       style="width: 100%"
       :empty-text="$t('common.noData')"
     >
       <el-table-column
-        prop="empNumber"
+        prop="UserID"
         :label="$t('user.empNO')"
         width="180"
         align="center"
       />
       <el-table-column
-        prop="name"
+        prop="UserName"
         :label="$t('user.name')"
         width="180"
         align="center"
       />
-      <el-table-column
-        prop="site"
-        :label="$t('user.site')"
-        width="180"
-        align="center"
-      />
-      <el-table-column
-        prop="role"
-        :label="$t('user.role')"
-        width="300"
-        align="center"
-      >
+      <el-table-column prop="Tel" :label="$t('schedulerDialog.contact')" width="180" align="center" />
+      <el-table-column :label="$t('user.role')" width="300" align="center">
         <template slot-scope="scope">
-          <el-tag
-            v-if="scope.row.role"
-            :type="scope.row.role === 'Admin' ? 'primary' : 'success'"
-          >
-            {{ scope.row.roleName }}
+          <el-tag type="primary" v-if="scope.row.RoleName">
+            {{ scope.row.RoleName }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('user.operation')"
+        prop="CreatedBy"
+        :label="$t('site.creator')"
         align="center"
-      >
+        width="150"
+      />
+      <el-table-column
+        prop="CreatedTime"
+        :label="$t('site.createTime')"
+        align="center"
+        sortable
+        width="160"
+      />
+      <el-table-column :label="$t('user.operation')" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -134,116 +131,77 @@
           >
             {{ $t('user.edit') }}
           </el-button>
-          <!--  <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
+    <!--     <el-pagination
       align="right"
       background
       layout="prev, pager, next"
       :total="1000"
-    />
+    /> -->
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { dateFormat } from '../../utils/date'
+import { IRole,IUserRole, CreateUserRoleEntity, UpdateUserRoleEntity } from '@/models'
+import RoleApi from '@/api/role'
+import UserRoleApi from '@/api/userRole'
+import moment from 'moment'
+
 @Component
 export default class RoleManage extends Vue {
-  roleData = [
-    {
-      id: 1,
-      code: 'Admin',
-      name: '系统管理员',
-      description: 'Super Administrator. Have access to view all pages.',
-      tag: '系统'
-    },
-    {
-      id: 2,
-      code: 'SiteAdmin',
-      name: '厂区管理员',
-      description: '可以维护对应厂区的会议室信息及公告通知'
-    },
-    {
-      id: 3,
-      code: 'User',
-      name: '默认普通用户',
-      description: '只能预订会议室',
-      tag: '默认'
-    }
-  ]
+  roleData: IRole[] = []
 
-  userData = [
-    {
-      id: 1,
-      empNumber: 'F2846759',
-      name: '李如梦',
-      site: '龙华',
-      role: 'Admin',
-      roleName: '系统管理员'
-    },
-    {
-      id: 2,
-      empNumber: 'F2846811',
-      name: '张三',
-      site: '龙华',
-      role: 'SiteAdmin',
-      roleName: '厂区管理员'
-    },
-    {
-      id: 3,
-      empNumber: 'F2846235',
-      name: '李四',
-      site: '贵阳',
-      role: 'SiteAdmin',
-      roleName: '厂区管理员'
-    },
-    {
-      id: 4,
-      empNumber: 'F2846759',
-      name: '李小梦',
-      site: '龙华',
-      role: 'User',
-      roleName: '默认普通用户'
-    }
-  ]
-
-  dialogVisible = false
-  userForm = {
-    id: 0,
-    empNumber: '',
-    name: '',
-    site: '',
-    role: '',
-    roleName: '',
-    ModifyTime: '',
-    ModifyUser: ''
+  searchKey = ''
+  showData: IUserRole[] = []
+  userData: IUserRole[] = []
+  async mounted() {
+    this.roleData = await RoleApi.GetRoles()
+    this.refreshList().then(() => {
+      this.showData = this.userData
+    })
   }
 
-  /*   addRole() {
-    this.dialogVisible = true;
-  } */
+  async refreshList() {
+    this.userData = await UserRoleApi.GetUserRoles()
+    this.userData.forEach(item => {
+      item.CreatedTime &&
+        (item.CreatedTime = moment(item.CreatedTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ))
+    })
+    console.log('allUserRoles', this.userData)
+  }
+
+  async searchUser() {
+    this.showData = await UserRoleApi.SearchUser(this.searchKey)
+    this.showData.forEach(item => {
+      item.CreatedTime &&
+        (item.CreatedTime = moment(item.CreatedTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ))
+    })
+  }
+
+  dialogVisible = false
+  userForm: IUserRole = {
+    UserRoleID: 0,
+    UserID: '',
+    UserName: '',
+    RoleID: 0,
+    RoleName: '',
+    Tel: ''
+  }
 
   rules = {}
   submitForm(formName: string) {
     (this.$refs[formName] as any).validate((valid: boolean) => {
       if (valid) {
         this.dialogVisible = false
-        const index = this.userData.findIndex(p => p.id === this.userForm.id)
-        if (index > -1) {
-          let updateItem = this.userData.find(p => p.id === this.userForm.id)
-          if (updateItem) {
-            updateItem.role = this.userForm.role
-            let roleItem = this.roleData.find(
-              p => p.code === this.userForm.role
-            )
-            updateItem.roleName = roleItem ? roleItem.name : 'User'
-          }
-        }
         this.resetForm(formName)
         this.$message(this.$t('common.saveSuccess').toString())
       } else {
@@ -264,23 +222,19 @@ export default class RoleManage extends Vue {
 
   handleEdit(index: any, row: any) {
     console.log(index, row)
-    this.userForm.id = row.id
-    this.userForm.empNumber = row.empNumber
-    this.userForm.name = row.name
-    this.userForm.site = row.site
-    this.userForm.role = row.role
-    this.userForm.roleName = row.roleForm
+    this.userForm.UserRoleID = row.UserRoleID
+    this.userForm.UserID = row.UserID
+    this.userForm.UserName = row.UserName
+    this.userForm.RoleID = row.RoleID
+    this.userForm.RoleName = row.RoleName
+    this.userForm.Tel = row.Tel
     this.dialogVisible = true
   }
-
-  /*
-  handleDelete(index: any, row: any) {
-    let a = this.tableData.findIndex(p => p.id == row.id);
-    this.tableData.splice(a, 1);
-    console.log(index, row);
-  } */
 }
 </script>
 
 <style>
+.search-user {
+  width: 20% !important;
+}
 </style>
