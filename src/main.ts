@@ -9,6 +9,7 @@ import i18n from './utils/i18n'
 import Vuex from 'vuex'
 import 'normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
+import '@/style/index.scss'
 import store from './store'
 // 全局導入dhtmlx-scheduler 樣式表
 // import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css'

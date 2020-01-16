@@ -4,8 +4,9 @@ import store from './index'
 import { login } from '@/api/user'
 import { DesHelper } from '@/utils/des'
 import { SCERET } from '@/constant'
+import { Message } from 'element-ui'
 
-const user = sessionStorage.getItem('user')
+const user = localStorage.getItem('user')
 let initVal: IUserInfo = {
   UserName: '',
   UserNo: '',
@@ -53,7 +54,7 @@ class User extends VuexModule implements IUserInfo {
 
   @Mutation
   LOGOUT() {
-    sessionStorage.removeItem('user')
+    localStorage.removeItem('user')
     this.UserName = ''
     this.Email = ''
     this.UserNo = ''
@@ -68,13 +69,21 @@ class User extends VuexModule implements IUserInfo {
       const data = await login(userinfo.account, pwd)
 
       const { Email, UserNo, UserName, Id, Token } = data
-      sessionStorage.setItem('user', JSON.stringify(data))
+      localStorage.setItem('user', JSON.stringify(data))
       this.SET_EMAIL(Email)
       this.SET_USERNO(UserNo)
       this.SET_NAME(UserName)
       this.SET_ID(Id)
       this.SET_TOKEN(Token)
     } catch (e) {
+      let msg = 'Has Error'
+      switch (e.Errcode) {
+        case 6120: msg = '密码不正确'
+          break
+        case 6101: msg = '账号不存在'
+          break
+      }
+      Message.error(msg)
       throw new Error(e)
     }
   }

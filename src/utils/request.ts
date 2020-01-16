@@ -51,7 +51,7 @@ instance.interceptors.response.use(
     } else if (error.response.status === 401) {
       // tslint:disable-next-line: no-floating-promises
       router.replace({
-        path: '/login'
+        path: '/login?redirect=' + router.currentRoute.fullPath
       })
       location.reload()
     }
