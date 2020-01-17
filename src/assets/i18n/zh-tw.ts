@@ -8,12 +8,14 @@ module.exports = {
     confirm: '確認',
     noData: '暫無數據',
     deleteSuccess: '刪除成功~',
+    cancelSuccess: '取消成功~',
     saveSuccess: '保存成功~',
     numberHint: '請輸入數字',
     enable: '啟用',
     disable: '不啟用',
     searchHint: '請輸入關鍵詞搜索~',
-    searchNothing: '沒有搜到哦，請確認輸入正確關鍵詞~'
+    searchNothing: '沒有搜到哦，請確認輸入正確關鍵詞~',
+    completed: '已完成'
   },
   menu: {
     home: '首頁',
@@ -72,6 +74,7 @@ module.exports = {
   },
   room: {
     all: '全部',
+    room: '會議室',
     roomManage: '會議室管理',
     add: '添加',
     dialogTitle: '添加會議室',
@@ -169,5 +172,13 @@ module.exports = {
     delete: '刪除',
     ableSiteHint: '請選擇可見廠區',
     contentHint: '請輸入內容'
+  },
+  profile: {
+    reservation: '我的預訂',
+    timeline: '我的足跡',
+    about: '關於我',
+    hello: '你好！',
+    role: '角色',
+    permission: '權限'
   }
 }

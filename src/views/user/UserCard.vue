@@ -1,7 +1,7 @@
 <template>
   <el-card class="text-left">
     <div slot="header" class="clearfix">
-      <span>About me</span>
+      <span>{{$t('profile.about')}}</span>
     </div>
 
     <div class="user-profile">
@@ -9,7 +9,7 @@
         <div :style="{ height: height, width: width }" class="pan-item">
           <div class="pan-info">
             <div class="pan-info-roles-container">
-              <div>Hello！</div>
+              <div>{{$t('profile.hello')}}</div>
               <div>{{ user.UserName }}</div>
             </div>
           </div>
@@ -21,10 +21,10 @@
       </div>
       <div class="box-center">
         <div class="user-name text-center">
-        {{ user.UserName }} 
+          {{ user.UserName }}
         </div>
         <div class="user-role text-center text-muted">
-         {{ user.UserNo }} 
+          {{ user.UserNo }}
         </div>
       </div>
     </div>
@@ -32,36 +32,21 @@
     <div class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header">
-          <span><i class="el-icon-s-custom"></i>&nbsp;Role</span>
+          <span><i class="el-icon-s-custom"></i>&nbsp;{{$t('profile.role')}}</span>
         </div>
         <div class="user-bio-section-body">
           <div class="text-muted">
-            <el-tag>系統管理員</el-tag>
+            <el-tag>{{ user.RoleName }}</el-tag>
           </div>
         </div>
       </div>
 
       <div class="user-skills user-bio-section">
         <div class="user-bio-section-header">
-          <span><i class="el-icon-menu"></i>&nbsp;Permission</span>
+          <span><i class="el-icon-menu"></i>&nbsp;{{$t('profile.permission')}}</span>
         </div>
         <div class="user-bio-section-body">
-          <div class="progress-item">
-            <span>Vue</span>
-            <el-progress :percentage="70" />
-          </div>
-          <div class="progress-item">
-            <span>JavaScript</span>
-            <el-progress :percentage="18" />
-          </div>
-          <div class="progress-item">
-            <span>Css</span>
-            <el-progress :percentage="12" />
-          </div>
-          <div class="progress-item">
-            <span>ESLint</span>
-            <el-progress :percentage="100" status="success" />
-          </div>
+          {{ user.RoleDescription }}
         </div>
       </div>
     </div>
@@ -75,6 +60,9 @@ import { Prop } from 'vue-property-decorator'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import PanThumb from '.././components/PanThumb.vue'
 import AppFooter from './components/Footer.vue'
+import { IUserRole, IUserInfo } from '@/models'
+import UserRoleApi from '@/api/userRole'
+import moment from 'moment'
 @Component({
   name: 'usercard'
 })
@@ -84,12 +72,11 @@ export default class UserCard extends Vue {
     required: true, // 是否必填
     default: () => ({}) // 默认值， 如果传入的是 Object，则要 default: ()=>({}) 参数为函数
   })
-  user!: object
+  user!: IUserInfo
 
   height = '100px'
   width = '100px'
   defaultAvatar = './icon.gif'
-
 }
 </script>
 

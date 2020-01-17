@@ -8,12 +8,14 @@ module.exports = {
     confirm: '确认',
     noData: '暂无数据',
     deleteSuccess: '删除成功~',
+    cancelSuccess: '取消成功~',
     saveSuccess: '保存成功~',
     numberHint: '请输入数字',
     enable: '启用',
     disable: '不启用',
     searchHint: '请输入关键词搜索~',
-    searchNothing: '没有搜到哦，请确认输入正确关键词~'
+    searchNothing: '没有搜到哦，请确认输入正确关键词~',
+    completed: '已完成'
   },
   menu: {
     home: '首页',
@@ -73,6 +75,7 @@ module.exports = {
   },
   room: {
     all: '全部',
+    room: '会议室',
     roomManage: '会议室管理',
     add: '添加',
     dialogTitle: '添加会议室',
@@ -169,6 +172,14 @@ module.exports = {
     delete: '删除',
     ableSiteHint: '请选择可见厂区',
     contentHint: '请输入内容'
+  },
+  profile: {
+    reservation: '我的预定',
+    timeline: '我的足跡',
+    about: '关于我',
+    hello: '你好！',
+    role: '角色',
+    permission: '权限'
   }
 
 }

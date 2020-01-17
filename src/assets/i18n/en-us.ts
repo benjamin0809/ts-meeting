@@ -6,12 +6,14 @@ module.exports = {
     confirm: 'Confirm',
     noData: 'No any data now.',
     deleteSuccess: 'Deleted successfully~',
+    cancelSuccess: 'Cancelled successfully~',
     saveSuccess: 'Saved successfully~',
     numberHint: 'please input a number',
     enable: 'Enable',
     disable: 'Disable',
     searchHint: 'Please input the key words to search~',
-    searchNothing: 'Searched nothing!please input the correct key words~'
+    searchNothing: 'Searched nothing!please input the correct key words~',
+    completed: 'Completed'
   },
 
   menu: {
@@ -70,6 +72,7 @@ module.exports = {
   },
   room: {
     all: 'All',
+    room: 'Meeting room',
     roomManage: 'Meeting room management',
     add: 'Add',
     dialogTitle: 'Add a meeting room',
@@ -166,5 +169,13 @@ module.exports = {
     delete: 'Delete',
     ableSiteHint: 'please choose the visiable sites of the notice',
     contentHint: 'please input the content'
+  },
+  profile: {
+    reservation: 'Reservations',
+    timeline: 'Timeline',
+    about: 'About Me',
+    hello: 'Hello！',
+    role: 'Role',
+    permission: 'Permission'
   }
 }
