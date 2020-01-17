@@ -1,12 +1,12 @@
 import request from '../utils/request'
-import { IUserRole,CreateUserRoleEntity,UpdateUserRoleEntity } from '@/models'
+import { IUser,IUserRole,CreateUserRoleEntity,UpdateUserRoleEntity } from '@/models'
 
 // 用户的角色管理
 export interface IUserRoleAPI {
   /**
    * 搜索用户以设置角色
    */
-  SearchUser (key: string): Promise<IUserRole[]>
+  SearchUser (SearchKey: string): Promise<IUser[]>
   /**
    * 获取用户角色表里的用户
    */
@@ -31,8 +31,8 @@ export interface IUserRoleAPI {
 
 class UserRoleAPI implements IUserRoleAPI {
 
-  SearchUser(key: string): Promise<IUserRole[]> {
-    return request.post<IUserRole[]>('admin/SearchUser', { key })
+  SearchUser(SearchKey: string): Promise<IUser[]> {
+    return request.post<IUser[]>('admin/SearchUser', { SearchKey })
   }
 
   GetUserRoles(): Promise<IUserRole[]> {

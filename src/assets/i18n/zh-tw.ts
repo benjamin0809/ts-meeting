@@ -11,7 +11,9 @@ module.exports = {
     saveSuccess: '保存成功~',
     numberHint: '請輸入數字',
     enable: '啟用',
-    disable: '不啟用'
+    disable: '不啟用',
+    searchHint: '請輸入關鍵詞搜索~',
+    searchNothing: '沒有搜到哦，請確認輸入正確關鍵詞~'
   },
   menu: {
     home: '首頁',
@@ -145,7 +147,10 @@ module.exports = {
     cancel: '取消',
     confirm: '確定',
     operation: '操作',
-    edit: '編輯'
+    edit: '編輯',
+    searchPlaceholder: '輸入工號搜索...',
+    searchUser: '搜索用戶',
+    deleteRoleSet: '刪除角色設定'
   },
   notice: {
     notice: '公告通知',

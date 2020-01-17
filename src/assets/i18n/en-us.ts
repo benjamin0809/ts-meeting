@@ -9,7 +9,9 @@ module.exports = {
     saveSuccess: 'Saved successfully~',
     numberHint: 'please input a number',
     enable: 'Enable',
-    disable: 'Disable'
+    disable: 'Disable',
+    searchHint: 'Please input the key words to search~',
+    searchNothing: 'Searched nothing!please input the correct key words~'
   },
 
   menu: {
@@ -142,7 +144,10 @@ module.exports = {
     cancel: 'Cancel',
     confirm: 'Confirm',
     operation: 'Operation',
-    edit: 'Edit'
+    edit: 'Edit',
+    searchPlaceholder: 'Input the employee number to search...',
+    searchUser: 'Search the system users',
+    deleteRoleSet: 'Delete role setting'
   },
   notice: {
     notice: 'Notices',
