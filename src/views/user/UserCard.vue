@@ -61,8 +61,6 @@ import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import PanThumb from '.././components/PanThumb.vue'
 import AppFooter from './components/Footer.vue'
 import { IUserRole, IUserInfo } from '@/models'
-import UserRoleApi from '@/api/userRole'
-import moment from 'moment'
 @Component({
   name: 'usercard'
 })

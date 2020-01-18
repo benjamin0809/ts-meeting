@@ -1,7 +1,7 @@
 import { IUserInfo } from './../models/user'
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import store from './index'
-import { login } from '@/api/user'
+import { login } from '@/api/login'
 import { DesHelper } from '@/utils/des'
 import { SCERET } from '@/constant'
 import { Message } from 'element-ui'

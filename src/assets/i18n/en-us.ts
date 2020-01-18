@@ -177,5 +177,13 @@ module.exports = {
     hello: 'Hello！',
     role: 'Role',
     permission: 'Permission'
+  },
+  timeline: {
+    addSite: 'Add a site of meeting room',
+    addRoom: 'Add a meeting room',
+    addNotice: 'Add a notice',
+    addRole: 'Add a role of system',
+    setUserRole: 'Set a user`s role',
+    reserveRoom: 'Reserve a meeting room'
   }
 }

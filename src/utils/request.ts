@@ -2,6 +2,7 @@ import { moduleUser } from '@/store/user'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import router from '@/router'
 import { IResponseResult } from '@/models/http'
+import { config } from '@vue/test-utils'
 
 // import { BASE_URL } from '../../config/index'
 const instance = axios.create({
@@ -61,6 +62,18 @@ instance.interceptors.response.use(
 
 class Request {
   static get<T>(url: string, config?: AxiosRequestConfig | undefined) {
+    return new Promise<T>((resolve, reject) => {
+      instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+        resolve(res.data.Result)
+      }).catch((err: IResponseResult<any>) => {
+        reject(err)
+      })
+    })
+  }
+
+  static getData<T>(url: string, data: any) {
+    let config: AxiosRequestConfig = {}
+    config.params = data
     return new Promise<T>((resolve, reject) => {
       instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
         resolve(res.data.Result)

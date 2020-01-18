@@ -21,3 +21,12 @@ export interface IUserMeetingRoom {
   CreatedTime: string
   canCancel?: boolean
 }
+
+export interface ITimelineItem {
+  timestamp: string,
+  title: string,
+  content: string,
+  icon?: string,
+  type?: string,
+  color?: string,
+}

@@ -1,33 +1,55 @@
-import store from '../store'
+
 import request from '../utils/request'
-import { IUserInfo } from '@/models'
+import { ISite,IRoom,INotice,IRole,IUserMeetingRoom,IUserRole } from '@/models'
 
-export const login = (account: string, pwd: string) => {
-  return request.post<IUserInfo>('auth/login', {
-    account: account,
-    password: pwd
-  })
+// 获得用户的Timeline数据
+export interface IUserAPI {
+  /**
+   * 用户添加的会议室厂区
+   */
+  GetUserCreateSites (UserID: string): Promise<ISite[]>
+  /**
+   * 用户添加的会议室
+   */
+  GetUserCreateRooms (UserID: string): Promise<IRoom[]>
+  /**
+   * 用户添加的公告
+   */
+  GetUserCreateAnnounces (UserID: string): Promise<INotice[]>
+  /**
+   * 用户添加的系统角色
+   */
+  GetUserCreateRoles (UserID: string): Promise<IRole[]>
+  /**
+   * 用户的会议室预定记录
+   */
+  GetUserReservations (UserID: string): Promise<IUserMeetingRoom[]>
+  /**
+   * 用户设置的角色
+   */
+  GetUserSetAdmin (UserID: string): Promise<IUserRole[]>
 }
-export const userLogin = (account: string, password: string) => {
-  return new Promise((resolve, reject) => {
-    if (!account) {
-      reject(new Error('account is empty'))
-      return
-    }
 
-    if (!password) {
-      reject(new Error('password is empty'))
-      return
-    }
-    // tslint:disable-next-line: no-floating-promises
-    store.dispatch('login', account)
+class UserAPI implements IUserAPI {
 
-    resolve({
-      result: true,
-      user: {
-        id: account,
-        name: account
-      }
-    })
-  })
+  GetUserCreateSites (UserID: string): Promise<ISite[]> {
+    return request.getData<ISite[]>('user/GetUserCreateSites', { UserID })
+  }
+  GetUserCreateRooms (UserID: string): Promise<IRoom[]> {
+    return request.getData<IRoom[]>('user/GetUserCreateRooms', { UserID })
+  }
+  GetUserCreateAnnounces (UserID: string): Promise<INotice[]> {
+    return request.getData<INotice[]>('user/GetUserCreateAnnounces', { UserID })
+  }
+  GetUserCreateRoles (UserID: string): Promise<IRole[]> {
+    return request.getData<IRole[]>('user/GetUserCreateRoles', { UserID })
+  }
+  GetUserReservations (UserID: string): Promise<IUserMeetingRoom[]> {
+    return request.getData<IUserMeetingRoom[]>('user/GetUserReservations', { UserID })
+  }
+  GetUserSetAdmin (UserID: string): Promise<IUserRole[]> {
+    return request.getData<IUserRole[]>('user/GetUserSetAdmin', { UserID })
+  }
 }
+const instance: IUserAPI = new UserAPI()
+export default instance

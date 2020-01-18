@@ -180,5 +180,14 @@ module.exports = {
     hello: '你好！',
     role: '角色',
     permission: '權限'
+  },
+  timeline: {
+    addSite: '添加廠區',
+    addRoom: '添加會議室',
+    addNotice: '添加公告',
+    addRole: '添加角色',
+    setUserRole: '設置用戶角色',
+    reserveRoom: '預訂會議室'
+
   }
 }

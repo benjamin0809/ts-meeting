@@ -180,6 +180,15 @@ module.exports = {
     hello: '你好！',
     role: '角色',
     permission: '权限'
+  },
+  timeline: {
+    addSite: '添加厂区',
+    addRoom: '添加会议室',
+    addNotice: '添加公告',
+    addRole: '添加角色',
+    setUserRole: '设置用戶角色',
+    reserveRoom: '预订会议室'
+
   }
 
 }

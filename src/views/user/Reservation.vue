@@ -74,7 +74,7 @@ import Component from 'vue-class-component'
 import { IUserInfo } from '../../models'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { IUserMeetingRoom } from '@/models'
-import UserApi from '@/api/userRole'
+import UserApi from '@/api/user'
 import RoomApi from '@/api/room'
 import moment from 'moment'
 @Component
