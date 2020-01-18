@@ -187,8 +187,21 @@ module.exports = {
     addNotice: '添加公告',
     addRole: '添加角色',
     setUserRole: '设置用戶角色',
-    reserveRoom: '预订会议室'
-
+    reserveRoom: '预订会议室',
+    addSiteContent: '你添加了一个会议室厂区：',
+    addRoomContent: '你添加了一个会议室：',
+    addNoticeContent: '你添加了一个公告：',
+    addRoleContent: '你添加了一个角色：',
+    setUserRoleContent: '你设置了',
+    to: '为',
+    reserveRoomContent: '你预订了一个会议室：'
+  },
+  setting: {
+    mySetting: '个人设置',
+    myEmail: '我的邮箱',
+    sendMailSwitch: '预定成功发邮件提醒我',
+    iproudSwitch: '预定成功在员宝推送消息通知',
+    save: '保存'
   }
 
 }

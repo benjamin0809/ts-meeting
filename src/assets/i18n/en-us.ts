@@ -184,6 +184,20 @@ module.exports = {
     addNotice: 'Add a notice',
     addRole: 'Add a role of system',
     setUserRole: 'Set a user`s role',
-    reserveRoom: 'Reserve a meeting room'
+    reserveRoom: 'Reserve a meeting room',
+    addSiteContent: 'You has added a a site of meeting room: ',
+    addRoomContent: 'You has added a meeting room: ',
+    addNoticeContent: 'You has added a notice: ',
+    addRoleContent: 'You has added a role of system: ',
+    setUserRoleContent: 'You has setted ',
+    to: ' to ',
+    reserveRoomContent: 'You has reserved a meeting room: '
+  },
+  setting: {
+    mySetting: 'Personal Setting',
+    myEmail: 'My email',
+    sendMailSwitch: 'Send email to remind me of reservation success',
+    iproudSwitch: 'Push message notice in iProud app after booking successfully',
+    save: 'Save'
   }
 }

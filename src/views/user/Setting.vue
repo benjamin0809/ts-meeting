@@ -1,17 +1,21 @@
 <template>
   <div style="padding:20px 40px 20px 20px;">
-    <div class="page-title">个人设置</div>
+    <div class="page-title">{{$t('setting.mySetting')}}</div>
 
     <el-form ref="form" :model="form" label-width="120px" class="form">
-      <el-form-item label="我的邮箱">
+      <el-form-item :label="$t('setting.myEmail')">
         <el-input v-model="form.email"></el-input>
       </el-form-item>
       <el-form-item align="left">
-        <el-switch v-model="form.send"></el-switch>
-        预定成功发邮件提醒我
-      </el-form-item>  
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-switch v-model="form.sendEmail"></el-switch>
+        {{$t('setting.sendMailSwitch')}}
+      </el-form-item>
+      <el-form-item align="left">
+        <el-switch v-model="form.iProudPush"></el-switch>
+        {{$t('setting.iproudSwitch')}}
+      </el-form-item>
+      <el-form-item align="right">
+        <el-button type="primary" @click="onSubmit">{{$t('setting.save')}}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -26,7 +30,8 @@ import Component from 'vue-class-component'
 export default class extends Vue {
   form = {
     email: 'amy.rm.li@mail.foxconn.com',
-    send: true
+    sendEmail: true,
+    iProudPush: true
   }
   onSubmit() {
     console.log('submit!')

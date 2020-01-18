@@ -187,7 +187,20 @@ module.exports = {
     addNotice: '添加公告',
     addRole: '添加角色',
     setUserRole: '設置用戶角色',
-    reserveRoom: '預訂會議室'
-
+    reserveRoom: '預訂會議室',
+    addSiteContent: '你添加了一個會議室廠區：',
+    addRoomContent: '你添加了一個會議室：',
+    addNoticeContent: '你添加了一個公告：',
+    addRoleContent: '你添加了一個角色：',
+    setUserRoleContent: '你設置了',
+    to: '為',
+    reserveRoomContent: '你預定了一個會議室：'
+  },
+  setting: {
+    mySetting: '個人設置',
+    myEmail: '我的郵箱',
+    sendMailSwitch: '預訂成功發郵件提醒我',
+    iproudSwitch: '預訂成功在員寶推送消息通知',
+    save: '保存'
   }
 }

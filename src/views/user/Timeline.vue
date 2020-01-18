@@ -53,7 +53,7 @@ export default class extends Vue {
           let item: ITimelineItem = {
             timestamp: moment(data.CreatedTime).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.addSite').toString() ,
-            content: '你添加了一個會議室廠區：' + data.Name,
+            content: this.$t('timeline.addSiteContent') + data.Name,
             icon: 'el-icon-office-building',
             type: 'primary',
             color: ''
@@ -68,7 +68,7 @@ export default class extends Vue {
             timestamp: moment(data.CreatedTime).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.addRoom').toString(),
             content:
-              '你添加了一個會議室：' + data.RoomName + '(' + data.Site + ')',
+              this.$t('timeline.addRoomContent') + data.RoomName + '(' + data.Site + ')',
             icon: 'el-icon-s-platform',
             type: 'success',
             color: ''
@@ -82,7 +82,7 @@ export default class extends Vue {
           let item: ITimelineItem = {
             timestamp: moment(data.CreatedTime).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.addNotice').toString(),
-            content: '你添加了一個公告：' + data.Content,
+            content: this.$t('timeline.addNoticeContent') + data.Content,
             icon: 'el-icon-message-solid',
             type: 'warning',
             color: ''
@@ -97,7 +97,7 @@ export default class extends Vue {
             timestamp: moment(data.CreateDate).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.addRole').toString(),
             content:
-              '你添加了一個角色：' +
+              this.$t('timeline.addRoleContent') +
               data.RoleName +
               '(' +
               data.Description +
@@ -115,10 +115,9 @@ export default class extends Vue {
           let item: ITimelineItem = {
             timestamp: moment(data.CreatedTime).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.setUserRole').toString(),
-            content: '你設置了' + data.UserName + '為' + data.RoleName,
-            icon: 'el-icon-office-building',
-            type: 'primary',
-            color: ''
+            content: this.$t('timeline.setUserRoleContent') + data.UserName + this.$t('timeline.to') + data.RoleName,
+            icon: 'el-icon-s-tools',
+            color: '#9A32CD'
           }
           this.timeline.push(item)
         })
@@ -130,7 +129,7 @@ export default class extends Vue {
             timestamp: moment(data.CreatedTime).format('YYYY-MM-DD HH:mm:ss'),
             title: this.$t('timeline.reserveRoom').toString(),
             content:
-              '你預定了一個會議室：' +
+              this.$t('timeline.reserveRoomContent') +
               data.RoomName +
               '(' +
               data.MeetingMemo +
