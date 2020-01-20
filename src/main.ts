@@ -7,6 +7,8 @@ import router from './router'
 import ElementUI from 'element-ui'
 import i18n from './utils/i18n'
 import Vuex from 'vuex'
+import SvgIcon from 'vue-svgicon'
+import '@/icons/components'
 import 'normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/style/index.scss'
@@ -17,6 +19,13 @@ import store from './store'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+
+Vue.use(SvgIcon, {
+  tagName: 'svg-icon',
+  defaultWidth: '1em',
+  defaultHeight: '1em'
+})
+
 Vue.use(Vuex)
 
 /* eslint-disable no-new */
