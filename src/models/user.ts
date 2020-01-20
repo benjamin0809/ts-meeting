@@ -4,6 +4,7 @@ export interface IUserInfo {
   Token: string
   Email: string
   Id: number
+  Roles: number[]
   RoleName?: string
   RoleDescription?: string
 }

@@ -5,18 +5,25 @@ import { login } from '@/api/login'
 import { DesHelper } from '@/utils/des'
 import { SCERET } from '@/constant'
 import { Message } from 'element-ui'
-
+import router from '@/router/index'
+import { asyncRouter } from '@/router/async'
 const user = localStorage.getItem('user')
 let initVal: IUserInfo = {
   UserName: '',
   UserNo: '',
   Token: '',
   Email: '',
-  Id: 0
+  Id: 0,
+  Roles: [0]
 }
 if (typeof user === 'string') {
   initVal = JSON.parse(user)
 }
+
+// if (initVal.Roles.includes(2)) {
+//   console.log('router', router)
+//   router.addRoutes(asyncRouter)
+// }
 console.log('initVal', initVal)
 
 @Module({ dynamic: true, store, name: 'user' })
@@ -26,6 +33,7 @@ class User extends VuexModule implements IUserInfo {
   public Token = initVal.Token
   public Email = initVal.Email
   public Id = initVal.Id
+  public Roles = initVal.Roles || 2
 
   @Mutation
   SET_NAME(userName: string) {
@@ -44,12 +52,17 @@ class User extends VuexModule implements IUserInfo {
 
   @Mutation
   SET_EMAIL(Email: string) {
-    this.UserNo = Email
+    this.Email = Email
   }
 
   @Mutation
   SET_ID(Id: number) {
     this.Id = Id
+  }
+
+  @Mutation
+  SET_ROLE(RoleID: number[]) {
+    this.Roles = RoleID
   }
 
   @Mutation
@@ -60,6 +73,7 @@ class User extends VuexModule implements IUserInfo {
     this.UserNo = ''
     this.Id = 0
     this.Token = ''
+    this.Roles = [0]
   }
   @Action
   public async login(userinfo: { account: string, password: string }) {
@@ -68,13 +82,15 @@ class User extends VuexModule implements IUserInfo {
       console.log(userinfo.account, pwd)
       const data = await login(userinfo.account, pwd)
 
-      const { Email, UserNo, UserName, Id, Token } = data
+      const { Email, UserNo, UserName, Id, Token, Roles } = data
       localStorage.setItem('user', JSON.stringify(data))
       this.SET_EMAIL(Email)
       this.SET_USERNO(UserNo)
       this.SET_NAME(UserName)
       this.SET_ID(Id)
       this.SET_TOKEN(Token)
+      this.SET_ROLE(Roles)
+      router.addRoutes(asyncRouter)
     } catch (e) {
       let msg = 'Has Error'
       switch (e.Errcode) {

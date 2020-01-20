@@ -50,6 +50,7 @@ instance.interceptors.response.use(
     if (error.message === 'Network Error') {
       console.log('连接失败')
     } else if (error.response.status === 401) {
+      moduleUser.logout()
       // tslint:disable-next-line: no-floating-promises
       router.replace({
         path: '/login?redirect=' + router.currentRoute.fullPath
