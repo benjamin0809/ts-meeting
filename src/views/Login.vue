@@ -1,17 +1,22 @@
 <template>
-  <div id="login">
+  <div id="login" >
+    <!-- :style="{ backgroundImage: 'url(' + bg  + ')' }" -->
     <div class="box">
-      <div class="left-box">
+      <!-- <div class="left-box">
         <el-carousel indicator-position="outside">
           <el-carousel-item v-for="item in 4" :key="item">
             <h3>{{ item }}</h3>
           </el-carousel-item>
         </el-carousel>
-      </div>
+      </div> -->
 
-      <div class="right-box">
-        <el-tabs type="border-card" class="login-card">
-          <el-tab-pane :label="$t('login.byAccount')">
+      <!-- <div class="right-box"> -->
+        <!-- <el-tabs type="border-card" class="login-card"> -->
+          <!-- <el-tab-pane :label="$t('login.byAccount')"> -->
+            <el-card shadow="always">
+
+                <h2 class="login-desc">用户身份验证</h2>
+    
             <el-form
               ref="ruleForm"
               :model="ruleForm"
@@ -20,36 +25,46 @@
               label-width="120px"
               class="demo-ruleForm"
             >
-              <el-form-item :label="$t('login.account')" prop="account">
+              <el-form-item prop="account" class="margin-h-16">
                 <el-input
                   v-model="ruleForm.account"
                   type="text"
                   auto-complete="off"
-                />
+                ><template slot="prepend"><svg-icon class="icon"
+                  name="account"
+                /></template>
+                </el-input>
               </el-form-item>
-              <el-form-item :label="$t('login.pass')" prop="pass">
+              <el-form-item prop="pass" class="margin-h-16">
                 <el-input
                   v-model="ruleForm.pass"
                   type="password"
                   auto-complete="off"
-                />
+                  ><template slot="prepend"><svg-icon class="icon"
+                  name="password"
+                /></template>
+                </el-input>
               </el-form-item>
-              <el-form-item>
-                <el-button
-                  type="primary" native-type="submit"
+              <!--      workflow登录提示 -->
+            <div v-for="(item, index) in showHints" :key="index" class="hint">
+              {{ item.index }}. {{ item.content }}
+            </div>
+              <el-form-item class="margin-h-16"> 
+                <!-- <el-button @click="resetForm('ruleForm')" :disabled="loading">{{
+                  $t('login.reset')
+                }}</el-button> -->
+                <el-button class="login-button"
+                  type="primary"
+                  native-type="submit"
                   @click="submitForm('ruleForm')"
                   :loading="loading"
                   >{{ $t('login.submit') }}</el-button
                 >
-                <el-button @click="resetForm('ruleForm')" :disabled="loading">{{
-                  $t('login.reset')
-                }}</el-button>
+                
               </el-form-item>
             </el-form>
-            <!--      workflow登录提示 -->
-            <div v-for="(item, index) in showHints" :key="index" class="hint">
-              {{ item.index }}. {{ item.content }}
-            </div>
+
+            
             <!--      选择语言 -->
             <el-row>
               <el-button
@@ -62,14 +77,15 @@
                 >{{ lang.lang }}</el-button
               >
             </el-row>
-          </el-tab-pane>
+            </el-card>
+          <!-- </el-tab-pane> -->
 
-          <el-tab-pane :label="$t('login.byiProud')">Config</el-tab-pane>
-        </el-tabs>
+          <!-- <el-tab-pane :label="$t('login.byiProud')">Config</el-tab-pane>
+        </el-tabs> -->
       </div>
       <!--     -->
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script lang="ts">
@@ -137,7 +153,7 @@ export default class extends Vue {
             password: this.ruleForm.pass
           })
           this.loading = false
-          let defaultRoute = '/scheduler'
+          let defaultRoute = '/home'
           if (this.$route.query.redirect) {
             defaultRoute = this.$route.query.redirect as string
           }
@@ -163,20 +179,30 @@ export default class extends Vue {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
+.login-desc{
+  text-align: center;
+}
 #login::after {
   clear: both;
   content: '';
   display: block;
 }
 #login {
-  position: relative;
-  background: url('/assets/login.jpg')
+  position: fixed;
+  background: url(../assets/login.jpg);
+  top:0;
+  bottom: 0;
+  left:0;
+  right:0;
 }
 
 .box {
-  margin: auto;
-  width: 1020px;
+    margin: auto;
+    max-width: 400px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 .box::after {
   clear: both;
@@ -200,6 +226,12 @@ export default class extends Vue {
 .login-card {
   height: 400px;
 }
+.el-row{
+  margin-left: 16px;
+  .el-button{
+    width: 30%;
+  }
+}
 .el-carousel__item h3 {
   color: #475669;
   font-size: 18px;
@@ -219,9 +251,26 @@ export default class extends Vue {
 }
 
 .hint {
+  margin-left: 16px;
   text-align: left;
   font-size: 14px;
   margin-bottom: 10px;
   color: #909399;
 }
+
+.login-button{
+  width: 100%;
+}
+
+.icon {
+  width: 1.2em !important;
+  height: 1.2em !important;
+  fill:#475669;
+}
+ 
+
+// body{
+//   background: $theme-color;
+//   // background-image: url('../assets/login.jpg');
+// }
 </style>

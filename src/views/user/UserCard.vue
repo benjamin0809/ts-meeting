@@ -1,7 +1,7 @@
 <template>
   <el-card class="text-left">
     <div slot="header" class="clearfix">
-      <span>{{$t('profile.about')}}</span>
+      <span>{{ $t('profile.about') }}</span>
     </div>
 
     <div class="user-profile">
@@ -9,7 +9,7 @@
         <div :style="{ height: height, width: width }" class="pan-item">
           <div class="pan-info">
             <div class="pan-info-roles-container">
-              <div>{{$t('profile.hello')}}</div>
+              <div>{{ $t('profile.hello') }}</div>
               <div>{{ user.UserName }}</div>
             </div>
           </div>
@@ -32,7 +32,11 @@
     <div class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header">
-          <span><i class="el-icon-s-custom"></i>&nbsp;{{$t('profile.role')}}</span>
+          <span
+            ><i class="el-icon-s-custom"></i>&nbsp;{{
+              $t('profile.role')
+            }}</span
+          >
         </div>
         <div class="user-bio-section-body">
           <div class="text-muted">
@@ -43,7 +47,11 @@
 
       <div class="user-skills user-bio-section">
         <div class="user-bio-section-header">
-          <span><i class="el-icon-menu"></i>&nbsp;{{$t('profile.permission')}}</span>
+          <span
+            ><i class="el-icon-menu"></i>&nbsp;{{
+              $t('profile.permission')
+            }}</span
+          >
         </div>
         <div class="user-bio-section-body">
           {{ user.RoleDescription }}

@@ -86,14 +86,7 @@
           $t('room.confirm')
         }}</el-button>
       </span>
-    </el-dialog>
-
-    <el-tabs type="border-card">
-      <el-tab-pane>
-        <span slot="label">
-          <i class="el-icon-date" />
-          {{ $t('room.all') }}
-        </span>
+    </el-dialog> 
         <!--         所有会议室 -->
         <el-table
           :data="listData"
@@ -112,21 +105,27 @@
             :label="$t('room.position')"
             width="150"
           ></el-table-column>
-          <el-table-column :label="$t('room.site')" width="100" align="center">
+          <el-table-column :label="$t('room.site')" width="100" align="center" :filters="siteFilters"
+      :filter-method="filterTag" >
             <template slot-scope="scope">
               <el-tag size="medium">{{ translateSite(scope.row.Site) }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
+          sortable
+          sort-by="StatusID" 
             prop="StatusID"
             :label="$t('room.valid')"
             width="100"
             align="center"
-          ></el-table-column>
+          >  <template slot-scope="scope">
+        <el-checkbox :checked="!!scope.row.StatusID" disabled=""></el-checkbox>
+           
+        </template>
+          </el-table-column>
           <el-table-column
             prop="Device"
             :label="$t('room.device')"
-            width="200"
           ></el-table-column>
           <el-table-column
             prop="CreatedBy"
@@ -151,7 +150,7 @@
             width="160"
           ></el-table-column>
 
-          <el-table-column :label="$t('room.operation')" align="center">
+          <el-table-column :label="$t('room.operation')" align="center"   width="200">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -168,83 +167,7 @@
               </el-button>
             </template>
           </el-table-column>
-        </el-table>
-      </el-tab-pane>
-      <!--         厂区会议室 -->
-      <el-tab-pane v-for="item in siteData" :label="item.Name" :key="item.Code">
-        <el-table
-          :data="listData.filter(p => p.Site == item.Code)"
-          style="width: 100%"
-          :empty-text="$t('common.noData')"
-        >
-          <el-table-column
-            prop="RoomName"
-            :label="$t('room.name')"
-            width="200"
-          ></el-table-column>
-          <el-table-column
-            prop="Position"
-            :label="$t('room.position')"
-            width="150"
-          ></el-table-column>
-          <el-table-column :label="$t('room.site')" width="100" align="center">
-            <template slot-scope="scope">
-              <el-tag size="medium">{{ scope.row.Site }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="StatusID"
-            :label="$t('room.valid')"
-            width="100"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="Device"
-            :label="$t('room.device')"
-            width="200"
-          ></el-table-column>
-          <el-table-column
-            prop="CreatedBy"
-            :label="$t('site.creator')"
-            width="150"
-          ></el-table-column>
-          <el-table-column
-            prop="CreatedTime"
-            :label="$t('site.createTime')"
-            sortable
-            width="160"
-          ></el-table-column>
-          <el-table-column
-            prop="LastUpdateBy"
-            :label="$t('site.updator')"
-            width="150"
-          ></el-table-column>
-          <el-table-column
-            prop="LastUpdatedTime"
-            :label="$t('site.updateTime')"
-            sortable
-            width="160"
-          ></el-table-column>
-          <el-table-column :label="$t('room.operation')" align="center">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
-              >
-                {{ $t('room.edit') }}
-              </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)"
-              >
-                {{ $t('room.delete') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
+        </el-table> 
   </div>
 </template>
 
@@ -252,6 +175,7 @@
 import Vue from 'vue'
 import moment from 'moment'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 import { dateFormat } from '../../utils/date'
 import RoomApi from '@/api/admin'
 import {
@@ -271,8 +195,15 @@ export default class extends Vue {
   listData: MeetingRoomEntity[] = []
   siteData: ISite[] = []
   loading = false
+  siteFilters: any = []
   async mounted() {
     this.siteData = await RoomApi.GetSites()
+    this.siteFilters = this.siteData.map((item) => {
+      return {
+        value: item.Code,
+        text: item.Name
+      }
+    })
     this.loading = true
     this.refreshList()
   }
@@ -316,9 +247,13 @@ export default class extends Vue {
     this.dialogVisible = true
   }
 
+  filterTag(value: string, row: any) {
+    return row.Site === value
+  }
   translateSite(siteCode: string) {
     const site: any = this.siteData.find(x => x.Code === siteCode)
-    if (!site) {
+    if (site) {
+      console.log(site.Name)
       return site.Name
     }
     return siteCode

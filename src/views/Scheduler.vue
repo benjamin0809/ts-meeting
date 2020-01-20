@@ -148,9 +148,11 @@
   </div>
 </template>
 <style lang="scss" scope>
-.el-main {
-  padding: 0 0 0 20px !important;
-}
+// .el-main {
+//   padding: 0 0 0 20px !important;
+// }
+
+$light_today_color: #f7f2d0;
 .widget-box {
   min-height: calc(100vh - 76px);
 }
@@ -194,6 +196,14 @@
 .notice div {
   text-align: left;
 }
+
+.today{
+  background: $light_today_color  !important;
+  .dhx_month_body,
+  .dhx_month_head{
+    background: $light_today_color  !important;
+  }
+}
 </style>
 
 <script lang="ts">
@@ -217,7 +227,12 @@ import {
   IUpdateBookingRoomInput
 } from '../models'
 import { ISchedulerOptions } from '../models/scheduler'
-@Component
+import Layout from '@/views/Layout.vue'
+@Component({
+  components: {
+    Layout
+  }
+})
 export default class Scheduler extends Vue {
   // 预定dialog
   dialogVisible = false
@@ -278,38 +293,49 @@ export default class Scheduler extends Vue {
     scheduler.init(this.$refs.container, new Date(), 'week')
     scheduler.parse(this.schedulerData, 'json')
 
+    /** 拖动结束事件，显示自定义弹出框，忽略默认弹出框 */
     scheduler.attachEvent('onDragEnd', (id: string) => {
-      console.log('onDragEnd showDialog id:', id)
+      // console.log('onDragEnd showDialog id:', id)
       this.showDialog(id)
       return false
     })
 
+    /** 月视图，当天高亮 */
     scheduler.templates.month_date_class = (date: any, today: any) => {
-      const time = new Date(date).getTime()
-      const from = time
-      const to = time + 86400000
-      const evs = scheduler.getEvents(from, to)
-      return ''
-    }
-    scheduler._click.buttons.edit = (id: any) => {
-      console.log('_click.buttons icon_edit showDialog id:', id)
-      this.showDialog(id)
-      // some_function(id)
+      // console.log('month_date_class', date, today)
+      if (moment(date).format('YYYY-MM-DD') === moment(today).format('YYYY-MM-DD')) {
+        return 'today'
+      }
     }
 
+    /** 周视图，当天高亮 */
+    scheduler.templates.week_date_class = function(start: any, today: any) {
+      // console.log('week_date_class', start, today)
+      if (moment(start).format('YYYY-MM-DD') === moment(today).format('YYYY-MM-DD')) {
+        return 'today'
+      }
+    }
+
+    /** 自定义图标事件  编辑 */
+    scheduler._click.buttons.edit = (id: any) => {
+      // console.log('_click.buttons icon_edit showDialog id:', id)
+      this.showDialog(id)
+    }
+
+    /** 自定义图标事件  删除 */
     scheduler._click.buttons.delete = (id: any) => {
-      console.log('_click.buttons icon_delete', id)
+      // console.log('_click.buttons icon_delete', id)
       this.RecID = id
       this.cancelBooking()
-      // some_function(id)
     }
 
+    /** 自定义图标事件  详细 */
     scheduler._click.buttons.details = (id: any) => {
-      console.log('_click.buttons icon_details showDialog id:', id)
+      // console.log('_click.buttons icon_details showDialog id:', id)
       this.showDialog(id)
-      // some_function(id)
     }
 
+    // 忽略默认弹出框
     scheduler.attachEvent('onBeforeLightbox', (id: string, ev: any) => {
       // this.dialogVisible = true
       // any custom logic here
@@ -317,6 +343,7 @@ export default class Scheduler extends Vue {
       return false
     })
 
+    // 双击事件，忽略默认弹出框
     scheduler.attachEvent('onDblClick', (id: any, e: any) => {
       console.log('onDblClick showDialog id:', id, e)
       // any custom logic here
@@ -338,14 +365,15 @@ export default class Scheduler extends Vue {
       return id === null
     })
 
+    // 切换视图，
     scheduler.attachEvent('onViewChange', (newMode: string, newDate: any) => {
-      console.log(newMode, newDate)
+      // console.log(newMode, newDate)
       this.crrentDate = newDate
       const startMonth = moment(newDate).format('YYYY-MM')
       const endMonth = moment(newDate)
         .add(7, 'd')
         .format('YYYY-MM')
-      console.log(startMonth, endMonth)
+      // console.log(startMonth, endMonth)
       if (!this.isloadingData) {
         switch (newMode) {
           case 'day':
@@ -372,7 +400,15 @@ export default class Scheduler extends Vue {
   }
 
   showLoading() {
+    this.isloadingData = true
     this.loadingInstance = Loading.service({ target: this.$refs.dhx_data as any,fullscreen: false })
+    console.log('Loading.service')
+  }
+
+  hideLoading() {
+    this.isloadingData = false
+    this.loadingInstance.close()
+    console.log('Loading.close')
   }
 
   siteChanged() {
@@ -382,7 +418,6 @@ export default class Scheduler extends Vue {
     this.roomValue =
       this.roomOptions.length > 0 ? this.roomOptions[0].RoomID : 0
     void this.refreshScheduler()
-    // this.loadingInstance.close()
     this.schedulerOption.Site = this.siteValue
     moduleScheduler.setSchedulerOptions(this.schedulerOption)
   }
@@ -402,7 +437,6 @@ export default class Scheduler extends Vue {
 
   async getMeetingRoomData(month: string) {
     try {
-      this.isloadingData = true
       this.showLoading()
       const data = await RoomApi.GetMeetingRoomData(this.roomValue, month)
       moduleScheduler.ADD_MONTH(month)
@@ -424,8 +458,7 @@ export default class Scheduler extends Vue {
     } catch (e) {
       return []
     } finally {
-      this.loadingInstance.close()
-      this.isloadingData = false
+      this.hideLoading()
     }
   }
 
@@ -505,6 +538,7 @@ export default class Scheduler extends Vue {
     })
       .then(async () => {
         await RoomApi.CancelBookingRoom(this.RecID)
+        this.$message.success('取消预订成功')
         // 清除dialog form
         ;(this.$refs['form'] as any).clearValidate()
         this.schedulerData = []
@@ -602,7 +636,7 @@ export default class Scheduler extends Vue {
           }
           try {
             await RoomApi.BookingRoom(input)
-            this.$message('预订成功')
+            this.$message.success('预订成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
             scheduler.render(new Date(this.crrentDate))
@@ -628,7 +662,7 @@ export default class Scheduler extends Vue {
           }
           try {
             await RoomApi.UpdateBookingInfo(input)
-            this.$message('修改成功')
+            this.$message.success('修改成功')
             moduleScheduler.CLEAR_MONTH()
             this.schedulerData = []
             scheduler.render(new Date(this.crrentDate))

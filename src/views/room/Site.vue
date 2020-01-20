@@ -166,7 +166,7 @@
         sortable
         width="160"
       ></el-table-column>
-      <el-table-column :label="$t('site.operation')" align="center" width="400">
+      <el-table-column :label="$t('site.operation')" align="center" width="200">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">{{
             $t('site.edit')
