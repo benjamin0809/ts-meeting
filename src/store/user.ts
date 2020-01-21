@@ -6,7 +6,7 @@ import { DesHelper } from '@/utils/des'
 import { SCERET } from '@/constant'
 import { Message } from 'element-ui'
 import router from '@/router/index'
-import { asyncRouter } from '@/router/async'
+import asyncRouter from '@/router/async'
 const user = localStorage.getItem('user')
 let initVal: IUserInfo = {
   UserName: '',
@@ -20,10 +20,12 @@ if (typeof user === 'string') {
   initVal = JSON.parse(user)
 }
 
-// if (initVal.Roles.includes(2)) {
-//   console.log('router', router)
-//   router.addRoutes(asyncRouter)
-// }
+if (initVal.Roles.includes(2)) {
+  console.log('router', router)
+  if (router) {
+    router.addRoutes(asyncRouter)
+  }
+}
 console.log('initVal', initVal)
 
 @Module({ dynamic: true, store, name: 'user' })

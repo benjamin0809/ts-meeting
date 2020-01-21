@@ -6,7 +6,7 @@ import Layout from '@/views/Layout.vue'
 import userRouter from '@/router/modules/user'
 import homeRouter from '@/router/modules/home'
 import Scheduler from '@/views/Scheduler.vue'
-// import asyncRouter from './async'
+import asyncRouter from './async'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 Vue.use(Router)
@@ -42,8 +42,13 @@ const router = new Router({
 
 router.beforeEach((to: Route, from: Route, next: any) => {
   NProgress.start()
+  console.log(moduleUser)
   // ...判断session是否过期
   if (moduleUser.Id > 0 || to.name === 'login') {
+    if (moduleUser.Roles.includes(2)) {
+      // console.log('router', router)
+      // router.addRoutes(asyncRouter)
+    }
     next()
   } else {
     moduleUser.logout()
@@ -54,8 +59,5 @@ router.beforeEach((to: Route, from: Route, next: any) => {
 router.afterEach(() => {
   NProgress.done()
 })
-// if (moduleUser.Roles.includes(2)) {
-//   console.log('router', router)
-//   router.addRoutes(asyncRouter)
-// }
+
 export default router

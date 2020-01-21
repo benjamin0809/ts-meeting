@@ -8,10 +8,12 @@ const mockServerPort = 9528 // TODO: get this variable from setting.ts
 const name = 'Meeting Room Booking' // TODO: get this variable from setting.ts
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   lintOnSave: process.env.NODE_ENV === 'development',
+  outputDir:'build',
   productionSourceMap: false,
   devServer: {
+    proxy: 'http://10.167.70.36',
     port: devServerPort,
     open: true,
     overlay: {

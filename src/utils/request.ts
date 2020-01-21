@@ -6,8 +6,8 @@ import { config } from '@vue/test-utils'
 
 // import { BASE_URL } from '../../config/index'
 const instance = axios.create({
-  baseURL: 'http://localhost:25035/api/',
-  withCredentials: true, // 带上Cookie
+  baseURL: process.env.VUE_APP_API,
+  withCredentials: false, // 带上Cookie
   timeout: 200000,
   headers: {
     common: {

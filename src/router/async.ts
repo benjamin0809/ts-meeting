@@ -6,7 +6,7 @@ import Site from '@/views/room/Site.vue'
 import Index from '@/views/room/Index.vue'
 import Layout from '@/views/Layout.vue'
 import { RouteConfig } from 'vue-router'
-export const asyncRouter: RouteConfig[] = [
+const asyncRouter: RouteConfig[] = [
   {
     path: '/sysadmin',
     name: 'sysadmin',
@@ -58,3 +58,4 @@ export const asyncRouter: RouteConfig[] = [
     ]
   }
 ]
+export default asyncRouter
