@@ -107,7 +107,7 @@ export default class extends Vue {
   }
 
   hints = LOGIN_HINTS
-  hintItem = this.hints.find(p => p.lang === localStorage.getItem('lang'))
+  hintItem = this.hints.find(p => p.lang === localStorage.getItem('lang')) || this.hints[0]
 
   showHints = this.hintItem && this.hintItem.hints
 

@@ -1,13 +1,15 @@
+import Cookie from 'js-cookie'
 import { IUserInfo } from './../models/user'
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import store from './index'
-import { login } from '@/api/login'
+import { login, userLogin } from '@/api/login'
 import { DesHelper } from '@/utils/des'
 import { SCERET } from '@/constant'
 import { Message } from 'element-ui'
 import router from '@/router/index'
 import asyncRouter from '@/router/async'
-const user = localStorage.getItem('user')
+
+const user = Cookie.getJSON('user')
 let initVal: IUserInfo = {
   UserName: '',
   UserNo: '',
@@ -16,8 +18,9 @@ let initVal: IUserInfo = {
   Id: 0,
   Roles: [0]
 }
-if (typeof user === 'string') {
-  initVal = JSON.parse(user)
+
+if (user) {
+  initVal = user
 }
 
 if (initVal.Roles.includes(2)) {
@@ -69,7 +72,8 @@ class User extends VuexModule implements IUserInfo {
 
   @Mutation
   LOGOUT() {
-    localStorage.removeItem('user')
+    // localStorage.removeItem('user')
+    Cookie.remove('user')
     this.UserName = ''
     this.Email = ''
     this.UserNo = ''
@@ -82,10 +86,11 @@ class User extends VuexModule implements IUserInfo {
     try {
       const pwd = DesHelper.DesEncrypt(userinfo.password, SCERET)
       console.log(userinfo.account, pwd)
-      const data = await login(userinfo.account, pwd)
+      const data = await userLogin(userinfo.account, pwd)
 
       const { Email, UserNo, UserName, Id, Token, Roles } = data
-      localStorage.setItem('user', JSON.stringify(data))
+      // localStorage.setItem('user', JSON.stringify(data))
+      Cookie.set('user', data)
       this.SET_EMAIL(Email)
       this.SET_USERNO(UserNo)
       this.SET_NAME(UserName)

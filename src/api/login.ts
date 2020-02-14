@@ -8,7 +8,7 @@ export const login = (account: string, pwd: string) => {
     password: pwd
   })
 }
-export const userLogin = (account: string, password: string) => {
+export const userLogin = (account: string, password: string): Promise<IUserInfo> => {
   return new Promise((resolve, reject) => {
     if (!account) {
       reject(new Error('account is empty'))
@@ -20,14 +20,14 @@ export const userLogin = (account: string, password: string) => {
       return
     }
     // tslint:disable-next-line: no-floating-promises
-    store.dispatch('login', account)
-
+    // store.dispatch('login', account)
     resolve({
-      result: true,
-      user: {
-        id: account,
-        name: account
-      }
+      Email: '894306909@qq.com',
+      UserNo: 'F2846595',
+      UserName: 'Benjamin',
+      Id: 123,
+      Token: 'sdssdsd',
+      Roles: [0, 1]
     })
   })
 }
