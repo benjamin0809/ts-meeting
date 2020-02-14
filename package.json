@@ -13,6 +13,7 @@
     "svg": "vsvg -s ./src/icons/svg -t ./src/icons/components --ext ts --es6"
   },
   "dependencies": {
+    "@types/js-cookie": "^2.2.4",
     "@types/nprogress": "^0.2.0",
     "async-validator": "^1.11.5",
     "axios": "^0.19.0",
@@ -20,6 +21,7 @@
     "core-js": "^3.4.4",
     "dhtmlx-scheduler": "^5.3.4",
     "element-ui": "^2.13.0",
+    "js-cookie": "^2.2.1",
     "moment": "^2.24.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
