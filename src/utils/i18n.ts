@@ -9,7 +9,7 @@ const messages = {
   'en-us': require('../assets/i18n/en-us') // 英文语言包
 }
 
-const lang = localStorage.getItem('lang') || navigator.language.toLowerCase()
+const lang = localStorage.getItem('lang') || (navigator.language ? navigator.language.toLowerCase() : '')
 
 // 最后 export default，这一步肯定要写的。
 export default new VueI18n({

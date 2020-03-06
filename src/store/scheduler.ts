@@ -12,7 +12,7 @@ let initVal: ISchedulerOptions = {
 if (typeof scheduler === 'string') {
   initVal = JSON.parse(scheduler)
 }
-console.log('initVal', initVal)
+// console.log('initVal', initVal)
 
 @Module({ dynamic: true, store, name: 'scheduler' })
 class Scheduler extends VuexModule implements ISchedulerOptions {

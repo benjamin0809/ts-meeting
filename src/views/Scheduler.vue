@@ -94,6 +94,11 @@
           <div v-for="(item, name, index) in showNotices" :key="index">
             {{ item.Content }}
           </div>
+          1.龍華視訊會議室使用完畢后請及時通知IT(A2棟 趙華麗：560-60560，黃梅寧：560-60565，E7棟 肖迎春：560-29188 & 560-29114)關閉視訊設備<br/>
+          2.龍華C16棟會議室使用完畢后請及時通知管理員 謝木蘭：560-27369 (戰情室;會議室1;會議室7)，劉念：560-27137 (工程會議室)關閉視訊設備<br/>
+          3.龍華E10棟會議室使用完畢后請及時通知管理員 凡億平：560-78280 關閉視訊設備<br/>
+          4.龍華F07棟會議室使用完畢后請及時通知管理員 謝桃：560-70057/13421335203，譚海燕：560-70807/18565789818 關閉視訊設備<br/>
+          5.貴陽視訊會議室使用完畢后請及時通知管理員 周天衛：583-62628 ， 周安：583-61111 關閉視訊設備<br/>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -198,10 +203,10 @@ $light_today_color: #f7f2d0;
 }
 
 .today{
-  background: $light_today_color  !important;
+  background-color: $light_today_color  !important;
   .dhx_month_body,
   .dhx_month_head{
-    background: $light_today_color  !important;
+    background-color: $light_today_color  !important;
   }
 }
 </style>
@@ -378,20 +383,20 @@ export default class Scheduler extends Vue {
         switch (newMode) {
           case 'day':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              return this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth, 'onViewChange day')
             }
             break
           case 'week':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              return this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth, 'onViewChange week startMonth')
             }
             if (!moduleScheduler.loadedDataMonths.some(m => m === endMonth)) {
-              return this.getMeetingRoomData(endMonth)
+              return this.getMeetingRoomData(endMonth, 'onViewChange week startMonth')
             }
             break
           case 'month':
             if (!moduleScheduler.loadedDataMonths.some(m => m === startMonth)) {
-              return this.getMeetingRoomData(startMonth)
+              return this.getMeetingRoomData(startMonth, 'onViewChange week startMonth')
             }
             break
         }
@@ -432,11 +437,12 @@ export default class Scheduler extends Vue {
   async refreshScheduler() {
     console.log(this.roomValue)
     this.schedulerData = []
-    await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'))
+    await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'), 'refreshScheduler')
   }
 
-  async getMeetingRoomData(month: string) {
+  async getMeetingRoomData(month: string, mode: string) {
     try {
+      console.log('getMeetingRoomData', mode)
       this.showLoading()
       const data = await RoomApi.GetMeetingRoomData(this.roomValue, month)
       moduleScheduler.ADD_MONTH(month)
@@ -483,6 +489,9 @@ export default class Scheduler extends Vue {
     } else {
       // 新增
       this.indexId = id
+      this.form.subject = ''
+      this.form.remark = ''
+      this.form.contact = ''
     }
     const startDate = attachEvent.start_date
     const endDate = attachEvent.end_date
@@ -544,7 +553,7 @@ export default class Scheduler extends Vue {
         this.schedulerData = []
         this.dialogVisible = false
         scheduler.render(new Date(this.crrentDate))
-        await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'))
+        await this.getMeetingRoomData(moment(this.crrentDate).format('YYYY-MM'), 'cancelBooking')
       })
       .catch(_ => {
         // console.error("關閉失敗");
@@ -641,7 +650,7 @@ export default class Scheduler extends Vue {
             this.schedulerData = []
             scheduler.render(new Date(this.crrentDate))
             await this.getMeetingRoomData(
-              moment(this.crrentDate).format('YYYY-MM')
+              moment(this.crrentDate).format('YYYY-MM'), 'saveDialog'
             )
             // 清除dialog form
             ;(this.$refs['form'] as any).clearValidate()

@@ -55,7 +55,7 @@
                 }}</el-button> -->
                 <el-button class="login-button"
                   type="primary"
-                  native-type="submit"
+                  :disabled="!ruleForm.account || !ruleForm.pass" 
                   @click="submitForm('ruleForm')"
                   :loading="loading"
                   >{{ $t('login.submit') }}</el-button
@@ -148,21 +148,25 @@ export default class extends Vue {
       if (valid) {
         this.loading = true
         try {
+          // await login(this.ruleForm.account, this.ruleForm.pass)
           await moduleUser.login({
             account: this.ruleForm.account,
             password: this.ruleForm.pass
           })
           this.loading = false
           let defaultRoute = '/home'
+          // console.log(moduleUser.UserNo)
           if (this.$route.query.redirect) {
             defaultRoute = this.$route.query.redirect as string
           }
+          // debugger
           this.$router.push(defaultRoute).catch(err => {
             console.error(err)
           })
         } catch (e) {
           this.loading = false
         }
+        return false
       } else {
         console.log('error submit!!')
         return false
@@ -174,7 +178,25 @@ export default class extends Vue {
   }
 
   created() {
+    // register('asdadsdasd', '123').then(res => {
+    //   console.log(res)
+    // })
     // console.log(DesHelper.DesEncrypt('123', '123'))
+//     let xhr = new XMLHttpRequest()
+// xhr.timeout = 3000
+// xhr.ontimeout = function (event) {
+//       alert('请求超时！')
+//     }
+// xhr.open('GET', 'http://www.popochiu.com/file/base64/getpdf')
+// xhr.send()
+// xhr.onreadystatechange = function () {
+//       if (xhr.readyState == 4 && xhr.status == 200) {
+//             // alert(xhr.responseText);
+//         }
+//       else {
+//           // alert(xhr.statusText)
+//         }
+//     }
   }
 }
 </script>

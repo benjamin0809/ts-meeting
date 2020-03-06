@@ -1,6 +1,5 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -13,16 +12,6 @@ import 'normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/style/index.scss'
 import store from './store'
-import Cookie from 'js-cookie'
-
-// 全局導入dhtmlx-scheduler 樣式表
-// import 'dhtmlx-scheduler/codebase/dhtmlxscheduler.css'
-
-Cookie.set('name', 'benjamin')
-Cookie.set('json', { name: 'benjamin' })
-
-console.log(Cookie.get('json'))
-console.log(Cookie.getJSON('json'))
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

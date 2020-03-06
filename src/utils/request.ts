@@ -2,7 +2,6 @@ import { moduleUser } from '@/store/user'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import router from '@/router'
 import { IResponseResult } from '@/models/http'
-import { config } from '@vue/test-utils'
 
 // import { BASE_URL } from '../../config/index'
 const instance = axios.create({
@@ -15,10 +14,12 @@ const instance = axios.create({
     }
   }
 })
+// instance.defaults.headers.get['Pragma'] = 'no-cache'
+// instance.defaults.headers.get['Cache-Control'] = 'no-cache, no-store'
 
 // 请求拦截器
 instance.interceptors.request.use(
-  (config) => {
+  function (config) {
     config.headers['Content-Type'] = 'application/json'
     if (moduleUser.Token) {
       config.headers['Authorization'] = 'Bearer ' + moduleUser.Token
@@ -28,7 +29,7 @@ instance.interceptors.request.use(
     // debugger
     return config
   },
-  (error) => {
+  function(error) {
     // 对请求错误做些什么
     return Promise.reject(error)
   }
@@ -36,15 +37,20 @@ instance.interceptors.request.use(
 
 // 响应拦截器
 instance.interceptors.response.use(
-  (response) => {
-    // 对响应数据做点什么
-    if (response.data && response.data.Errcode === 0) {
-      return response
-    } else {
-      return Promise.reject(response.data)
+  function(response) {
+    // console.log(response)
+    try {
+      if (response.data && response.data.Errcode === 0) {
+        return response
+      } else {
+        return Promise.reject(response.data)
+      }
+    } catch (e) {
+      console.error(e)
+      return Promise.reject(e)
     }
   },
-  (error) => {
+  function (error) {
     // 对响应错误做点什么
 
     if (error.message === 'Network Error') {
@@ -63,10 +69,10 @@ instance.interceptors.response.use(
 
 class Request {
   static get<T>(url: string, config?: AxiosRequestConfig | undefined) {
-    return new Promise<T>((resolve, reject) => {
-      instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+    return new Promise<T>(function (resolve, reject) {
+      instance.get<IResponseResult<T>>(url, config).then(function(res: AxiosResponse<IResponseResult<T>>) {
         resolve(res.data.Result)
-      }).catch((err: IResponseResult<any>) => {
+      }).catch(function(err: IResponseResult<any>) {
         reject(err)
       })
     })
@@ -75,20 +81,23 @@ class Request {
   static getData<T>(url: string, data: any) {
     let config: AxiosRequestConfig = {}
     config.params = data
-    return new Promise<T>((resolve, reject) => {
-      instance.get<IResponseResult<T>>(url, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+    return new Promise<T>(function (resolve, reject) {
+      instance.get<IResponseResult<T>>(url, config).then(function(res: AxiosResponse<IResponseResult<T>>) {
         resolve(res.data.Result)
-      }).catch((err: IResponseResult<any>) => {
+      }).catch(function(err: IResponseResult<any>) {
         reject(err)
       })
     })
   }
 
   static post<T>(url: string, data: any, config?: AxiosRequestConfig | undefined) {
-    return new Promise<T>((resolve, reject) => {
-      instance.post<IResponseResult<T>>(url, data, config).then((res: AxiosResponse<IResponseResult<T>>) => {
+    console.log('url:',url,',data:',data)
+    return new Promise<T>(function(resolve, reject) {
+      console.log('Promise:',Promise,'instance',instance)
+      instance.post<IResponseResult<T>>(url, data, config).then(function (res: AxiosResponse<IResponseResult<T>>) {
+        console.log('res:',res)
         resolve(res.data.Result)
-      }).catch((err: any) => {
+      }).catch(function(err: any) {
         reject(err)
       })
     })

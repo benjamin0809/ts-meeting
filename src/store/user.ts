@@ -1,4 +1,5 @@
-import Cookie from 'js-cookie'
+import { removeUser, setUser } from './../utils/cookies'
+
 import { IUserInfo } from './../models/user'
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import store from './index'
@@ -9,36 +10,14 @@ import { Message } from 'element-ui'
 import router from '@/router/index'
 import asyncRouter from '@/router/async'
 
-const user = Cookie.getJSON('user')
-let initVal: IUserInfo = {
-  UserName: '',
-  UserNo: '',
-  Token: '',
-  Email: '',
-  Id: 0,
-  Roles: [0]
-}
-
-if (user) {
-  initVal = user
-}
-
-if (initVal.Roles.includes(2)) {
-  console.log('router', router)
-  if (router) {
-    router.addRoutes(asyncRouter)
-  }
-}
-console.log('initVal', initVal)
-
 @Module({ dynamic: true, store, name: 'user' })
 class User extends VuexModule implements IUserInfo {
-  public UserName = initVal.UserName
-  public UserNo = initVal.UserNo
-  public Token = initVal.Token
-  public Email = initVal.Email
-  public Id = initVal.Id
-  public Roles = initVal.Roles || 2
+  public UserName = ''
+  public UserNo = ''
+  public Token = ''
+  public Email = ''
+  public Id = 0
+  public Roles: number[] = []
 
   @Mutation
   SET_NAME(userName: string) {
@@ -73,7 +52,7 @@ class User extends VuexModule implements IUserInfo {
   @Mutation
   LOGOUT() {
     // localStorage.removeItem('user')
-    Cookie.remove('user')
+    removeUser()
     this.UserName = ''
     this.Email = ''
     this.UserNo = ''
@@ -85,12 +64,11 @@ class User extends VuexModule implements IUserInfo {
   public async login(userinfo: { account: string, password: string }) {
     try {
       const pwd = DesHelper.DesEncrypt(userinfo.password, SCERET)
-      console.log(userinfo.account, pwd)
-      const data = await userLogin(userinfo.account, pwd)
-
+      // console.log(userinfo.account, pwd)
+      const data = await login(userinfo.account, pwd)
+      // console.log('login',data)
       const { Email, UserNo, UserName, Id, Token, Roles } = data
-      // localStorage.setItem('user', JSON.stringify(data))
-      Cookie.set('user', data)
+      setUser(data)
       this.SET_EMAIL(Email)
       this.SET_USERNO(UserNo)
       this.SET_NAME(UserName)
@@ -99,16 +77,31 @@ class User extends VuexModule implements IUserInfo {
       this.SET_ROLE(Roles)
       router.addRoutes(asyncRouter)
     } catch (e) {
+      console.error(e)
       let msg = 'Has Error'
       switch (e.Errcode) {
         case 6120: msg = '密码不正确'
           break
         case 6101: msg = '账号不存在'
           break
+        default:
+          msg = msg + JSON.stringify(e)
+
       }
-      Message.error(msg)
+      Message.error(msg + JSON.stringify(e))
       throw new Error(e)
     }
+  }
+
+  @Action
+  setUserInfo(data: IUserInfo) {
+    const { Email, UserNo, UserName, Id, Token, Roles } = data
+    this.SET_EMAIL(Email)
+    this.SET_USERNO(UserNo)
+    this.SET_NAME(UserName)
+    this.SET_ID(Id)
+    this.SET_TOKEN(Token)
+    this.SET_ROLE(Roles)
   }
 
   @Action
